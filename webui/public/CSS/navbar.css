@@ -1,0 +1,39 @@
+/* /public/css/navbar.css */
+
+/* Navigation Bar Styles */
+.navbar {
+    background-color: #333;
+    overflow: hidden;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 20px;
+  }
+  
+  .nav-tabs {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+  
+  .nav-item {
+    flex: 1;
+  }
+  
+  .nav-link {
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+  
+  .nav-link:hover {
+    background-color: #575757;
+  }
+  
+  .nav-link.active {
+    background-color: #4CAF50;
+    color: white;
+  }
+  

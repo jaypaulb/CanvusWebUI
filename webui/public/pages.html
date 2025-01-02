@@ -1,0 +1,77 @@
+<!-- /public/pages.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Canvus Page Maker - Pages</title>
+  
+  <!-- External CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/navbar.css"> <!-- Optional: If navbar has separate styles -->
+</head>
+<body>
+  <!-- Navbar Placeholder -->
+  <div id="navbar-placeholder"></div>
+    
+    <div class="container">
+        <h1>Create Pages for Templates</h1>
+        
+        <!-- Existing Sections -->
+        <div class="section">
+            <label for="gridSize">Select Grid Size:</label>
+            <select id="gridSize">
+                <option value="1">1x1 - Whole Canvas</option>
+                <option value="3">3x3 - 9 Zones</option>
+                <option value="4">4x4 - 16 Zones</option>
+                <option value="5">5x5 - 25 Zones</option>
+            </select>
+        </div>
+        
+        <div class="section">
+            <label for="gridPattern">Select Grid Pattern:</label>
+            <select id="gridPattern">
+                <option value="Z">Z Pattern - Left to Right, Top to Bottom</option>
+                <option value="Snake">Snake Pattern - Alternating Rows</option>
+                <option value="Spiral">Spiral Pattern - From Center Outward</option>
+            </select>
+        </div>
+        
+        <!-- New Sections for SubZones -->
+        <div class="section">
+            <label for="subZone">Select Zone to Subdivide:</label>
+            <select id="subZone">
+                <option value="">-- Select Zone --</option>
+                <!-- Options will be populated dynamically -->
+            </select>
+        </div>
+        
+        <div class="section">
+            <label for="subZoneArray">Select SubZone Array:</label>
+            <select id="subZoneArray">
+                <option value="">-- Select SubZone Array --</option>
+                <option value="2x2">2x2</option>
+                <option value="3x3">3x3</option>
+                <option value="4x4">4x4</option>
+                <option value="3x1">3x1</option>
+                <option value="5x1">5x1</option>
+                <option value="7x1">7x1</option>
+                <option value="11x1">11x1</option>
+            </select>
+        </div>
+        
+        <!-- Existing Buttons -->
+        <div class="section">
+            <button id="createZones">Create Zones</button>
+            <button id="deleteZones" class="action-button">Delete Zones</button>
+        </div>
+        
+        <div id="message" class="message"></div>
+    </div>
+
+  <!-- External JavaScript -->
+  <script src="js/common.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="js/pages.js"></script>w
+</body>
+</html>

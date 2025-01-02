@@ -1,0 +1,56 @@
+<!-- /public/admin.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Page</title>
+  
+  <!-- External CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/navbar.css"> <!-- Optional: If navbar has separate styles -->
+</head>
+<body>
+  <!-- Navbar Placeholder -->
+  <div id="navbar-placeholder"></div>
+
+  <!-- Password Prompt Section -->
+  <div id="password-section" class="container">
+    <h2>Admin Authentication</h2>
+    <form id="password-form">
+      <label for="admin-password">Enter Admin Password:</label>
+      <input type="password" id="admin-password" name="password" required placeholder="Password">
+      <button type="submit">Authenticate</button>
+    </form>
+    <div id="password-message" class="message"></div>
+  </div>
+
+  <!-- Environment Variables Form Section -->
+  <div id="env-form-container" class="container" style="display: none;">
+    <h1>Manage Environment Variables</h1>
+  <!-- Form to Edit Environment Variables -->
+  <form id="env-form">
+    <input type="hidden" name="password" value="">
+    <div id="env-variables"></div>
+    <button type="submit">Save Changes</button>
+  </form>
+    <div id="env-message" class="message"></div>
+    <!-- Logout button removed -->
+  </div>
+  
+  <!-- Confirmation Modal -->
+  <div id="confirm-modal" class="modal">
+    <div class="modal-content">
+      <p>Are you sure you want to save these changes?</p>
+      <button id="confirm-save" class="confirm-button">Yes</button>
+      <button id="cancel-save" class="cancel-button">No</button>
+    </div>
+  </div>
+
+  <!-- External JavaScript -->
+  <script src="js/common.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

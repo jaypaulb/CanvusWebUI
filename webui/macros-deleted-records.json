@@ -1,0 +1,4980 @@
+[
+  {
+    "recordId": "rec-1734883449599",
+    "timestamp": "2024-12-22T16:04:09.599Z",
+    "zoneBB": {
+      "x": 3200,
+      "y": 0.9999753832817078,
+      "width": 3200,
+      "height": 1800,
+      "scale": 1
+    },
+    "widgets": [
+      {
+        "dst": {
+          "auto_location": false,
+          "id": "ac6e8846-7a71-43fd-beeb-f656603555ab",
+          "rel_location": {
+            "x": 0.5,
+            "y": 1
+          },
+          "tip": "solid-equilateral-triangle"
+        },
+        "id": "170c2a43-a683-471a-85e9-0a7fa210f8c7",
+        "line_color": "#e7e7f2ff",
+        "line_width": 5,
+        "src": {
+          "auto_location": false,
+          "id": "571c98ea-04f1-4b10-af25-f39aa00726e9",
+          "rel_location": {
+            "x": 0.5,
+            "y": 1
+          },
+          "tip": "none"
+        },
+        "state": "normal",
+        "type": "curve",
+        "widget_type": "Connector"
+      },
+      {
+        "dst": {
+          "auto_location": false,
+          "id": "bd5b78ea-a038-426e-94ae-93224657109b",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "solid-equilateral-triangle"
+        },
+        "id": "445f3218-6589-4ec8-aa39-29e6f0b78a81",
+        "line_color": "#e7e7f2ff",
+        "line_width": 5,
+        "src": {
+          "auto_location": false,
+          "id": "dcf3e7fb-9f26-4682-bcb6-772661bce534",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "none"
+        },
+        "state": "normal",
+        "type": "curve",
+        "widget_type": "Connector"
+      },
+      {
+        "dst": {
+          "auto_location": false,
+          "id": "a3b710c7-ce0a-48c1-b5f2-880d0663f6be",
+          "rel_location": {
+            "x": 0.5,
+            "y": 1
+          },
+          "tip": "solid-equilateral-triangle"
+        },
+        "id": "7fa84257-7358-4106-9f58-b310eaa61eed",
+        "line_color": "#e7e7f2ff",
+        "line_width": 5,
+        "src": {
+          "auto_location": false,
+          "id": "bd5b78ea-a038-426e-94ae-93224657109b",
+          "rel_location": {
+            "x": 0.5,
+            "y": 1
+          },
+          "tip": "none"
+        },
+        "state": "normal",
+        "type": "curve",
+        "widget_type": "Connector"
+      },
+      {
+        "dst": {
+          "auto_location": false,
+          "id": "571c98ea-04f1-4b10-af25-f39aa00726e9",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "solid-equilateral-triangle"
+        },
+        "id": "e29c8a84-2484-4b3b-9abb-b8e084a1b62b",
+        "line_color": "#e7e7f2ff",
+        "line_width": 5,
+        "src": {
+          "auto_location": false,
+          "id": "a3b710c7-ce0a-48c1-b5f2-880d0663f6be",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "none"
+        },
+        "state": "normal",
+        "type": "curve",
+        "widget_type": "Connector"
+      },
+      {
+        "dst": {
+          "auto_location": false,
+          "id": "1a61d50b-02a8-4499-a6af-e7a940df7dc6",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "solid-equilateral-triangle"
+        },
+        "id": "e31307ca-dcae-4c43-a7dc-304d9a30cf6b",
+        "line_color": "#e7e7f2ff",
+        "line_width": 5,
+        "src": {
+          "auto_location": false,
+          "id": "b79b32d4-7437-4769-843b-4047edfc425a",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "none"
+        },
+        "state": "normal",
+        "type": "curve",
+        "widget_type": "Connector"
+      },
+      {
+        "dst": {
+          "auto_location": false,
+          "id": "dcf3e7fb-9f26-4682-bcb6-772661bce534",
+          "rel_location": {
+            "x": 0.5,
+            "y": 1
+          },
+          "tip": "solid-equilateral-triangle"
+        },
+        "id": "fc0a18fe-1ed6-47b0-bd51-254a69eda7b5",
+        "line_color": "#e7e7f2ff",
+        "line_width": 5,
+        "src": {
+          "auto_location": false,
+          "id": "1a61d50b-02a8-4499-a6af-e7a940df7dc6",
+          "rel_location": {
+            "x": 0.5,
+            "y": 1
+          },
+          "tip": "none"
+        },
+        "state": "normal",
+        "type": "curve",
+        "widget_type": "Connector"
+      }
+    ]
+  },
+  {
+    "recordId": "rec-1734884150029",
+    "timestamp": "2024-12-22T16:15:50.029Z",
+    "zoneBB": {
+      "x": 0.9999390840530396,
+      "y": 0.9999753832817078,
+      "width": 3200,
+      "height": 1800,
+      "scale": 1
+    },
+    "widgets": [
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 530.197998046875,
+        "id": "026ef0b5-9575-4fbb-b755-039ba991effe",
+        "location": {
+          "x": 1429.380859375,
+          "y": 592.0067749023438
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 529.8980712890625,
+        "id": "2992296e-be4b-495d-a748-cf010139f9ba",
+        "location": {
+          "x": 701.4828491210938,
+          "y": 693.1036987304688
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 530.0980224609375,
+        "id": "5da2cfe4-eea6-43cf-9b3d-9e7a131462be",
+        "location": {
+          "x": 1186.748046875,
+          "y": 490.90985107421875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 530.2979736328125,
+        "id": "766d02dc-0c03-4ad6-9cf7-086bacf8472a",
+        "location": {
+          "x": 1672.0126953125,
+          "y": 693.1036987304688
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 530.39794921875,
+        "id": "8c78aa35-2505-41ab-b599-e8cfecc4b880",
+        "location": {
+          "x": 1914.64599609375,
+          "y": 794.2006225585938
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ff0000ff",
+        "depth": 529.798095703125,
+        "id": "9d7b7ff9-af85-4d50-8569-4ed955955a71",
+        "location": {
+          "x": 458.85003662109375,
+          "y": 794.2006225585938
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 529.998046875,
+        "id": "aa0fc5f0-eb40-4ad5-9d47-9e55eda243f2",
+        "location": {
+          "x": 944.1151733398438,
+          "y": 592.0067749023438
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      }
+    ]
+  },
+  {
+    "recordId": "rec-1734885336684",
+    "timestamp": "2024-12-22T16:35:36.684Z",
+    "zoneBB": {
+      "x": 0.9999390840530396,
+      "y": 0.9999753832817078,
+      "width": 3200,
+      "height": 1800,
+      "scale": 1
+    },
+    "widgets": [
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 531.19775390625,
+        "id": "0d315df3-3e75-4140-ba2d-3dda4a573d5f",
+        "location": {
+          "x": 1761.52734375,
+          "y": 683.449951171875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 530.997802734375,
+        "id": "3704fc6d-1360-465b-9444-f31da391a23b",
+        "location": {
+          "x": 1182.8525390625,
+          "y": 442.33721923828125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 531.2977294921875,
+        "id": "b18f9130-8bb6-42ee-9c05-8cabfea41229",
+        "location": {
+          "x": 2050.86279296875,
+          "y": 804.0072021484375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 531.0977783203125,
+        "id": "bb4c3593-ccd6-498d-9a6a-982b2aa9033d",
+        "location": {
+          "x": 1472.18994140625,
+          "y": 562.8927001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 530.7978515625,
+        "id": "c4a2d645-0945-4803-a545-52ef6e8c50b1",
+        "location": {
+          "x": 604.1801147460938,
+          "y": 683.449951171875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ff0000ff",
+        "depth": 530.6978759765625,
+        "id": "dc187d38-d7e9-45a4-9d3a-e6ffc0774cbe",
+        "location": {
+          "x": 436.01873779296875,
+          "y": 804.0072021484375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 530.8978271484375,
+        "id": "ee7898ae-406d-49f8-84ca-950535068aed",
+        "location": {
+          "x": 893.5172729492188,
+          "y": 562.8927001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      }
+    ]
+  },
+  {
+    "recordId": "rec-1734885401201",
+    "timestamp": "2024-12-22T16:36:41.201Z",
+    "zoneBB": {
+      "x": 3200,
+      "y": 0.9999753832817078,
+      "width": 3200,
+      "height": 1800,
+      "scale": 1
+    },
+    "widgets": [
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 530.997802734375,
+        "id": "1766c3c0-59a1-49f7-be48-bc3ad7001dff",
+        "location": {
+          "x": 4381.8525390625,
+          "y": 442.33721923828125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 531.0977783203125,
+        "id": "497649c9-7a5d-476d-9361-e37243aca976",
+        "location": {
+          "x": 4671.18994140625,
+          "y": 562.8927001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 530.8978271484375,
+        "id": "61882bdd-8637-4c6b-b0c0-f20af4b7b4d0",
+        "location": {
+          "x": 4092.517333984375,
+          "y": 562.8927001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ff0000ff",
+        "depth": 531.4976806640625,
+        "id": "7707bd1c-47bb-4b93-8de2-b2348361703f",
+        "location": {
+          "x": 3513.8447265625,
+          "y": 804.0089111328125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 531.2977294921875,
+        "id": "97f42d23-2bee-447f-9719-d94bbdf63253",
+        "location": {
+          "x": 5249.86279296875,
+          "y": 804.0072021484375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "dst": {
+          "auto_location": false,
+          "id": "d5f50f3e-7e8b-4e88-a244-e3a6064bbc40",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "solid-equilateral-triangle"
+        },
+        "id": "673b1433-ad62-4530-9681-1dfae7ae6a94",
+        "line_color": "#e7e7f2ff",
+        "line_width": 5,
+        "src": {
+          "auto_location": false,
+          "id": "7707bd1c-47bb-4b93-8de2-b2348361703f",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "none"
+        },
+        "state": "normal",
+        "type": "curve",
+        "widget_type": "Connector"
+      },
+      {
+        "dst": {
+          "auto_location": false,
+          "id": "61f00886-2db9-4a25-acfa-03229e5a5959",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "solid-equilateral-triangle"
+        },
+        "id": "617f3030-50a1-4f20-8534-754c542cf516",
+        "line_color": "#e7e7f2ff",
+        "line_width": 5,
+        "src": {
+          "auto_location": false,
+          "id": "0ffcb12f-9f38-4084-9258-d5cf31206333",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "none"
+        },
+        "state": "normal",
+        "type": "curve",
+        "widget_type": "Connector"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 530.7978515625,
+        "id": "d5f50f3e-7e8b-4e88-a244-e3a6064bbc40",
+        "location": {
+          "x": 3803.18017578125,
+          "y": 683.449951171875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 531.19775390625,
+        "id": "e0be373f-1178-4489-a96e-0462a98f30ef",
+        "location": {
+          "x": 4960.52734375,
+          "y": 683.449951171875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      }
+    ]
+  },
+  {
+    "recordId": "rec-1734886106601",
+    "timestamp": "2024-12-22T16:48:26.601Z",
+    "zoneBB": {
+      "x": 0.9999390840530396,
+      "y": 0.9999753832817078,
+      "width": 3200,
+      "height": 1800,
+      "scale": 1
+    },
+    "widgets": [
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 531.2977294921875,
+        "id": "0ee7ccbe-bcaa-4e18-b8f3-c554a0fa7890",
+        "location": {
+          "x": 2050.86279296875,
+          "y": 804.0072021484375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ff0000ff",
+        "depth": 531.6976318359375,
+        "id": "0ffcb12f-9f38-4084-9258-d5cf31206333",
+        "location": {
+          "x": 314.84454345703125,
+          "y": 804.0089111328125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 530.997802734375,
+        "id": "1f9a29cb-319c-4495-aa19-3b61a02b3005",
+        "location": {
+          "x": 1182.8525390625,
+          "y": 442.33721923828125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 530.8978271484375,
+        "id": "26714a54-35db-4fe7-bf50-fca6c2d79b81",
+        "location": {
+          "x": 893.5172729492188,
+          "y": 562.8927001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 530.7978515625,
+        "id": "61f00886-2db9-4a25-acfa-03229e5a5959",
+        "location": {
+          "x": 604.1801147460938,
+          "y": 683.449951171875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 531.0977783203125,
+        "id": "a634c51b-1530-45e8-a847-1faf02797c6a",
+        "location": {
+          "x": 1472.18994140625,
+          "y": 562.8927001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 531.19775390625,
+        "id": "afbac3dd-d51f-4b89-b32c-43505bd08f79",
+        "location": {
+          "x": 1761.52734375,
+          "y": 683.449951171875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "dst": {
+          "auto_location": false,
+          "id": "61f00886-2db9-4a25-acfa-03229e5a5959",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "solid-equilateral-triangle"
+        },
+        "id": "2c1632d6-1858-4d50-be44-35447cc7829c",
+        "line_color": "#e7e7f2ff",
+        "line_width": 5,
+        "src": {
+          "auto_location": false,
+          "id": "0ffcb12f-9f38-4084-9258-d5cf31206333",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "none"
+        },
+        "state": "normal",
+        "type": "curve",
+        "widget_type": "Connector"
+      }
+    ]
+  },
+  {
+    "recordId": "rec-1734890160759",
+    "timestamp": "2024-12-22T17:56:00.759Z",
+    "zoneBB": {
+      "x": 0.9999390840530396,
+      "y": 0.9999753832817078,
+      "width": 3200,
+      "height": 1800,
+      "scale": 1
+    },
+    "widgets": [
+      {
+        "dst": {
+          "auto_location": false,
+          "id": "e1ff1b9c-5c50-47c2-b347-781817b7142b",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "solid-equilateral-triangle"
+        },
+        "id": "d43f4161-bc8d-4582-a4ad-565aea5e0e22",
+        "line_color": "#e7e7f2ff",
+        "line_width": 5,
+        "src": {
+          "auto_location": false,
+          "id": "c355152c-b473-4893-931a-e9a356a7ac84",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "none"
+        },
+        "state": "normal",
+        "type": "curve",
+        "widget_type": "Connector"
+      },
+      {
+        "dst": {
+          "auto_location": false,
+          "id": "4216327e-1118-4380-acf8-b486704ce760",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "solid-equilateral-triangle"
+        },
+        "id": "dfb5127b-849e-451b-a2f9-73e5a9d2096e",
+        "line_color": "#e7e7f2ff",
+        "line_width": 5,
+        "src": {
+          "auto_location": false,
+          "id": "8e0ae19b-4beb-4983-92b5-2fec820dc1e2",
+          "rel_location": {
+            "x": 0.5,
+            "y": 0
+          },
+          "tip": "none"
+        },
+        "state": "normal",
+        "type": "curve",
+        "widget_type": "Connector"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 530.197998046875,
+        "id": "ef28eb9d-5de4-4c54-bc19-c59ff87f1502",
+        "location": {
+          "x": 1429.380859375,
+          "y": 592.0067749023438
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 529.8980712890625,
+        "id": "df98453a-5061-45ef-a387-91b992254450",
+        "location": {
+          "x": 701.4828491210938,
+          "y": 693.1036987304688
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 530.0980224609375,
+        "id": "f68feb9c-d1f1-4f61-bd29-22de9f814b20",
+        "location": {
+          "x": 1186.748046875,
+          "y": 490.90985107421875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 530.2979736328125,
+        "id": "7d1bbab6-09f3-48d0-9aee-f769190a97f6",
+        "location": {
+          "x": 1672.0126953125,
+          "y": 693.1036987304688
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 530.39794921875,
+        "id": "6f116444-88b2-432a-ab72-088d4b39d7c7",
+        "location": {
+          "x": 1914.64599609375,
+          "y": 794.2006225585938
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ff0000ff",
+        "depth": 529.798095703125,
+        "id": "bdb9ff3d-b3ca-44eb-b176-1cba63e44139",
+        "location": {
+          "x": 458.85003662109375,
+          "y": 794.2006225585938
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 529.998046875,
+        "id": "da68b651-352b-4834-9e4e-df7565c4dbf7",
+        "location": {
+          "x": 944.1151733398438,
+          "y": 592.0067749023438
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 531.19775390625,
+        "id": "2256e75c-4d68-4d7d-ba9f-dd6efe72dc49",
+        "location": {
+          "x": 1761.52734375,
+          "y": 683.449951171875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 530.997802734375,
+        "id": "5f65fe1d-d140-4919-8552-b3b4f4768f59",
+        "location": {
+          "x": 1182.8525390625,
+          "y": 442.33721923828125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 531.2977294921875,
+        "id": "fa2d538d-ac35-443e-92c3-4792f258f91d",
+        "location": {
+          "x": 2050.86279296875,
+          "y": 804.0072021484375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 531.0977783203125,
+        "id": "3529e102-d9f0-4764-86e0-5b398a6b431a",
+        "location": {
+          "x": 1472.18994140625,
+          "y": 562.8927001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 530.7978515625,
+        "id": "a8f46c27-e487-4984-918d-17c7c39c1016",
+        "location": {
+          "x": 604.1801147460938,
+          "y": 683.449951171875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ff0000ff",
+        "depth": 530.6978759765625,
+        "id": "ed611fde-548e-408d-952b-d6268a353d82",
+        "location": {
+          "x": 436.01873779296875,
+          "y": 804.0072021484375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 530.8978271484375,
+        "id": "02d2b90a-8016-49ac-907e-34a4aaa60466",
+        "location": {
+          "x": 893.5172729492188,
+          "y": 562.8927001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 530.997802734375,
+        "id": "d71abc67-ed81-48e5-9652-b8bddcf98f77",
+        "location": {
+          "x": 1182.8525390625,
+          "y": 442.33721923828125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 531.0977783203125,
+        "id": "5e6e6e41-fbee-4365-a0b9-a393055e4bc1",
+        "location": {
+          "x": 1472.18994140625,
+          "y": 562.8927001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 530.8978271484375,
+        "id": "b9b2fd79-c518-4f43-913d-0eede1f4275d",
+        "location": {
+          "x": 893.5172729492188,
+          "y": 562.8927001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ff0000ff",
+        "depth": 531.4976806640625,
+        "id": "c355152c-b473-4893-931a-e9a356a7ac84",
+        "location": {
+          "x": 314.84466552734375,
+          "y": 804.0089111328125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 531.2977294921875,
+        "id": "d3ed2f63-bfb6-4e49-9b32-5bc8ecd048ba",
+        "location": {
+          "x": 2050.86279296875,
+          "y": 804.0072021484375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 530.7978515625,
+        "id": "e1ff1b9c-5c50-47c2-b347-781817b7142b",
+        "location": {
+          "x": 604.1801147460938,
+          "y": 683.449951171875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 531.19775390625,
+        "id": "42ecb05f-b0e6-41e5-9476-7e5936d34d96",
+        "location": {
+          "x": 1761.52734375,
+          "y": 683.449951171875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 531.2977294921875,
+        "id": "dd5742e9-50a8-440c-89e6-3271ebf54c64",
+        "location": {
+          "x": 2050.86279296875,
+          "y": 804.0072021484375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ff0000ff",
+        "depth": 531.6976318359375,
+        "id": "8e0ae19b-4beb-4983-92b5-2fec820dc1e2",
+        "location": {
+          "x": 314.84454345703125,
+          "y": 804.0089111328125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 530.997802734375,
+        "id": "38007d1b-fc01-4d6c-b7db-b578bcc09d03",
+        "location": {
+          "x": 1182.8525390625,
+          "y": 442.33721923828125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 530.8978271484375,
+        "id": "07eaa8d8-5263-4329-84fe-408625f35e8c",
+        "location": {
+          "x": 893.5172729492188,
+          "y": 562.8927001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 530.7978515625,
+        "id": "4216327e-1118-4380-acf8-b486704ce760",
+        "location": {
+          "x": 604.1801147460938,
+          "y": 683.449951171875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 531.0977783203125,
+        "id": "ac585a69-1b28-4f57-806f-06712ea53709",
+        "location": {
+          "x": 1472.18994140625,
+          "y": 562.8927001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 531.19775390625,
+        "id": "9338cd24-7ff1-48f8-88e7-4f9dbd99179d",
+        "location": {
+          "x": 1761.52734375,
+          "y": 683.449951171875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.411144495010376,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      }
+    ]
+  },
+  {
+    "recordId": "rec-1734890998567",
+    "timestamp": "2024-12-22T18:09:58.567Z",
+    "zoneBB": {
+      "x": 0.9999390840530396,
+      "y": 0.9999753832817078,
+      "width": 3200,
+      "height": 1800,
+      "scale": 1
+    },
+    "widgets": [
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 530.39794921875,
+        "id": "2313d6ea-75b6-4fe2-8f56-0aff7e0aecfc",
+        "location": {
+          "x": 1914.64599609375,
+          "y": 794.2006225585938
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 530.0980224609375,
+        "id": "414d2e5f-c8c6-454c-9016-1df1e52666f8",
+        "location": {
+          "x": 1186.748046875,
+          "y": 490.90985107421875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 529.8980712890625,
+        "id": "451aa0eb-2f0a-4b75-9390-5aa51743b32e",
+        "location": {
+          "x": 701.4828491210938,
+          "y": 693.1036987304688
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 530.2979736328125,
+        "id": "51337a4f-58ff-4295-a72b-49fbe515e9aa",
+        "location": {
+          "x": 1672.0126953125,
+          "y": 693.1036987304688
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 530.197998046875,
+        "id": "6863b8e4-b495-46c1-93a3-91b19a28aa17",
+        "location": {
+          "x": 1429.380859375,
+          "y": 592.0067749023438
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ff0000ff",
+        "depth": 529.798095703125,
+        "id": "c90ef1a8-419f-46e0-880c-b91d5327a5a1",
+        "location": {
+          "x": 458.85003662109375,
+          "y": 794.2006225585938
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 529.998046875,
+        "id": "f2b8e17f-8d71-47df-bd14-9b2bf11911fd",
+        "location": {
+          "x": 944.1151733398438,
+          "y": 592.0067749023438
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.0219383239746094,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      }
+    ]
+  },
+  {
+    "recordId": "rec-1734891415230",
+    "timestamp": "2024-12-22T18:16:55.230Z",
+    "zoneBB": {
+      "x": 0.9999390244483948,
+      "y": 0.9999750256538391,
+      "width": 3200,
+      "height": 1800,
+      "scale": 1
+    },
+    "widgets": [
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 535.7979736328125,
+        "id": "28878e00-596e-49f9-b079-afdb37b16c32",
+        "location": {
+          "x": 1186.75,
+          "y": 490.9100036621094
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.021939992904663,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 530.7979736328125,
+        "id": "3041f7de-1347-455c-8d6a-a6a0a2499188",
+        "location": {
+          "x": 458.8500061035156,
+          "y": 794.2009887695312
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.021939992904663,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 539.7979736328125,
+        "id": "5cb23585-4e0a-4314-aea7-4a084613daf6",
+        "location": {
+          "x": 1672.010009765625,
+          "y": 693.10400390625
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.021939992904663,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 537.7979736328125,
+        "id": "7190e25b-de34-492d-8459-2d30d615e5f2",
+        "location": {
+          "x": 1429.3800048828125,
+          "y": 592.0070190429688
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.021939992904663,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 541.7979736328125,
+        "id": "cb1aa268-b61e-4d1a-a90e-71586ca02be5",
+        "location": {
+          "x": 1914.6500244140625,
+          "y": 794.2009887695312
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.021939992904663,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 532.7979736328125,
+        "id": "e03c011e-94aa-4ada-9126-4cf484b24eb8",
+        "location": {
+          "x": 701.4829711914062,
+          "y": 693.10400390625
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.021939992904663,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 534.7979736328125,
+        "id": "ef7c38c5-fdb4-45b3-b470-aaeb22738030",
+        "location": {
+          "x": 944.114990234375,
+          "y": 592.0070190429688
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.021939992904663,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      }
+    ]
+  },
+  {
+    "recordId": "rec-1734952559897",
+    "timestamp": "2024-12-23T11:15:59.897Z",
+    "zoneBB": {
+      "x": 3840,
+      "y": 4319.001953125,
+      "width": 1920,
+      "height": 1080,
+      "scale": 1
+    },
+    "widgets": [
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 568.9959716796875,
+        "id": "02c77377-e842-4d1d-94ea-e7ee9eb0ed99",
+        "location": {
+          "x": 3900,
+          "y": 4379.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 566.7965087890625,
+        "id": "03a843c7-3094-413d-a1de-1bac110a9640",
+        "location": {
+          "x": 4155,
+          "y": 4379.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 566.896484375,
+        "id": "062d4e8a-e30b-490d-b4e9-cb1cd9e5a2c7",
+        "location": {
+          "x": 4410,
+          "y": 4379.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 569.095947265625,
+        "id": "33b1938a-414c-48e5-8120-003a07bebd38",
+        "location": {
+          "x": 4665,
+          "y": 4379.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 567.096435546875,
+        "id": "6196a3db-a6e3-4a5a-990e-410c4ff64e92",
+        "location": {
+          "x": 4920,
+          "y": 4379.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 569.1959228515625,
+        "id": "63569772-d3f0-42c6-83df-7303731bfe82",
+        "location": {
+          "x": 5175,
+          "y": 4379.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 567.496337890625,
+        "id": "7a7e5d1e-28ba-419f-b077-d6c3846a9496",
+        "location": {
+          "x": 3900,
+          "y": 4634.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 568.89599609375,
+        "id": "8461af7e-e9f9-4bb8-9f27-37cb9d94aca4",
+        "location": {
+          "x": 4155,
+          "y": 4634.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 567.5963134765625,
+        "id": "85d52009-f310-4a1f-ba06-09ab109bc713",
+        "location": {
+          "x": 4410,
+          "y": 4634.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 565.7967529296875,
+        "id": "8cb0c89b-a48d-43ff-a049-20c416f2fe99",
+        "location": {
+          "x": 4665,
+          "y": 4634.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 567.6962890625,
+        "id": "9008ac2f-368c-4e03-9f5b-a89143a21789",
+        "location": {
+          "x": 4920,
+          "y": 4634.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 565.896728515625,
+        "id": "9be11828-b385-4d93-b86b-28abed3e0da5",
+        "location": {
+          "x": 5175,
+          "y": 4634.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 565.9967041015625,
+        "id": "9cb18202-75a7-4f42-bd64-16a4e4a09b3d",
+        "location": {
+          "x": 3900,
+          "y": 4889.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 567.1964111328125,
+        "id": "a01be99c-4342-4d3f-8254-c29e42b10548",
+        "location": {
+          "x": 4155,
+          "y": 4889.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 567.29638671875,
+        "id": "b0329aac-f8df-46ec-8efc-fe7825a76b77",
+        "location": {
+          "x": 4410,
+          "y": 4889.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 566.0966796875,
+        "id": "b702ff0e-3606-4582-902b-09f2195a47b7",
+        "location": {
+          "x": 4665,
+          "y": 4889.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 566.1966552734375,
+        "id": "b97b3e46-39fa-4deb-8cf8-d958bd7cc25e",
+        "location": {
+          "x": 4920,
+          "y": 4889.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 566.296630859375,
+        "id": "c56b54b7-e686-4a96-ba01-3125dc0109eb",
+        "location": {
+          "x": 5175,
+          "y": 4889.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 566.3966064453125,
+        "id": "d375c393-353f-474c-a933-78a35862fd39",
+        "location": {
+          "x": 3900,
+          "y": 5144.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 566.49658203125,
+        "id": "d6a4017f-2af5-45df-b959-58bca737769d",
+        "location": {
+          "x": 4155,
+          "y": 5144.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 569.69580078125,
+        "id": "f378da0b-f1c7-4535-bb4e-ecde4f34a4b7",
+        "location": {
+          "x": 4410,
+          "y": 5144.001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.3000000715255737,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      }
+    ]
+  },
+  {
+    "recordId": "rec-1735401007759",
+    "timestamp": "2024-12-28T15:50:07.759Z",
+    "zoneBB": {
+      "x": 6399.00244140625,
+      "y": 0.9999753832817078,
+      "width": 3200,
+      "height": 1800,
+      "scale": 1
+    },
+    "widgets": [
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 574.7969970703125,
+        "id": "054f9916-29e6-4f7e-aea9-d2cfbed8a3d5",
+        "location": {
+          "x": 8504,
+          "y": 1650
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 580.7969970703125,
+        "id": "13d99641-5b99-429b-a42e-bb041a4f17d0",
+        "location": {
+          "x": 9014,
+          "y": 1650
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 604.7969970703125,
+        "id": "15f58761-1df5-4ed2-86f3-27fea9f109c9",
+        "location": {
+          "x": 7739,
+          "y": 1395
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 595.7969970703125,
+        "id": "1650b9df-02dd-43fd-9c43-8e1b6a95363c",
+        "location": {
+          "x": 8759,
+          "y": 1140
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 589.7969970703125,
+        "id": "22daa53e-5693-4543-a393-4f9aefcb0792",
+        "location": {
+          "x": 7994,
+          "y": 1140
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 598.7969970703125,
+        "id": "231d64d4-c078-4a5c-82b7-705ed9d79e92",
+        "location": {
+          "x": 7994,
+          "y": 1650
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 593.7969970703125,
+        "id": "2b7dbf64-42fb-4781-a5ed-9729bc0959e4",
+        "location": {
+          "x": 8249,
+          "y": 1140
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 602.7969970703125,
+        "id": "44104f39-3c73-45d2-b730-d596ae7b6564",
+        "location": {
+          "x": 8249,
+          "y": 1650
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 621.7969970703125,
+        "id": "67b319bb-697d-4fcd-a271-ee34ecb80701",
+        "location": {
+          "x": 8504,
+          "y": 1140
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 612.7969970703125,
+        "id": "6bf0a2fd-b8d9-404c-974b-d4cba1931c68",
+        "location": {
+          "x": 8759,
+          "y": 1395
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 570.7969970703125,
+        "id": "778e4d58-4d03-401d-9272-08fe8ff53201",
+        "location": {
+          "x": 9014,
+          "y": 1395
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 615.7969970703125,
+        "id": "7d15b7ff-65d3-4886-9607-54b9082c5079",
+        "location": {
+          "x": 7994,
+          "y": 1395
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 573.7969970703125,
+        "id": "7fa30e80-d0bc-4946-8e6d-a8ecd0ba3f8f",
+        "location": {
+          "x": 7739,
+          "y": 1650
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 617.7969970703125,
+        "id": "96e64737-f29a-4b28-900e-a6f7dda169ad",
+        "location": {
+          "x": 7739,
+          "y": 1140
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 608.7969970703125,
+        "id": "a515296a-5ce3-4327-b3b0-b74f1e4b607e",
+        "location": {
+          "x": 8249,
+          "y": 1395
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 624.7969970703125,
+        "id": "d4c6c482-98a6-4378-b450-fc0d648e1025",
+        "location": {
+          "x": 9014,
+          "y": 1140
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ff9123ff",
+        "depth": 629.7969970703125,
+        "id": "e2017d74-ec05-45b4-8da9-8d50b9c64c34",
+        "location": {
+          "x": 6589,
+          "y": 301
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1,
+        "size": {
+          "height": 300,
+          "width": 300
+        },
+        "state": "normal",
+        "text": "asdfas",
+        "text_color": "#000000ff",
+        "title": "teats @ (23 Dec 12:18:53)",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 567.7969970703125,
+        "id": "f48b6cdd-8daa-4d0f-ab11-f4fb3f0948b0",
+        "location": {
+          "x": 8504,
+          "y": 1395
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 579.7969970703125,
+        "id": "fb686cc7-4253-4162-a869-ea2c2bce79d5",
+        "location": {
+          "x": 8759,
+          "y": 1650
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      }
+    ]
+  },
+  {
+    "recordId": "rec-1735401953789",
+    "timestamp": "2024-12-28T16:05:53.790Z",
+    "zoneBB": {
+      "x": 1.7764160633087158,
+      "y": 0.9988356232643127,
+      "width": 9600,
+      "height": 5400,
+      "scale": 0.9996299743652344
+    },
+    "widgets": [
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 601.7969970703125,
+        "id": "042b29ed-89e0-4784-9d75-a2d3aaa53e8d",
+        "location": {
+          "x": 7349,
+          "y": 2750
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 619.7969970703125,
+        "id": "09476f28-8f8b-481d-a6c3-8ea2d875cc82",
+        "location": {
+          "x": 986,
+          "y": 3340
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2000000476837158,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 620.7969970703125,
+        "id": "09c03b14-088a-4758-8d15-bcea61396f4f",
+        "location": {
+          "x": 7774,
+          "y": 1900
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 565.7969970703125,
+        "id": "0bf646a4-890b-4481-8de0-857baf1eef2a",
+        "location": {
+          "x": 7774,
+          "y": 2325
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 625.7969970703125,
+        "id": "104f08d0-b9ed-4aed-a4ef-982f6d9c118c",
+        "location": {
+          "x": 8249,
+          "y": 1905
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 622.7969970703125,
+        "id": "10dcb960-40f7-4ff7-8486-a6ae8f511a6f",
+        "location": {
+          "x": 8624,
+          "y": 1900
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 613.7969970703125,
+        "id": "14d1b56a-689a-4217-b6da-4e26e2fb3dde",
+        "location": {
+          "x": 101,
+          "y": 3340
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.5101450085639954,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 605.7969970703125,
+        "id": "16216124-effe-402f-87ce-79d6997c9d6e",
+        "location": {
+          "x": 1428.5,
+          "y": 3545
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2000000476837158,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 583.7969970703125,
+        "id": "1a3eaee8-f4f0-4e60-ac25-9967da26d5c3",
+        "location": {
+          "x": 7739,
+          "y": 1905
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 610.7969970703125,
+        "id": "1bac7200-591e-4b64-a2c3-0b7b5f166b66",
+        "location": {
+          "x": 1428.5,
+          "y": 3955
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2000000476837158,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 616.7969970703125,
+        "id": "2314d8c8-085d-4580-bf77-bb33f5f78edb",
+        "location": {
+          "x": 6499,
+          "y": 1900
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 614.7969970703125,
+        "id": "2370ad86-4ba5-4de8-9b94-6ddd82d7d23b",
+        "location": {
+          "x": 6924,
+          "y": 2325
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 592.7969970703125,
+        "id": "2a8484d5-db50-46c7-a003-52dde014a8e9",
+        "location": {
+          "x": 543.5,
+          "y": 3750
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2000000476837158,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 586.7969970703125,
+        "id": "2c388fa2-8715-45ac-851f-e26f3247e957",
+        "location": {
+          "x": 101,
+          "y": 4143.47998046875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.5101450085639954,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 581.7969970703125,
+        "id": "3027107d-00d7-40e7-9183-5cc5c8599520",
+        "location": {
+          "x": 8624,
+          "y": 2750
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 571.7969970703125,
+        "id": "31071724-f3c0-46eb-817c-c095841811bf",
+        "location": {
+          "x": 101,
+          "y": 3644.570068359375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.5101450085639954,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 575.7969970703125,
+        "id": "427ed84b-7742-40e4-9efc-d4dafd6ac55e",
+        "location": {
+          "x": 101,
+          "y": 3746.090087890625
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.5101450085639954,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 606.7969970703125,
+        "id": "465fd064-7efb-4ca9-80e0-35c8b0137989",
+        "location": {
+          "x": 6499,
+          "y": 2325
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 596.7969970703125,
+        "id": "46a3689e-0922-4382-afd0-29516273a2c7",
+        "location": {
+          "x": 8199,
+          "y": 1900
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#00f500ff",
+        "depth": 630.7969970703125,
+        "id": "4930978e-b6f4-4571-bc8b-93b158f56f45",
+        "location": {
+          "x": 3428,
+          "y": 2035
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1,
+        "size": {
+          "height": 300,
+          "width": 300
+        },
+        "state": "normal",
+        "text": "asdfdsa",
+        "text_color": "#000000ff",
+        "title": "easresareas @ (23 Dec 12:18:57)",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 611.7969970703125,
+        "id": "49996178-f885-4642-a4be-fc5a5d7fdcb7",
+        "location": {
+          "x": 8199,
+          "y": 2325
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 568.7969970703125,
+        "id": "4b68a292-f1d6-4198-a4e6-44d4e2e0886c",
+        "location": {
+          "x": 101,
+          "y": 3543.0400390625
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.5101450085639954,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 569.7969970703125,
+        "id": "4fa74c31-332d-4bbc-95eb-213d314c4a27",
+        "location": {
+          "x": 8624,
+          "y": 2325
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 577.7969970703125,
+        "id": "5129d388-9024-44fc-962b-c623e07339cc",
+        "location": {
+          "x": 101,
+          "y": 3847.610107421875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.5101450085639954,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 584.7969970703125,
+        "id": "5611e384-64ba-4297-80bf-4bc155860bba",
+        "location": {
+          "x": 6499,
+          "y": 3175
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "depth": 631.7969970703125,
+        "id": "569b74f1-8ad4-43a1-8067-5649e0eb546f",
+        "location": {
+          "x": 2409.5,
+          "y": 2546.5
+        },
+        "main_frame_scroll_offset": {
+          "x": 0,
+          "y": 0
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": true,
+        "scale": 2.706249952316284,
+        "size": {
+          "height": 800,
+          "width": 1200
+        },
+        "state": "normal",
+        "title": "Macros Page",
+        "transparent_mode": false,
+        "url": "http://localhost:3000/macros.html",
+        "widget_type": "Browser"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 626.7969970703125,
+        "id": "58bc1f8d-9ef6-4d8c-8faa-8900951acd71",
+        "location": {
+          "x": 101,
+          "y": 4143.47998046875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.5101450085639954,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 590.7969970703125,
+        "id": "66c0dae1-8c1d-4bbf-98d8-58ddd8255dc5",
+        "location": {
+          "x": 6924,
+          "y": 1900
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 587.7969970703125,
+        "id": "6ede1dbb-94d3-423f-b599-ab5937d303cb",
+        "location": {
+          "x": 7994,
+          "y": 1905
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2999999523162842,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 627.7969970703125,
+        "id": "7977a067-f31d-4931-9257-fc75bdc3d334",
+        "location": {
+          "x": 7349,
+          "y": 3175
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 572.7969970703125,
+        "id": "7d5412c2-76d4-480f-8f52-f7e02726f5ec",
+        "location": {
+          "x": 6499,
+          "y": 2750
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 607.7969970703125,
+        "id": "7ebe6485-ec14-42c6-aefe-99a9620b3402",
+        "location": {
+          "x": 7349,
+          "y": 2325
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 585.7969970703125,
+        "id": "7f47737e-c8df-45b1-81d2-a0c2e2f7eb5c",
+        "location": {
+          "x": 101,
+          "y": 4050.64990234375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.5101450085639954,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 599.7969970703125,
+        "id": "811a3824-bd97-44a4-9df2-895c7db59abb",
+        "location": {
+          "x": 6924,
+          "y": 2750
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 588.7969970703125,
+        "id": "8ac77ed2-c678-45d3-8f26-dac3d2053132",
+        "location": {
+          "x": 6924,
+          "y": 3175
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 566.7969970703125,
+        "id": "8c19f1dc-5482-4ebd-a344-fc5d0f2232e3",
+        "location": {
+          "x": 101,
+          "y": 3441.52001953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.5101450085639954,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 603.7969970703125,
+        "id": "a6d43224-d0b0-4789-84b1-aaf76b36b268",
+        "location": {
+          "x": 986,
+          "y": 3955
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2000000476837158,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 576.7969970703125,
+        "id": "a8e73b83-64db-4b5c-8fe9-931fed90bd9c",
+        "location": {
+          "x": 7774,
+          "y": 2750
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 623.7969970703125,
+        "id": "b021c530-b65e-47df-9005-560087cb4912",
+        "location": {
+          "x": 1428.5,
+          "y": 3340
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2000000476837158,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 609.7969970703125,
+        "id": "b30c9c8b-804f-4e89-8b15-9b7e83402147",
+        "location": {
+          "x": 1428.5,
+          "y": 3750
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2000000476837158,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 600.7969970703125,
+        "id": "bc85ec81-1947-4371-b35d-12166aee9461",
+        "location": {
+          "x": 986,
+          "y": 3750
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2000000476837158,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 597.7969970703125,
+        "id": "be1c687e-c440-47f6-ab2e-e3a267d28f9d",
+        "location": {
+          "x": 986,
+          "y": 3545
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2000000476837158,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 578.7969970703125,
+        "id": "c1f34d03-c021-4e27-82ee-c84c0f639a1b",
+        "location": {
+          "x": 8199,
+          "y": 2750
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 582.7969970703125,
+        "id": "dba2c635-2ae2-4605-bac6-e813603f4c37",
+        "location": {
+          "x": 101,
+          "y": 3949.1298828125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.5101450085639954,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 591.7969970703125,
+        "id": "eee57656-f26a-4c92-869d-9340eabf343c",
+        "location": {
+          "x": 543.5,
+          "y": 3545
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2000000476837158,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ff1717ff",
+        "depth": 628.7969970703125,
+        "id": "f62dc6da-ea37-4687-911c-4647a570da38",
+        "location": {
+          "x": 3326.510009765625,
+          "y": 160.03700256347656
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1,
+        "size": {
+          "height": 321.68701171875,
+          "width": 524.0969848632812
+        },
+        "state": "normal",
+        "text": "asdfsadfasdf",
+        "text_color": "#ffffffff",
+        "title": "Tony @ (23 Dec 12:18:16)",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 594.7969970703125,
+        "id": "fe3a4709-3f12-4b65-ade8-de2a780e0b96",
+        "location": {
+          "x": 7349,
+          "y": 1900
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 2.166670083999634,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 618.7969970703125,
+        "id": "ff2dfd5c-9953-4060-80ae-ca5abad6f00b",
+        "location": {
+          "x": 543.5,
+          "y": 3340
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 1.2000000476837158,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      }
+    ]
+  },
+  {
+    "recordId": "rec-1735402013275",
+    "timestamp": "2024-12-28T16:06:53.275Z",
+    "zoneBB": {
+      "x": 1.7764160633087158,
+      "y": 0.9991956353187561,
+      "width": 9600,
+      "height": 5400,
+      "scale": 0.9996299147605896
+    },
+    "widgets": [
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 601.7969970703125,
+        "id": "a4e9bc8e-72c4-44e6-b7eb-ccdc55c03cea",
+        "location": {
+          "x": 5649.07470703125,
+          "y": 917.3336791992188
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 619.7969970703125,
+        "id": "bb9bc5f2-398d-44f7-8cc4-84a55d946204",
+        "location": {
+          "x": 3528.074462890625,
+          "y": 1114.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.4000000059604645,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 620.7969970703125,
+        "id": "7ae03064-bb31-443b-9d10-47be60c82fc4",
+        "location": {
+          "x": 5790.7412109375,
+          "y": 634.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 565.7969970703125,
+        "id": "f23daf19-a4e1-4067-91f4-dfb5811c102a",
+        "location": {
+          "x": 5790.7412109375,
+          "y": 775.6670532226562
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 625.7969970703125,
+        "id": "5d5fefa6-ef8d-4504-8b7e-48e8216a9246",
+        "location": {
+          "x": 5949.07470703125,
+          "y": 635.6670532226562
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.43333330750465393,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 622.7969970703125,
+        "id": "4e7671af-647e-4874-a6f3-265481a5eaad",
+        "location": {
+          "x": 6074.07470703125,
+          "y": 634.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 613.7969970703125,
+        "id": "ec5140d5-7757-48be-a224-a48d1503d94f",
+        "location": {
+          "x": 3233.074462890625,
+          "y": 1114.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.17004834115505219,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 605.7969970703125,
+        "id": "f3a20be3-a3a7-4bb5-b62e-da20e1ddd199",
+        "location": {
+          "x": 3675.574462890625,
+          "y": 1182.333740234375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.4000000059604645,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 583.7969970703125,
+        "id": "3c549988-6afe-4009-87d5-19f901ff1f6d",
+        "location": {
+          "x": 5779.07470703125,
+          "y": 635.6670532226562
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.43333330750465393,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 610.7969970703125,
+        "id": "99f58dad-6541-4103-8bbc-7c9a83a6246d",
+        "location": {
+          "x": 3675.574462890625,
+          "y": 1319.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.4000000059604645,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 616.7969970703125,
+        "id": "c9bc1763-656d-4d66-b968-584550ec137b",
+        "location": {
+          "x": 5365.7412109375,
+          "y": 634.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 614.7969970703125,
+        "id": "ef39daa2-214d-4c4f-b425-e87c5f292d18",
+        "location": {
+          "x": 5507.40771484375,
+          "y": 775.6670532226562
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 592.7969970703125,
+        "id": "729c032d-815b-408e-ba79-16fa99635728",
+        "location": {
+          "x": 3380.574462890625,
+          "y": 1250.6669921875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.4000000059604645,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 586.7969970703125,
+        "id": "01781697-679b-4b10-bd7d-b90d82c02daa",
+        "location": {
+          "x": 3233.074462890625,
+          "y": 1381.8270263671875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.17004834115505219,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 581.7969970703125,
+        "id": "4e3cc53b-15fd-43e1-b37f-59cd341f6665",
+        "location": {
+          "x": 6074.07470703125,
+          "y": 917.3336791992188
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 571.7969970703125,
+        "id": "7d7d2a09-541d-46d7-8908-3714b107fdc1",
+        "location": {
+          "x": 3233.074462890625,
+          "y": 1215.523681640625
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.17004834115505219,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 575.7969970703125,
+        "id": "c099e3d4-93a7-454d-a5a3-0e8f18bd52d2",
+        "location": {
+          "x": 3233.074462890625,
+          "y": 1249.36376953125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.17004834115505219,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 606.7969970703125,
+        "id": "0ca59b65-03ee-4997-9c4a-4d923cb5c4bc",
+        "location": {
+          "x": 5365.7412109375,
+          "y": 775.6670532226562
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 596.7969970703125,
+        "id": "e1a562da-31b7-41a7-aadd-af12199470a2",
+        "location": {
+          "x": 5932.40771484375,
+          "y": 634.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#00f500ff",
+        "depth": 630.7969970703125,
+        "id": "065c65ef-41e1-4b1c-bd2f-6022f972af34",
+        "location": {
+          "x": 4342.07470703125,
+          "y": 679.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.3333333432674408,
+        "size": {
+          "height": 300,
+          "width": 300
+        },
+        "state": "normal",
+        "text": "asdfdsa",
+        "text_color": "#000000ff",
+        "title": "easresareas @ (23 Dec 12:18:57)",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 611.7969970703125,
+        "id": "f5d31a13-65ad-4560-b6b0-bee489dc4f4a",
+        "location": {
+          "x": 5932.40771484375,
+          "y": 775.6670532226562
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 568.7969970703125,
+        "id": "6634bed3-069d-481e-a0de-c1222a3c577f",
+        "location": {
+          "x": 3233.074462890625,
+          "y": 1181.680419921875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.17004834115505219,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 569.7969970703125,
+        "id": "2765a93d-3bd6-44b2-bab5-6af1b90a76a9",
+        "location": {
+          "x": 6074.07470703125,
+          "y": 775.6670532226562
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 577.7969970703125,
+        "id": "2935c9ae-2689-4938-85dd-9852fb41a742",
+        "location": {
+          "x": 3233.074462890625,
+          "y": 1283.2037353515625
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.17004834115505219,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 584.7969970703125,
+        "id": "2854ab4d-51ce-455f-a5b0-8b3b920c5d93",
+        "location": {
+          "x": 5365.7412109375,
+          "y": 1059.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "depth": 631.7969970703125,
+        "id": "dc2f1d8d-8090-4d38-bf82-69e55ab5b41b",
+        "location": {
+          "x": 4002.574462890625,
+          "y": 849.5003662109375
+        },
+        "main_frame_scroll_offset": {
+          "x": 0,
+          "y": 0
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": true,
+        "scale": 0.9020833373069763,
+        "size": {
+          "height": 800,
+          "width": 1200
+        },
+        "state": "normal",
+        "title": "Macros Page",
+        "transparent_mode": false,
+        "url": "http://localhost:3000/macros.html",
+        "widget_type": "Browser"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 626.7969970703125,
+        "id": "647d26b9-2972-4489-8994-5f6a092445fe",
+        "location": {
+          "x": 3233.074462890625,
+          "y": 1381.8270263671875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.17004834115505219,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 590.7969970703125,
+        "id": "83586ca8-d815-490f-9e34-60d6d9e2c4a6",
+        "location": {
+          "x": 5507.40771484375,
+          "y": 634.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 587.7969970703125,
+        "id": "9c786b27-a3fa-45a3-a243-5c978fe97a0c",
+        "location": {
+          "x": 5864.07470703125,
+          "y": 635.6670532226562
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.43333330750465393,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 627.7969970703125,
+        "id": "678e53ae-b3a4-4026-a536-d2ebc8031545",
+        "location": {
+          "x": 5649.07470703125,
+          "y": 1059.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 572.7969970703125,
+        "id": "a58986ff-f8c6-4b2a-8762-a1a1534efa10",
+        "location": {
+          "x": 5365.7412109375,
+          "y": 917.3336791992188
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 607.7969970703125,
+        "id": "cdd4077e-7cce-481e-95d9-112d1f477c2f",
+        "location": {
+          "x": 5649.07470703125,
+          "y": 775.6670532226562
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 585.7969970703125,
+        "id": "3a7a0f0f-793f-4500-a1f7-4c13a5278a6d",
+        "location": {
+          "x": 3233.074462890625,
+          "y": 1350.8836669921875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.17004834115505219,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 599.7969970703125,
+        "id": "83f7e41d-38ee-4911-9ca8-69c0f357f6ea",
+        "location": {
+          "x": 5507.40771484375,
+          "y": 917.3336791992188
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 588.7969970703125,
+        "id": "e1943a5b-88a4-4b31-a030-c70a60ba7759",
+        "location": {
+          "x": 5507.40771484375,
+          "y": 1059.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 566.7969970703125,
+        "id": "37d9d057-bfda-474f-a31a-607e89a0ab56",
+        "location": {
+          "x": 3233.074462890625,
+          "y": 1147.84033203125
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.17004834115505219,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#0000ffff",
+        "depth": 603.7969970703125,
+        "id": "80cedd93-af75-4987-9742-b1836b9adde1",
+        "location": {
+          "x": 3528.074462890625,
+          "y": 1319.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.4000000059604645,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Blue - Battle",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 576.7969970703125,
+        "id": "dd2478b7-fbfe-4cee-ad54-61672d9fb42e",
+        "location": {
+          "x": 5790.7412109375,
+          "y": 917.3336791992188
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": false,
+        "background_color": "#ff0000ff",
+        "depth": 623.7969970703125,
+        "id": "3a5bafeb-e56a-432e-a054-d0ec680fb877",
+        "location": {
+          "x": 3675.574462890625,
+          "y": 1114.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.4000000059604645,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Red - Richard",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffff00ff",
+        "depth": 609.7969970703125,
+        "id": "e6fc0910-e426-4f95-a346-3f5b71edfc5d",
+        "location": {
+          "x": 3675.574462890625,
+          "y": 1250.6669921875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.4000000059604645,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Yellow - York",
+        "text_color": "#000000ff",
+        "title": "c",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 600.7969970703125,
+        "id": "afaebc7e-8b61-4fe2-906f-2a24e8e694ad",
+        "location": {
+          "x": 3528.074462890625,
+          "y": 1250.6669921875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.4000000059604645,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#008000ff",
+        "depth": 597.7969970703125,
+        "id": "5ae4d87b-9886-43d7-9588-e42551b71298",
+        "location": {
+          "x": 3528.074462890625,
+          "y": 1182.333740234375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.4000000059604645,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Green - Gave",
+        "text_color": "#ffffffff",
+        "title": "b",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 578.7969970703125,
+        "id": "2e02a9b2-e578-4382-92fb-77dba9390a72",
+        "location": {
+          "x": 5932.40771484375,
+          "y": 917.3336791992188
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#4b0082ff",
+        "depth": 582.7969970703125,
+        "id": "d682769e-a028-4f02-a7c1-4407b3551e57",
+        "location": {
+          "x": 3233.074462890625,
+          "y": 1317.043701171875
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.17004834115505219,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Indigo - In",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffa500ff",
+        "depth": 591.7969970703125,
+        "id": "55bb1787-309f-493d-9d9d-73f34c1248b0",
+        "location": {
+          "x": 3380.574462890625,
+          "y": 1182.333740234375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.4000000059604645,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Orange - Of",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ff1717ff",
+        "depth": 628.7969970703125,
+        "id": "8f3b827e-ad55-4ac9-a7bf-c59ae5f37528",
+        "location": {
+          "x": 4308.24462890625,
+          "y": 54.012699127197266
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.3333333432674408,
+        "size": {
+          "height": 321.68701171875,
+          "width": 524.0969848632812
+        },
+        "state": "normal",
+        "text": "asdfsadfasdf",
+        "text_color": "#ffffffff",
+        "title": "Tony @ (23 Dec 12:18:16)",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 594.7969970703125,
+        "id": "a594b11b-8611-439a-b10d-ef15849f1868",
+        "location": {
+          "x": 5649.07470703125,
+          "y": 634.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.7222233414649963,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ee82eeff",
+        "depth": 618.7969970703125,
+        "id": "b108c690-6bfc-4fed-a7ac-67fa293d5b0e",
+        "location": {
+          "x": 3380.574462890625,
+          "y": 1114.0003662109375
+        },
+        "parent_id": "0fde388b-1b52-4086-b3db-a14cca78d4ee",
+        "pinned": false,
+        "scale": 0.4000000059604645,
+        "size": {
+          "height": 150,
+          "width": 150
+        },
+        "state": "normal",
+        "text": "Violet - Vain",
+        "text_color": "#000000ff",
+        "title": "a",
+        "widget_type": "Note"
+      }
+    ]
+  }
+]

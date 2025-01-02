@@ -1,0 +1,286 @@
+/* /public/css/styles.css */
+
+/* Reset some default styles */
+body, h1, h2, form, label, input, button, nav, ul, li {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    padding-top: 60px; /* To prevent content from being hidden behind the navbar */
+  }
+  
+  /* Container Styles */
+  .container {
+    max-width: 800px; /* Adjust as needed */
+    margin: auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Typography */
+  h1, h2 {
+    text-align: center;
+    color: #333;
+  }
+  
+  h1 {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555555;
+    font-weight: bold;
+  }
+  
+  input[type="password"],
+  input[type="text"],
+  select,
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+/* Apply styles to buttons excluding those with the .team-tab class */
+button:not(.team-tab) {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  
+button:not(.team-tab):hover {
+    background-color: #45a049;
+  }
+  
+  .action-button {
+    background-color: #f44336;
+  }
+  
+  .action-button:hover {
+    background-color: #da190b;
+  }
+  
+  /* Message Styles */
+  .message {
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+    display: none;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .success {
+    background-color: #dff0d8;
+    color: #3c763d;
+  }
+  
+  .error {
+    background-color: #f2dede;
+    color: #a94442;
+  }
+  
+  .loading {
+    background-color: #d9edf7;
+    color: #31708f;
+  }
+
+/* Confirmation Modal Styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1000; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 400px; /* Could be more or less, depending on screen size */
+  border-radius: 8px;
+  text-align: center;
+}
+
+.modal-content p {
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.modal-content input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.modal-content button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.confirm-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.confirm-button:hover {
+  background-color: #45a049;
+}
+
+.cancel-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #e53935;
+}
+
+/* Add this CSS to your stylesheet */
+.modal {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 300px;
+  text-align: center;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+}
+
+/* Admin Frame Styles */
+.admin-frame {
+    margin-top: 40px;
+    padding: 20px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.modal-overlay {
+  position: fixed;
+  top:0; left:0; 
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 9999;
+}
+
+.modal-content {
+  background: #fff;
+  width: 300px;
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  position: relative;
+}
+
+.admin-frame h2 {
+    text-align: center;
+    color: #333333;
+    margin-bottom: 20px;
+}
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .env-field, .nav-tabs {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .env-field label, .nav-link {
+      text-align: left;
+      flex: none;
+    }
+  
+    .modal-content {
+      width: 90%;
+    }
+
+    .team-tabs {
+        flex-direction: column;
+    }
+
+    .colored-square {
+        width: 100%;
+        height: 200px;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+  }
+
+/* Colored Square Styles */
+.colored-square {
+    width: 300px;
+    height: 300px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    cursor: text;
+    padding: 10px;
+    overflow: auto;
+    font-size: 16px;
+    color: #000000; /* Default text color */
+}
+
+/* Button Group Styles */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+  

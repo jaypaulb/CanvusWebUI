@@ -1,0 +1,267 @@
+<!-- macros.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Macros Page</title>
+
+    <!-- External CSS (adjust paths as needed) -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/navbar.css">
+
+    <style>
+        /* Container for entire macros interface */
+        .admin-container {
+            margin-top: 40px;
+        }
+        .admin-frame {
+            display: flex;
+            flex-direction: row;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            min-height: 400px; 
+        }
+        .admin-frame-left {
+            width: 25%;
+            border-right: 1px solid #ccc;
+        }
+        .admin-frame-right {
+            width: 75%;
+            padding: 20px;
+            position: relative;
+        }
+
+        .action-panel {
+            display: none;
+        }
+        .action-panel.active {
+            display: block;
+        }
+
+        .message {
+            margin-top: 10px;
+            color: #333;
+        }
+
+        /* Left Nav styling similar to your upload.html approach */
+        .admin-frame-left .navbar {
+            background-color: #333;
+        }
+        .admin-frame-left .nav-tabs {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            margin: 0;
+        }
+        .admin-frame-left .nav-item {
+            width: 100%;
+        }
+        .admin-frame-left .nav-link {
+            display: block;
+            color: #f2f2f2;
+            padding: 14px 16px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            border-bottom: 1px solid #444;
+        }
+        .admin-frame-left .nav-link:hover {
+            background-color: #575757;
+        }
+        .admin-frame-left .nav-link.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* Layout for form elements, if needed */
+        .panel-section {
+            margin-bottom: 20px;
+        }
+        .panel-section label {
+            display: inline-block;
+            margin-right: 10px;
+            min-width: 120px;
+        }
+        .panel-section select, 
+        .panel-section input {
+            min-width: 150px;
+        }
+
+        /* If you want to style the list of deletions */
+        .deletion-list {
+            margin: 10px 0;
+            padding: 10px;
+            background: #ececec;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .deletion-record {
+            padding: 5px;
+            border-bottom: 1px solid #bbb;
+        }
+        .deletion-record:last-child {
+            border-bottom: none;
+        }
+        .deletion-record:hover {
+            background: #ddd;
+            cursor: pointer;
+        }
+
+        /* Modal styling - larger size */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; 
+            left: 0;
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+        .modal-content {
+            background: #fff;
+            width: 600px; /* Increased width */
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .modal-content h4 {
+            margin-top: 0;
+        }
+        .confirm-action {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            margin: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .close-modal {
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            margin: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar and other content -->  
+  <div id="navbar-placeholder"></div>
+    <div class="container admin-container">
+        <h2>Macros</h2>
+        <div class="admin-frame">
+            <!-- Left Nav Tabs -->
+            <div class="admin-frame-left">
+                <div class="navbar">
+                    <ul class="nav-tabs">
+                        <li class="nav-item"><a href="#" id="tab-manage" class="nav-link">Manage</a></li>
+                        <li class="nav-item"><a href="#" id="tab-undelete" class="nav-link">Undelete</a></li>
+                        <li class="nav-item"><a href="#" id="tab-grouping" class="nav-link">Grouping</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Panels -->
+            <div class="admin-frame-right">
+                <div id="macro-message" class="message"></div>
+
+                <!-- MANAGE Panel -->
+                <div id="panel-manage" class="action-panel">
+                    <h3>Manage Widgets (Move / Copy / Delete)</h3>
+                    <div class="panel-section">
+                        <label for="manageSourceZone">Source Zone:</label>
+                        <select id="manageSourceZone"></select>
+                    </div>
+                    <div class="panel-section">
+                        <label for="manageTargetZone">Target Zone:</label>
+                        <select id="manageTargetZone"></select>
+                    </div>
+                    <div class="panel-section">
+                        <button id="manageMoveBtn">Move</button>
+                        <button id="manageCopyBtn">Copy</button>
+                        <button id="manageDeleteBtn">Delete</button>
+                    </div>
+                </div>
+
+                <!-- UNDELETE Panel -->
+                <div id="panel-undelete" class="action-panel">
+                    <h3>Undelete Widgets</h3>
+                    <p>Select a previously deleted record below, then pick a target zone for restoration.</p>
+
+                    <div class="panel-section">
+                        <label for="undeleteTargetZone">Target Zone:</label>
+                        <select id="undeleteTargetZone"></select>
+                    </div>
+
+                    <div class="panel-section">
+                        <div class="deletion-list" id="deletedRecordsList">
+                            <!-- Populated via macros.js with past deletions/timestamps. -->
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <button id="refreshDeletedRecordsBtn">Refresh Deleted Records</button>
+                    </div>
+                </div>
+
+                <!-- GROUPING Panel -->
+                <div id="panel-grouping" class="action-panel">
+                    <h3>Widget Grouping</h3>
+                    <div class="panel-section">
+                        <label for="groupingSourceZone">Source Zone:</label>
+                        <select id="groupingSourceZone"></select>
+                    </div>
+
+                    <!-- Auto-Grid -->
+                    <div class="panel-section">
+                        <h4>Auto-Grid</h4>
+                        <p>Automatically arrange widgets within the zone.</p>
+                        <button id="autoGridExecuteBtn">Grid</button>
+                    </div>
+
+                    <!-- Group by Color -->
+                    <div class="panel-section">
+                        <h4>Group by Color</h4>
+                        <label for="colorToleranceSlider">Tolerance (%):</label>
+                        <input type="range" id="colorToleranceSlider" min="5" max="25" step="5" value="10" />
+                        <span id="colorToleranceValue">10%</span>
+                        <button id="groupByColorBtn">Group by Color</button>
+                    </div>
+
+                    <!-- Group by Title -->
+                    <div class="panel-section">
+                        <h4>Group by Title</h4>
+                        <p>Sort and group widgets alphabetically by title.</p>
+                        <button id="groupByTitleBtn">Group by Title</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Larger Confirmation Modal for Undelete -->
+    <div id="undeleteConfirmOverlay" class="modal-overlay">
+      <div class="modal-content">
+        <h4>Confirm Undelete</h4>
+        <p id="undeleteConfirmMessage">Restore deleted record [recordId]?</p>
+        <div id="undeleteWidgetList" style="background:#f0f0f0; margin:10px; padding:10px; border-radius:4px;">
+          <!-- Widget details will be populated here -->
+        </div>
+        <button id="undeleteConfirmBtn" class="confirm-action">Confirm</button>
+        <button id="undeleteCancelBtn" class="close-modal">Cancel</button>
+        </div>
+    </div>
+
+    <!-- macros.js script -->
+    <script src="js/common.js"></script>
+    <script src="js/navbar.js"></script>
+    <script src="js/macros.js"></script>
+</body>
+</html>

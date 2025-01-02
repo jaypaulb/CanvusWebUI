@@ -1,0 +1,39 @@
+<!-- /public/main.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/navbar.css"> <!-- Optional: If navbar has separate styles -->
+</head>
+<body>
+    <!-- Navbar Placeholder -->
+    <div id="navbar-placeholder"></div>
+      
+    <div class="container">
+    <h1>Welcome to the Main Page</h1>
+    <button id="setTargetButton" disabled>Loading...</button>
+        <span id="confirmation" class="message success"></span>
+        <span id="error" class="message error"></span>
+    </div>
+    <div id="passwordModal" class="modal" style="display: none;">
+        <div class="modal-content">
+          <span id="closeModal" class="close">&times;</span>
+          <h2>Enter Admin Password</h2>
+          <input type="password" id="adminPassword" placeholder="Password" required />
+          <button id="submitPassword">Submit</button>
+          <p id="modalError" class="error" style="display: none;"></p>
+        </div>
+      </div>
+      
+    <!-- External JavaScript -->
+    <script src="js/common.js"></script>
+    <script src="js/navbar.js"></script>
+    <script src="js/main-page.js"></script>
+</body>
+</html>
