@@ -1,36 +1,31 @@
 // /public/js/navbar.js
+document.addEventListener('DOMContentLoaded', async () => {
+    // Load the navbar HTML
+    const response = await fetch('/components/navbar.html');
+    const navbarHtml = await response.text();
+    document.getElementById('navbar-placeholder').innerHTML = navbarHtml;
 
-// Function to load the navbar
-async function loadNavbar() {
+    // Fetch and set the canvas name
     try {
-      const response = await fetch('/components/navbar.html');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const navbarHTML = await response.text();
-      document.getElementById('navbar-placeholder').innerHTML = navbarHTML;
-  
-      // Set the active link based on the current page
-      setActiveNavLink();
-    } catch (error) {
-      console.error('Error loading navbar:', error);
+        const envResponse = await fetch('/check-env');
+        const envVars = await envResponse.json();
+        const canvasName = envVars.CANVAS_NAME;
+        
+        const navbarTitle = document.getElementById("navbar-title");
+        if (navbarTitle) {
+            navbarTitle.textContent = `Currently Connected to ${canvasName}`;
+        }
+    } catch (err) {
+        console.error("Error fetching canvas name:", err);
     }
-  }
-  
-  // Function to set the active navigation link
-  function setActiveNavLink() {
-    const currentPage = window.location.pathname.split('/').pop();
+
+    // Set active nav link based on current page
+    const currentPage = window.location.pathname;
     const navLinks = document.querySelectorAll('.nav-link');
-  
     navLinks.forEach(link => {
-      if (link.getAttribute('href') === currentPage) {
-        link.classList.add('active');
-      } else {
-        link.classList.remove('active');
-      }
+        if (link.getAttribute('href') === currentPage) {
+            link.classList.add('active');
+        }
     });
-  }
-  
-  // Load the navbar when the DOM is fully loaded
-  document.addEventListener('DOMContentLoaded', loadNavbar);
+});
   

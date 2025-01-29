@@ -2,38 +2,52 @@
 
 /* Navigation Bar Styles */
 .navbar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     background-color: #333;
-    overflow: hidden;
     border-radius: 8px 8px 0 0;
     margin-bottom: 20px;
-  }
-  
-  .nav-tabs {
+}
+
+.navbar-title {
+    text-align: center;
+    padding: 10px 0;
+    margin: 0;
+    color: #f2f2f2;
+    font-size: 1.2em;
+    border-bottom: 1px solid #444;
+    width: 100%;
+}
+
+.nav-tabs {
     list-style-type: none;
     margin: 0;
     padding: 0;
     display: flex;
-  }
-  
-  .nav-item {
+    flex-direction: row;
+    width: 100%;
+}
+
+.nav-item {
     flex: 1;
-  }
-  
-  .nav-link {
+}
+
+.nav-link {
     display: block;
     color: #f2f2f2;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
     transition: background-color 0.3s;
-  }
-  
-  .nav-link:hover {
+}
+
+.nav-link:hover {
     background-color: #575757;
-  }
-  
-  .nav-link.active {
+}
+
+.nav-link.active {
     background-color: #4CAF50;
     color: white;
-  }
+}
   

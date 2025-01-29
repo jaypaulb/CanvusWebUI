@@ -32,6 +32,8 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const { body, validationResult } = require('express-validator');
 const FormData = require('form-data');
+const { exec } = require('child_process');
+const pm2 = require('pm2');
 
 // Function to load environment variables
 function loadEnv() {
@@ -355,7 +357,7 @@ app.post('/validateAdminPassword', validateAdminPassword, (req, res) => {
 // Update Environment Variables (admin password required)
 app.post('/update-env', [
   body('password').isString().trim().notEmpty().withMessage('Password is required.')
-], validateAdminPassword, (req, res) => {
+], validateAdminPassword, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
       return res.status(400).json({ success: false, errors: errors.array() });
@@ -367,68 +369,92 @@ app.post('/update-env', [
   console.log(`[update-env] Updating .env file at: ${envPath}`);
   console.log(`[update-env] Variables to update:`, updatedVars);
 
-  // Read existing .env file
-  let envContent;
   try {
-      envContent = fs.readFileSync(envPath, 'utf8');
+      // Read existing .env file
+      const envContent = fs.readFileSync(envPath, 'utf8');
       console.log(`[update-env] Successfully read .env file.`);
-  } catch (err) {
-      console.error(`[update-env] Failed to read .env file:`, err.message);
-      return res.status(500).json({ success: false, error: 'Failed to read .env file.' });
-  }
 
-  // Convert .env content into an object
-  const envObject = {};
-  envContent.split('\n').forEach(line => {
-      const trimmedLine = line.trim();
-      if (trimmedLine && !trimmedLine.startsWith('#')) {
-          const [key, ...vals] = trimmedLine.split('=');
-          envObject[key.trim()] = vals.join('=').trim();
+      // Convert .env content into an object
+      const envObject = {};
+      envContent.split('\n').forEach(line => {
+          const trimmedLine = line.trim();
+          if (trimmedLine && !trimmedLine.startsWith('#')) {
+              const [key, ...vals] = trimmedLine.split('=');
+              envObject[key.trim()] = vals.join('=').trim();
+          }
+      });
+
+      // Update variables
+      let updated = false;
+      Object.entries(updatedVars).forEach(([key, value]) => {
+          const envKey = key.toUpperCase();
+          if (envObject.hasOwnProperty(envKey)) {
+              console.log(`[update-env] Updating ${envKey}: "${envObject[envKey]}" => "${value}"`);
+              envObject[envKey] = value;
+              process.env[envKey] = value;
+              updated = true;
+          } else {
+              console.warn(`[update-env] Variable ${envKey} not found in .env. Skipping.`);
+          }
+      });
+
+      if (!updated) {
+          console.warn(`[update-env] No variables updated.`);
+          return res.status(400).json({ success: false, error: 'No valid environment variables provided for update.' });
       }
-  });
 
-  // Update variables
-  let updated = false;
-  Object.entries(updatedVars).forEach(([key, value]) => {
-      const envKey = key.toUpperCase(); // Assume all keys are uppercased in .env
-      if (envObject.hasOwnProperty(envKey)) {
-          console.log(`[update-env] Updating ${envKey}: "${envObject[envKey]}" => "${value}"`);
-          envObject[envKey] = value;
-          process.env[envKey] = value; // Update in process.env
-          updated = true;
-      } else {
-          console.warn(`[update-env] Variable ${envKey} not found in .env. Skipping.`);
-      }
-  });
+      // Convert back to .env file format and write it
+      const updatedEnvContent = Object.entries(envObject)
+          .map(([key, val]) => `${key}=${val}`)
+          .join('\n');
 
-  if (!updated) {
-      console.warn(`[update-env] No variables updated.`);
-      return res.status(400).json({ success: false, error: 'No valid environment variables provided for update.' });
-  }
-
-  // Convert back to .env file format and write it
-  const updatedEnvContent = Object.entries(envObject)
-      .map(([key, val]) => `${key}=${val}`)
-      .join('\n');
-
-  try {
       fs.writeFileSync(envPath, updatedEnvContent, 'utf8');
       console.log(`[update-env] Successfully updated .env file.`);
-  } catch (err) {
-      console.error(`[update-env] Failed to write to .env file:`, err.message);
-      return res.status(500).json({ success: false, error: 'Failed to update .env file.' });
-  }
 
-  // Reload environment variables
-  try {
-      const reloadResult = loadEnv(); // Assumes the loadEnv function is defined
+      // Reload environment variables for this process
+      const reloadResult = loadEnv();
       console.log(`[update-env] Environment variables reloaded:`, reloadResult);
-  } catch (err) {
-      console.error(`[update-env] Error reloading environment variables:`, err.message);
-      return res.status(500).json({ success: false, error: 'Failed to reload environment variables.' });
-  }
 
-  res.json({ success: true, message: 'Environment variables updated and reloaded successfully.' });
+      // Only restart webui since apiDemo will detect the change automatically
+      try {
+          await new Promise((resolve, reject) => {
+              pm2.connect(async (err) => {
+                  if (err) {
+                      reject(err);
+                      return;
+                  }
+                  try {
+                      await new Promise((res, rej) => {
+                          pm2.reload('webui', (err) => {
+                              if (err) rej(err);
+                              else res();
+                          });
+                      });
+                      resolve();
+                  } catch (error) {
+                      reject(error);
+                  } finally {
+                      pm2.disconnect();
+                  }
+              });
+          });
+          console.log(`[update-env] webui service restarted successfully`);
+      } catch (pmError) {
+          console.error(`[update-env] Error restarting webui:`, pmError);
+      }
+
+      res.json({ 
+          success: true, 
+          message: 'Environment variables updated successfully. Changes will be automatically detected by services.' 
+      });
+
+  } catch (error) {
+      console.error(`[update-env] Error:`, error);
+      res.status(500).json({ 
+          success: false, 
+          error: 'Failed to update environment variables.' 
+      });
+  }
 });
 
 // Find Canvas
@@ -562,17 +588,12 @@ app.get("/api/macros/deleted-details", (req, res) => {
 
 // Check if the provided canvasName/ID match the .env config
 app.get("/check-env", (req, res) => {
-    const { canvasName, canvasId } = req.query;
-
-    if (!canvasName || !canvasId) {
-        console.error(`[${getTimestamp()}] Canvas name or ID is missing in the request.`);
-        return res.status(400).json({ error: "Canvas name and ID are required." });
-    }
-
     try {
+        // Read .env file dynamically
         const envPath = path.resolve(__dirname, "../.env");
         const envData = fs.readFileSync(envPath, "utf-8");
 
+        // Parse the .env file into key-value pairs
         const envVariables = Object.fromEntries(
             envData
                 .split("\n")
@@ -583,10 +604,12 @@ app.get("/check-env", (req, res) => {
                 })
         );
 
-        const matches = envVariables.CANVAS_NAME === canvasName && envVariables.CANVAS_ID === canvasId;
-
-        console.log(`[${getTimestamp()}] Environment check for Canvas ID: ${canvasId}: ${matches ? "Matched" : "Did Not Match"}`);
-        return res.json({ matches });
+        // Include CANVAS_NAME in the response
+        res.json({ 
+            CANVAS_NAME: envVariables.CANVAS_NAME,
+            matches: req.query.canvasName === envVariables.CANVAS_NAME && 
+                    req.query.canvasId === envVariables.CANVAS_ID 
+        });
     } catch (error) {
         console.error(`[${getTimestamp()}] Error reading .env file:`, error.message);
         res.status(500).json({ error: "Failed to read .env file." });
@@ -824,7 +847,7 @@ app.post("/api/macros/copy", async (req, res) => {
         }
       }
   
-      // 2) Build a final “inSource” array that includes:
+      // 2) Build a final "inSource" array that includes:
       //    - Normal widgets that are physically in the zone.
       //    - Connectors only if BOTH src/dst are in inZoneSet
       const inSource = [];
@@ -1202,9 +1225,9 @@ function handleDeletionRecordClick(e) {
  * 
  * Instead of using user-defined rows/cols, we:
  * 1) Count how many items we have in the zone.
- * 2) Compute a “gridSize” such that gridSize x gridSize >= numberOfItems.
+ * 2) Compute a "gridSize" such that gridSize x gridSize >= numberOfItems.
  *    Example: if we have 10 items, the nearest uniform grid might be 4x4=16.
- * 3) Compute item scale so each item’s height fits the cell. Then we apply that
+ * 3) Compute item scale so each item's height fits the cell. Then we apply that
  *    scale to its location. We maintain at least 50 units between items.
  *
  * Example Steps:
@@ -1213,7 +1236,7 @@ function handleDeletionRecordClick(e) {
  *   - cellWidth = (zoneBB.width / gridSize)
  *   - cellHeight = (zoneBB.height / gridSize)
  *   - Use the smaller dimension (height or width) to set scale factor. 
- *     The item’s new height <= cellHeight - 50?? Or we fix 50 units between them?
+ *     The item's new height <= cellHeight - 50?? Or we fix 50 units between them?
  *   - Place items left-to-right, top-to-bottom in that grid.
  ******************************************************************************/
 /******************************************************************************
@@ -1479,8 +1502,7 @@ app.post("/api/macros/group-color", async (req, res) => {
   });
   
   
-  
- /******************************************************************************
+   /******************************************************************************
  * GROUP BY TITLE (Enhanced with Intelligent Scaling and Detailed Logging)
  ******************************************************************************/
 app.post("/api/macros/group-title", async (req, res) => {
@@ -1752,7 +1774,10 @@ app.post('/create-team-targets', async (req, res) => {
                 continue;
             }
 
-            const location = zone.location;
+            const location = {
+                x: zone.location.x + 100,  // Add 100 to x
+                y: zone.location.y + 100   // Add 100 to y
+            };
             const noteTitle = `Team_${team}_Target`;
             const noteText = `Team ${team}`;
             const noteColor = getTeamBaseColor(team);
@@ -2156,34 +2181,8 @@ app.post("/create-note", [
     const { team, name, text, color } = req.body;
 
     try {
-        const iconTitle = `Team_${team}_Target`;
-        console.log(`[${getTimestamp()}] Fetching widgets to locate ${iconTitle}.`);
-        const widgetsResponse = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`, {
-            headers: {
-                "Private-Token": CANVUS_API_KEY,
-                "Content-Type": "application/json"
-            }
-        });
-        const widgets = widgetsResponse.data;
-
-        const teamIcon = widgets.find(widget => widget.title === iconTitle);
-        if (!teamIcon) {
-            return res.status(404).json({ success: false, error: `${iconTitle} not found on the canvas.` });
-        }
-
-        const { location: iconLocation, depth: iconDepth, scale: iconScale } = teamIcon;
-
-        // Generate random offsets
-        const randomOffsetX = Math.floor(Math.random() * 601) - 300;
-        const randomOffsetY = Math.floor(Math.random() * 601) - 300;
-
-        const newNoteLocation = {
-            x: iconLocation.x + randomOffsetX,
-            y: iconLocation.y + randomOffsetY
-        };
-
-        // Random depth between 100 and 300 above the icon's depth
-        const randomDepth = iconDepth + Math.floor(Math.random() * 201) + 100;
+        // Get random position for this team
+        const position = await getTeamRandomPosition(team);
 
         // Timestamp for note title
         const now = new Date();
@@ -2195,18 +2194,18 @@ app.post("/create-note", [
             second: '2-digit'
         }).replace(',', '');
 
-        // Prepare payload for note creation
+        // Create note payload
         const payload = {
             auto_text_color: true,
             background_color: color,
-            depth: randomDepth,
-            location: newNoteLocation,
+            depth: Math.floor(Math.random() * 201) + 100,
+            location: position,
             pinned: false,
-            scale: iconScale,
+            scale: 1,
             size: { height: 300, width: 300 },
             state: "normal",
             text: text,
-            title: `${name} @ (${timestamp})`,
+            title: `${name} @ (${timestamp})`,  // Use the formatted timestamp
             widget_type: "Note"
         };
 
@@ -2282,49 +2281,32 @@ app.post("/upload-item", upload.single('file'), async (req, res) => {
             return res.status(400).json({ success: false, error: "Team or name missing in upload request." });
         }
 
-        // Fetch widgets to find Team_X_Target location
-        console.log(`[${getTimestamp()}] Fetching widgets to locate Team_${team}_Target.`);
-        const widgetsResponse = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`, {
-            headers: {
-                "Private-Token": CANVUS_API_KEY,
-                "Content-Type": "application/json"
-            }
-        });
-        const widgets = widgetsResponse.data;
-        const iconTitle = `Team_${team}_Target`;
-        const teamIcon = widgets.find(widget => widget.title === iconTitle);
+        // Get random position for this team using our new helper
+        const position = await getTeamRandomPosition(team);
 
-        let newX = 0;
-        let newY = 0;
-
-        if (teamIcon && teamIcon.location) {
-            const iconLocation = teamIcon.location;
-            const randomOffsetX = Math.floor(Math.random() * 601) - 300;
-            const randomOffsetY = Math.floor(Math.random() * 601) - 300;
-            newX = iconLocation.x + randomOffsetX;
-            newY = iconLocation.y + randomOffsetY;
+        // Calculate scale for 400 unit target width
+        let scale = 1;
+        if (widgetType === 'Image') {
+            // Use default scale for images
+            scale = 0.33;
+        } else if (widgetType === 'PDF') {
+            // Default scale for PDFs
+            scale = 0.33;
         } else {
-            console.warn(`[${getTimestamp()}] ${iconTitle} not found. Defaulting to (0,0)`);
+            // Default scale for videos
+            scale = 0.33;
         }
 
-        // Timestamp for the widget title
-        const now = new Date();
-        const timestamp = now.toLocaleString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        }).replace(',', '');
+        // Use the getFormattedTimestamp helper
+        const timestamp = getFormattedTimestamp();
         
-        // Construct the JSON part as per the API docs
+        // Construct the JSON part
         const jsonPart = {
             title: `${name} uploaded ${file.originalname} @ (${timestamp})`,
-            location: { x: newX, y: newY },
+            location: position,
             pinned: false,
-            scale: 1,
-            depth: 0
-            // You can add "size", "original_filename", etc. if needed
+            scale: scale,
+            depth: Math.floor(Math.random() * 201) + 100 // Random depth between 100-300
         };
 
         const form = new FormData();
@@ -2334,7 +2316,7 @@ app.post("/upload-item", upload.single('file'), async (req, res) => {
         // Append 'data' as the file stream
         form.append('data', fs.createReadStream(filePath));
 
-        console.log(`[${getTimestamp()}] Creating widget of type "${widgetType}" near Team_${team}_Target at (${newX}, ${newY}) using multipart/form-data`);
+        console.log(`[${getTimestamp()}] Creating widget of type "${widgetType}" near Team_${team}_Target at (${position.x}, ${position.y}) using multipart/form-data`);
 
         const widgetCreationURL = `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}${widgetEndpoint}`;
 
@@ -3042,9 +3024,9 @@ app.post("/api/macros/delete", async (req, res) => {
  * 
  * Instead of using user-defined rows/cols, we:
  * 1) Count how many items we have in the zone.
- * 2) Compute a “gridSize” such that gridSize x gridSize >= numberOfItems.
+ * 2) Compute a "gridSize" such that gridSize x gridSize >= numberOfItems.
  *    Example: if we have 10 items, the nearest uniform grid might be 4x4=16.
- * 3) Compute item scale so each item’s height fits the cell. Then we apply that
+ * 3) Compute item scale so each item's height fits the cell. Then we apply that
  *    scale to its location. We maintain at least 50 units between items.
  *
  * Example Steps:
@@ -3053,7 +3035,7 @@ app.post("/api/macros/delete", async (req, res) => {
  *   - cellWidth = (zoneBB.width / gridSize)
  *   - cellHeight = (zoneBB.height / gridSize)
  *   - Use the smaller dimension (height or width) to set scale factor. 
- *     The item’s new height <= cellHeight - 50?? Or we fix 50 units between them?
+ *     The item's new height <= cellHeight - 50?? Or we fix 50 units between them?
  *   - Place items left-to-right, top-to-bottom in that grid.
  ******************************************************************************/
 app.post("/api/macros/auto-grid", async (req, res) => {
@@ -3096,12 +3078,12 @@ app.post("/api/macros/auto-grid", async (req, res) => {
       const cellHeight = zoneHeight / gridSize;
   
       // 3) Scale each item so its *height* fits within cellHeight - 50 (for spacing).
-      //    We'll ignore the item’s original aspect ratio except for preserving it (scaling).
+      //    We'll ignore the item's original aspect ratio except for preserving it (scaling).
       //    i.e., newScale = min( (cellHeight-50) / itemOriginalHeight, ... ) 
       //    We must retrieve itemOriginalHeight from the widget's size property.
       //
       //    For simplicity, let's do a 2-pass approach:
-      //    - We'll collect each item’s original height => compute scale => store in an array
+      //    - We'll collect each item's original height => compute scale => store in an array
       //    - Then place them left->right, top->bottom
   
       let index = 0;
@@ -3434,3 +3416,335 @@ app.listen(PORT, () => console.log(`[${getTimestamp()}] Server running at http:/
 // -----------------------------------------------------------------------------
 // End of script
 // -----------------------------------------------------------------------------
+
+// Add this new endpoint
+app.post("/api/macros/pin", async (req, res) => {
+    console.log("[/api/macros/pin] route invoked.");
+    const { zoneId, pinned } = req.body;
+    
+    if (!zoneId) {
+        return res.status(400).json({ 
+            success: false, 
+            error: "zoneId is required." 
+        });
+    }
+
+    try {
+        // Get zone bounding box
+        const zoneBB = await getZoneBoundingBox(zoneId);
+        
+        // Get all widgets
+        const allWidgets = await getAllWidgets();
+        
+        // Filter widgets in zone (excluding connectors and anchors)
+        const widgetsToUpdate = allWidgets.filter(w => {
+            if (!w.location) return false;
+            const wt = (w.widget_type || "").toLowerCase();
+            if (wt === "connector" || wt === "anchor") return false;
+            return widgetIsInZone(w, zoneBB);
+        });
+
+        if (widgetsToUpdate.length === 0) {
+            return res.json({
+                success: true,
+                message: "No widgets found in the selected zone to update."
+            });
+        }
+
+        let updatedCount = 0;
+        
+        // Update each widget's pinned status
+        for (const widget of widgetsToUpdate) {
+            const route = getWidgetPatchURL(widget);
+            try {
+                await patchWidgetAtURL(route, widget.id, { pinned });
+                updatedCount++;
+            } catch (err) {
+                console.error(`Error updating widget ${widget.id}:`, err.message);
+            }
+        }
+
+        return res.json({
+            success: true,
+            message: `${updatedCount} widgets ${pinned ? 'pinned' : 'unpinned'} successfully.`
+        });
+
+    } catch (err) {
+        console.error("Error in /api/macros/pin:", err.message);
+        return res.status(500).json({
+            success: false,
+            error: err.message
+        });
+    }
+});
+
+// Add this middleware function near other middleware definitions
+function execPromise(command) {
+    return new Promise((resolve, reject) => {
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve({ stdout, stderr });
+        });
+    });
+}
+
+// Add this new endpoint with other app.post definitions
+app.post('/restart-pm2', validateAdminPassword, async (req, res) => {
+    const { process } = req.body;
+    
+    // Validate process name
+    if (!process || !['apiDemo', 'webui'].includes(process)) {
+        return res.status(400).json({
+            success: false,
+            error: 'Invalid process name specified'
+        });
+    }
+
+    try {
+        console.log(`[${getTimestamp()}] Attempting to restart PM2 process: ${process}`);
+        
+        // Connect to PM2
+        await new Promise((resolve, reject) => {
+            pm2.connect((err) => {
+                if (err) {
+                    console.error(`[${getTimestamp()}] PM2 connect error:`, err);
+                    reject(err);
+                    return;
+                }
+                resolve();
+            });
+        });
+
+        // Restart the process
+        await new Promise((resolve, reject) => {
+            pm2.restart(process, (err) => {
+                if (err) {
+                    console.error(`[${getTimestamp()}] PM2 restart error:`, err);
+                    reject(err);
+                    return;
+                }
+                resolve();
+            });
+        });
+
+        // Disconnect from PM2
+        pm2.disconnect();
+        
+        console.log(`[${getTimestamp()}] Successfully restarted ${process}`);
+        
+        res.json({
+            success: true,
+            message: `Successfully restarted ${process}`
+        });
+
+    } catch (error) {
+        console.error(`[${getTimestamp()}] Error restarting PM2 process:`, error);
+        // Ensure PM2 is disconnected even if there's an error
+        pm2.disconnect();
+        res.status(500).json({
+            success: false,
+            error: `Failed to restart ${process}: ${error.message}`
+        });
+    }
+});
+
+// Add near other utility functions
+function getRandomPositionInZone(zoneBB, padding = 0.1) {
+    // Calculate padding in absolute units
+    const paddingX = zoneBB.width * padding;
+    const paddingY = zoneBB.height * padding;
+    
+    // Calculate min/max coordinates with padding
+    const minX = zoneBB.x + paddingX;
+    const maxX = zoneBB.x + zoneBB.width - paddingX;
+    const minY = zoneBB.y + paddingY;
+    const maxY = zoneBB.y + zoneBB.height - paddingY;
+    
+    // Generate random position
+    return {
+        x: Math.floor(minX + Math.random() * (maxX - minX)),
+        y: Math.floor(minY + Math.random() * (maxY - minY))
+    };
+}
+
+// Add helper to calculate scale for 400 unit target width
+function calculateScaleFor400Units(originalWidth) {
+    return 400 / originalWidth;
+}
+
+// Add these helper functions
+async function getAllTeamTargetNotes() {
+    const response = await axios.get(
+        `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/notes`,
+        {
+            headers: {
+                "Private-Token": CANVUS_API_KEY,
+                "Content-Type": "application/json"
+            }
+        }
+    );
+    // Filter for team target notes
+    return response.data.filter(note => /^Team_\d+_Target$/.test(note.title));
+}
+
+// Check if a point is inside an anchor's bounds
+function isPointInAnchor(point, anchor) {
+    return point.x >= anchor.location.x &&
+           point.x <= anchor.location.x + anchor.size.width &&
+           point.y >= anchor.location.y &&
+           point.y <= anchor.location.y + anchor.size.height;
+}
+
+// Get the smallest anchor that contains a point
+function findSmallestContainingAnchor(point, anchors) {
+    const containingAnchors = anchors.filter(anchor => isPointInAnchor(point, anchor));
+    if (containingAnchors.length === 0) return null;
+    
+    // Sort by area and return the smallest
+    return containingAnchors.sort((a, b) => 
+        (a.size.width * a.size.height) - (b.size.width * b.size.height)
+    )[0];
+}
+
+// Generate fallback position near target note
+function getFallbackPosition(targetNote) {
+    return {
+        x: targetNote.location.x + (Math.random() * 700) + 300, // +300 to +1000
+        y: targetNote.location.y + (Math.random() * 300) + 200  // +200 to +500
+    };
+}
+
+// Get placement zone for a team
+async function getTeamPlacementZone(teamNumber) {
+    try {
+        // Get all widgets (includes both anchors and notes)
+        const widgets = await getAllWidgets();
+        
+        // Find the team's target note
+        const teamNote = widgets.find(w => w.title === `Team_${teamNumber}_Target`);
+        if (!teamNote) {
+            throw new Error(`No target note found for Team ${teamNumber}`);
+        }
+
+        // Find anchor zones
+        const anchorZones = widgets.filter(w => w.widget_type === 'Anchor');
+        
+        // Find the smallest anchor zone containing the target note
+        let smallestArea = Infinity;
+        let bestAnchor = null;
+
+        for (const anchor of anchorZones) {
+            const zoneBB = await getZoneBoundingBox(anchor.id);
+            if (widgetIsInZone(teamNote, zoneBB)) {
+                const area = zoneBB.width * zoneBB.height;
+                if (area < smallestArea) {
+                    smallestArea = area;
+                    bestAnchor = { ...anchor, boundingBox: zoneBB };
+                }
+            }
+        }
+
+        return {
+            anchor: bestAnchor,
+            targetNote: teamNote
+        };
+    } catch (error) {
+        console.error(`Error getting placement zone for team ${teamNumber}:`, error);
+        return null;
+    }
+}
+
+// Get random position for a team
+async function getTeamRandomPosition(teamNumber) {
+    const placementZone = await getTeamPlacementZone(teamNumber);
+    if (!placementZone) {
+        throw new Error(`Could not determine placement zone for Team ${teamNumber}`);
+    }
+
+    const { anchor, targetNote } = placementZone;
+
+    if (anchor) {
+        // Use anchor zone bounding box with padding
+        return getRandomPositionInZone(anchor.boundingBox, 0.1);
+    } else {
+        // Fallback to positioning near target note
+        return {
+            x: targetNote.location.x + (Math.random() * 700) + 300, // +300 to +1000
+            y: targetNote.location.y + (Math.random() * 300) + 200  // +200 to +500
+        };
+    }
+}
+const { v4: isUUIDv4 } = require('uuid'); // Ensure 'uuid' is installed
+
+app.post("/canvus-action", async (req, res) => {
+  const { crudAction, endpointType, id, payload } = req.body;
+  
+  const action = crudAction?.toUpperCase();
+  const allowedMethods = {
+    GET: "get",
+    POST: "post",
+    PATCH: "patch",
+    DELETE: "delete"
+  };
+
+  // Validate action
+  if (!allowedMethods[action]) {
+    return res.status(400).json({ success: false, error: "Invalid CRUD action." });
+  }
+
+  // Logic for ID usage
+  // GET can have an optional ID, returns list if omitted
+  // PATCH and DELETE require a valid UUID v4
+  // POST ignores 'id'
+  let url = `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/${endpointType}`;
+
+  if (action === "GET" && id) {
+    if (!isUUIDv4(id)) {
+      return res.status(400).json({ success: false, error: "Invalid UUID v4 'id' for GET request." });
+    }
+    url += `/${id}`;
+  } else if (["PATCH", "DELETE"].includes(action)) {
+    if (!id || !isUUIDv4(id)) {
+      return res.status(400).json({ success: false, error: "A valid UUID v4 'id' is required for PATCH/DELETE." });
+    }
+    url += `/${id}`;
+  }
+  // POST: no ID needed or used
+
+  const config = {
+    method: allowedMethods[action],
+    url,
+    headers: {
+      "Private-Token": CANVUS_API_KEY,
+      "Content-Type": "application/json"
+    }
+  };
+
+  // Include payload only for POST/PATCH
+  if (["POST", "PATCH"].includes(action)) {
+    config.data = payload || {};
+  }
+
+  try {
+    const response = await axios(config);
+    res.json({ success: true, data: response.data });
+  } catch (error) {
+    const message = error.response?.data || error.message;
+    res.status(500).json({ success: false, error: message });
+  }
+});
+
+// Add with other utility functions
+function getFormattedTimestamp() {
+    const now = new Date();
+    return now.toLocaleString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    }).replace(',', '');
+}

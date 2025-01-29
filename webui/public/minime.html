@@ -2,79 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Mini Me Controls</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Me</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
+    <!-- Navbar Placeholder -->
+    <div id="navbar-placeholder"></div>
+      
     <div class="container">
         <h1>Mini Me Controls</h1>
-        
-        <div class="button-group">
-            <button onclick="create3x3Spiral()" class="action-button">Create 3x3 Spiral</button>
-            <button onclick="create1x1()" class="action-button">Create 1x1</button>
-            <button onclick="miniMe()" class="action-button">Mini Me</button>
+        <div class="section">
+            <button id="create3x3" class="action-button">Create 3x3 spiral</button>
+            <button id="create1x1" class="action-button">Create 1x1</button>
+            <button id="miniMe" class="action-button">Mini Me</button>
         </div>
-
         <div id="message" class="message"></div>
     </div>
 
-    <script>
-        function displayMessage(msg, isError = false) {
-            const msgDiv = document.getElementById('message');
-            msgDiv.textContent = msg;
-            msgDiv.className = `message ${isError ? 'error' : 'success'}`;
-        }
-
-        async function create3x3Spiral() {
-            try {
-                const response = await fetch('/create-zones', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        gridSize: 3,
-                        gridPattern: 'Spiral'
-                    })
-                });
-                const data = await response.json();
-                displayMessage(data.message);
-            } catch (err) {
-                displayMessage(err.message, true);
-            }
-        }
-
-        async function create1x1() {
-            try {
-                const response = await fetch('/create-zones', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        gridSize: 1,
-                        gridPattern: 'Z'
-                    })
-                });
-                const data = await response.json();
-                displayMessage(data.message);
-            } catch (err) {
-                displayMessage(err.message, true);
-            }
-        }
-
-        async function miniMe() {
-            try {
-                const response = await fetch('/api/macros/move', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        sourceZoneId: 9,
-                        targetZoneId: 0
-                    })
-                });
-                const data = await response.json();
-                displayMessage(data.message);
-            } catch (err) {
-                displayMessage(err.message, true);
-            }
-        }
-    </script>
+    <!-- External JavaScript -->
+    <script src="js/common.js"></script>
+    <script src="js/navbar.js"></script>
+    <script src="js/minime.js"></script>
 </body>
 </html> 

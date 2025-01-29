@@ -283,4 +283,21 @@ button:not(.team-tab):hover {
     gap: 20px;
     margin-top: 20px;
 }
+
+.env-inputs {
+    margin: 15px 0;
+}
+
+.env-inputs input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.modal-content {
+    max-width: 400px;
+    width: 90%;
+}
   

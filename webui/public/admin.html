@@ -10,6 +10,7 @@
   <!-- External CSS -->
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/navbar.css"> <!-- Optional: If navbar has separate styles -->
+  <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
   <!-- Navbar Placeholder -->
@@ -36,7 +37,33 @@
     <button type="submit">Save Changes</button>
   </form>
     <div id="env-message" class="message"></div>
-    <!-- Logout button removed -->
+
+    <!-- New PM2 Restart Controls Section -->
+    <div class="pm2-controls">
+      <h2>PM2 Process Controls</h2>
+      
+      <!-- API Demo Restart Section -->
+      <div class="restart-section">
+        <button type="button" id="restart-api-btn" class="action-button">Restart API Demo</button>
+        <div id="api-confirm" class="confirm-section" style="display: none;">
+          <p>Are you sure you want to restart the API Demo process?</p>
+          <button type="button" class="confirm-yes" data-target="api">Yes</button>
+          <button type="button" class="confirm-no" data-target="api">No</button>
+        </div>
+        <div id="api-status" class="status-message"></div>
+      </div>
+
+      <!-- WebUI Restart Section -->
+      <div class="restart-section">
+        <button type="button" id="restart-webui-btn" class="action-button">Restart WebUI</button>
+        <div id="webui-confirm" class="confirm-section" style="display: none;">
+          <p>Are you sure you want to restart the WebUI process?</p>
+          <button type="button" class="confirm-yes" data-target="webui">Yes</button>
+          <button type="button" class="confirm-no" data-target="webui">No</button>
+        </div>
+        <div id="webui-status" class="status-message"></div>
+      </div>
+    </div>
   </div>
   
   <!-- Confirmation Modal -->

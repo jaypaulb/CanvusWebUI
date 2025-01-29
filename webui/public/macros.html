@@ -164,6 +164,7 @@
                         <li class="nav-item"><a href="#" id="tab-manage" class="nav-link">Manage</a></li>
                         <li class="nav-item"><a href="#" id="tab-undelete" class="nav-link">Undelete</a></li>
                         <li class="nav-item"><a href="#" id="tab-grouping" class="nav-link">Grouping</a></li>
+                        <li class="nav-item"><a href="#" id="tab-pinning" class="nav-link">Pinning</a></li>
                     </ul>
                 </div>
             </div>
@@ -241,6 +242,20 @@
                         <p>Sort and group widgets alphabetically by title.</p>
                         <button id="groupByTitleBtn">Group by Title</button>
                     </div>
+                </div>
+
+                <!-- PINNING Panel -->
+                <div id="panel-pinning" class="action-panel">
+                    <h3>Pin/Unpin Widgets in Zone</h3>
+                    <div class="section">
+                        <label for="pinningSourceZone">Source Zone:</label>
+                        <select id="pinningSourceZone" class="zone-dropdown"></select>
+                    </div>
+                    <div class="button-group">
+                        <button id="pinAllBtn" class="action-button">Pin ALL</button>
+                        <button id="unpinAllBtn" class="action-button">Unpin ALL</button>
+                    </div>
+                    <div id="pinning-message" class="message"></div>
                 </div>
             </div>
         </div>

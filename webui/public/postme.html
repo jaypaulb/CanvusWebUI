@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post JSON</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <style>
+        .json-input {
+            width: 100%;
+            height: 400px;
+            font-family: monospace;
+            padding: 10px;
+            margin: 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        
+        .button-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .status-item {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        
+        .status-success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        
+        .status-error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+
+        .zone-select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-placeholder"></div>
+    
+    <div class="container">
+        <h1>JSON Processor</h1>
+        
+        <div class="section">
+            <label for="targetZone">Target Zone:</label>
+            <select id="targetZone" class="zone-select">
+                <option value="">Loading zones...</option>
+            </select>
+        </div>
+
+        <textarea id="jsonInput" class="json-input" placeholder="Paste your JSON here..."></textarea>
+        
+        <div class="button-container">
+            <button id="postButton">Post JSON</button>
+            <button id="clearButton">Clear</button>
+        </div>
+        
+        <div id="status"></div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/navbar.js"></script>
+    <script src="js/postme.js"></script>
+</body>
+</html> 

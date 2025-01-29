@@ -28,6 +28,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // Modal confirmation
   document.getElementById("undeleteConfirmBtn").addEventListener("click", confirmUndelete);
   document.getElementById("undeleteCancelBtn").addEventListener("click", hideUndeleteModal);
+
+  // Add to your existing tab click handlers
+  document.getElementById('tab-pinning').addEventListener('click', (e) => {
+    e.preventDefault();
+    displayMessage('');
+    setActiveTab(document.getElementById('tab-pinning'));
+    showPanel(document.getElementById('panel-pinning'));
+  });
+
+  // Add these new functions for pinning functionality
+  document.getElementById('pinAllBtn').addEventListener('click', () => handlePinning(true));
+  document.getElementById('unpinAllBtn').addEventListener('click', () => handlePinning(false));
 });
 
 /* ------------------------------------------------------------------------- */
@@ -44,6 +56,7 @@ function setupTabs() {
     { tabId: "tab-manage", panelId: "panel-manage" },
     { tabId: "tab-undelete", panelId: "panel-undelete" },
     { tabId: "tab-grouping", panelId: "panel-grouping" },
+    { tabId: "tab-pinning", panelId: "panel-pinning" }
   ];
 
   tabs.forEach(({ tabId, panelId }) => {
@@ -51,20 +64,33 @@ function setupTabs() {
     const panelEl = document.getElementById(panelId);
     tabEl.addEventListener("click", (e) => {
       e.preventDefault();
-      // Deactivate all tabs/panels
-      tabs.forEach(({ tabId: tId, panelId: pId }) => {
-        document.getElementById(tId).classList.remove("active");
-        document.getElementById(pId).classList.remove("active");
-      });
-      // Activate the clicked tab/panel
-      tabEl.classList.add("active");
-      panelEl.classList.add("active");
+      displayMessage('');
+      setActiveTab(tabEl);
+      showPanel(panelEl);
     });
   });
 
   // By default, show the first tab (Manage)
-  document.getElementById("tab-manage").classList.add("active");
-  document.getElementById("panel-manage").classList.add("active");
+  setActiveTab(document.getElementById("tab-manage"));
+  showPanel(document.getElementById("panel-manage"));
+}
+
+function setActiveTab(activeTab) {
+  // Remove active class from all tabs
+  document.querySelectorAll('.nav-link').forEach(tab => {
+    tab.classList.remove("active");
+  });
+  // Add active class to clicked tab
+  activeTab.classList.add("active");
+}
+
+function showPanel(activePanel) {
+  // Hide all panels
+  document.querySelectorAll('.action-panel').forEach(panel => {
+    panel.classList.remove("active");
+  });
+  // Show the selected panel
+  activePanel.classList.add("active");
 }
 
 /* ------------------------------ FETCH ZONES ------------------------------ */
@@ -96,12 +122,14 @@ function populateZoneDropdowns(zones) {
   const manageTarget = document.getElementById("manageTargetZone");
   const undeleteTarget = document.getElementById("undeleteTargetZone");
   const groupingSource = document.getElementById("groupingSourceZone");
+  const pinningSource = document.getElementById("pinningSourceZone");
 
   // Clear existing
   manageSource.innerHTML = "";
   manageTarget.innerHTML = "";
   undeleteTarget.innerHTML = "";
   groupingSource.innerHTML = "";
+  pinningSource.innerHTML = "";
 
   // Populate dropdowns
   zones.forEach((zone) => {
@@ -115,6 +143,7 @@ function populateZoneDropdowns(zones) {
     manageTarget.appendChild(option.cloneNode(true));
     undeleteTarget.appendChild(option.cloneNode(true));
     groupingSource.appendChild(option.cloneNode(true));
+    pinningSource.appendChild(option.cloneNode(true));
   });
 }
 
@@ -407,5 +436,37 @@ function displayMessage(msg) {
   msgEl.textContent = msg;
   } else {
     console.log("[displayMessage]", msg);
+  }
+}
+
+// Add these new functions for pinning functionality
+async function handlePinning(setPinned) {
+  const sourceZoneId = document.getElementById('pinningSourceZone').value;
+  if (!sourceZoneId) {
+    displayMessage('Please select a source zone.', 'error');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/macros/pin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        zoneId: sourceZoneId,
+        pinned: setPinned
+      })
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      displayMessage(data.message, 'success');
+    } else {
+      displayMessage(data.error || 'Failed to update pins.', 'error');
+    }
+  } catch (err) {
+    console.error('Error:', err);
+    displayMessage('An error occurred while updating pins.', 'error');
   }
 }
