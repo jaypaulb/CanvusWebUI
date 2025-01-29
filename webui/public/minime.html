@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mini Me Controls</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Mini Me Controls</h1>
+        
+        <div class="button-group">
+            <button onclick="create3x3Spiral()" class="action-button">Create 3x3 Spiral</button>
+            <button onclick="create1x1()" class="action-button">Create 1x1</button>
+            <button onclick="miniMe()" class="action-button">Mini Me</button>
+        </div>
+
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        function displayMessage(msg, isError = false) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.textContent = msg;
+            msgDiv.className = `message ${isError ? 'error' : 'success'}`;
+        }
+
+        async function create3x3Spiral() {
+            try {
+                const response = await fetch('/create-zones', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        gridSize: 3,
+                        gridPattern: 'Spiral'
+                    })
+                });
+                const data = await response.json();
+                displayMessage(data.message);
+            } catch (err) {
+                displayMessage(err.message, true);
+            }
+        }
+
+        async function create1x1() {
+            try {
+                const response = await fetch('/create-zones', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        gridSize: 1,
+                        gridPattern: 'Z'
+                    })
+                });
+                const data = await response.json();
+                displayMessage(data.message);
+            } catch (err) {
+                displayMessage(err.message, true);
+            }
+        }
+
+        async function miniMe() {
+            try {
+                const response = await fetch('/api/macros/move', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sourceZoneId: 9,
+                        targetZoneId: 0
+                    })
+                });
+                const data = await response.json();
+                displayMessage(data.message);
+            } catch (err) {
+                displayMessage(err.message, true);
+            }
+        }
+    </script>
+</body>
+</html> 
