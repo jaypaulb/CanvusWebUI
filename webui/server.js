@@ -33,7 +33,14 @@ const multer = require('multer');
 const { body, validationResult } = require('express-validator');
 const FormData = require('form-data');
 const { exec } = require('child_process');
-const pm2 = require('pm2');
+const PromisePool = require('@supercharge/promise-pool').PromisePool;
+const http = require('http');
+const WebSocket = require('ws');
+const https = require('https');
+
+// First create the Express app
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Function to load environment variables
 function loadEnv() {
@@ -51,8 +58,8 @@ function loadEnv() {
       console.log("[loadEnv] Environment variables successfully loaded.");
 
       // Validate essential variables
-      if (!process.env.CANVUS_SERVER || !process.env.CANVAS_ID || !process.env.CANVUS_API_KEY) {
-          console.error("[loadEnv] Missing essential environment variables (CANVUS_SERVER, CANVAS_ID, CANVUS_API_KEY).");
+      if (!process.env.CANVUS_SERVER || !process.env.CANVAS_ID || !process.env.CANVAS_NAME || !process.env.CANVUS_API_KEY) {
+          console.error("[loadEnv] Missing essential environment variables (CANVUS_SERVER, CANVAS_ID, CANVAS_NAME, CANVUS_API_KEY).");
           process.exit(1);
       }
 
@@ -72,23 +79,21 @@ if (!envLoadResult.success) {
 }
 
 // Validate essential environment variables
-const CANVUS_SERVER = process.env.CANVUS_SERVER;
-const CANVAS_ID = process.env.CANVAS_ID;
-const CANVUS_API_KEY = process.env.CANVUS_API_KEY;
+let CANVUS_SERVER = process.env.CANVUS_SERVER;
+let CANVAS_ID = process.env.CANVAS_ID;
+let CANVAS_NAME = process.env.CANVAS_NAME;
+let CANVUS_API_KEY = process.env.CANVUS_API_KEY;
 
-if (!CANVUS_SERVER || !CANVAS_ID || !CANVUS_API_KEY) {
+if (!CANVUS_SERVER || !CANVAS_ID || !CANVAS_NAME || !CANVUS_API_KEY) {
     console.error("[Server Startup] Missing required environment variables.");
     process.exit(1); // Exit if essential variables are missing
 }
 
 console.log("[Server Startup] Environment variables loaded successfully.");
-console.log(`[Server Startup] CANVUS_SERVER=${CANVUS_SERVER}, CANVAS_ID=${CANVAS_ID}`);
+console.log(`[Server Startup] CANVUS_SERVER=${CANVUS_SERVER}, CANVAS_ID=${CANVAS_ID}, CANVAS_NAME=${CANVAS_NAME}`);
 
 
 
-
-const app = express();
-const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -358,182 +363,227 @@ app.post('/validateAdminPassword', validateAdminPassword, (req, res) => {
 app.post('/update-env', [
   body('password').isString().trim().notEmpty().withMessage('Password is required.')
 ], validateAdminPassword, async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() });
-  }
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ success: false, errors: errors.array() });
+    }
 
-  const { password, ...updatedVars } = req.body;
-  const envPath = path.join(__dirname, '..', '.env');
+    const { password, ...updatedVars } = req.body;
+    const envPath = path.join(__dirname, '..', '.env');
 
-  console.log(`[update-env] Updating .env file at: ${envPath}`);
-  console.log(`[update-env] Variables to update:`, updatedVars);
+    console.log(`[update-env] Updating .env file at: ${envPath}`);
+    console.log(`[update-env] Variables to update:`, updatedVars);
 
-  try {
-      // Read existing .env file
-      const envContent = fs.readFileSync(envPath, 'utf8');
-      console.log(`[update-env] Successfully read .env file.`);
+    try {
+        // Read existing .env file
+        const envContent = fs.readFileSync(envPath, 'utf8');
+        console.log(`[update-env] Successfully read .env file.`);
 
-      // Convert .env content into an object
-      const envObject = {};
-      envContent.split('\n').forEach(line => {
-          const trimmedLine = line.trim();
-          if (trimmedLine && !trimmedLine.startsWith('#')) {
-              const [key, ...vals] = trimmedLine.split('=');
-              envObject[key.trim()] = vals.join('=').trim();
-          }
-      });
+        // Convert .env content into an object
+        const envObject = {};
+        envContent.split('\n').forEach(line => {
+            const trimmedLine = line.trim();
+            if (trimmedLine && !trimmedLine.startsWith('#')) {
+                const [key, ...vals] = trimmedLine.split('=');
+                envObject[key.trim()] = vals.join('=').trim();
+            }
+        });
 
-      // Update variables
-      let updated = false;
-      Object.entries(updatedVars).forEach(([key, value]) => {
-          const envKey = key.toUpperCase();
-          if (envObject.hasOwnProperty(envKey)) {
-              console.log(`[update-env] Updating ${envKey}: "${envObject[envKey]}" => "${value}"`);
-              envObject[envKey] = value;
-              process.env[envKey] = value;
-              updated = true;
-          } else {
-              console.warn(`[update-env] Variable ${envKey} not found in .env. Skipping.`);
-          }
-      });
+        // Update variables both in file and memory
+        let updated = false;
+        Object.entries(updatedVars).forEach(([key, value]) => {
+            const envKey = key.toUpperCase();
+            if (envObject.hasOwnProperty(envKey)) {
+                console.log(`[update-env] Updating ${envKey}: "${envObject[envKey]}" => "${value}"`);
+                envObject[envKey] = value;
+                // Update in memory immediately
+                process.env[envKey] = value;
+                // Update global variables if they exist
+                if (envKey === 'CANVAS_ID') CANVAS_ID = value;
+                if (envKey === 'CANVAS_NAME') CANVAS_NAME = value;
+                if (envKey === 'CANVUS_SERVER') CANVUS_SERVER = value;
+                if (envKey === 'CANVUS_API_KEY') CANVUS_API_KEY = value;
+                updated = true;
+            } else {
+                console.warn(`[update-env] Variable ${envKey} not found in .env. Skipping.`);
+            }
+        });
 
-      if (!updated) {
-          console.warn(`[update-env] No variables updated.`);
-          return res.status(400).json({ success: false, error: 'No valid environment variables provided for update.' });
-      }
+        if (!updated) {
+            console.warn(`[update-env] No variables updated.`);
+            return res.status(400).json({ success: false, error: 'No valid environment variables provided for update.' });
+        }
 
-      // Convert back to .env file format and write it
-      const updatedEnvContent = Object.entries(envObject)
-          .map(([key, val]) => `${key}=${val}`)
-          .join('\n');
+        // Convert back to .env file format and write it
+        const updatedEnvContent = Object.entries(envObject)
+            .map(([key, val]) => `${key}=${val}`)
+            .join('\n');
 
-      fs.writeFileSync(envPath, updatedEnvContent, 'utf8');
-      console.log(`[update-env] Successfully updated .env file.`);
+        fs.writeFileSync(envPath, updatedEnvContent, 'utf8');
+        console.log(`[update-env] Successfully updated .env file and in-memory variables`);
 
-      // Reload environment variables for this process
-      const reloadResult = loadEnv();
-      console.log(`[update-env] Environment variables reloaded:`, reloadResult);
+        // Remove all PM2-related code and just return success
+        res.json({ 
+            success: true, 
+            message: 'Environment variables updated successfully in both file and memory.' 
+        });
 
-      // Only restart webui since apiDemo will detect the change automatically
-      try {
-          await new Promise((resolve, reject) => {
-              pm2.connect(async (err) => {
-                  if (err) {
-                      reject(err);
-                      return;
-                  }
-                  try {
-                      await new Promise((res, rej) => {
-                          pm2.reload('webui', (err) => {
-                              if (err) rej(err);
-                              else res();
-                          });
-                      });
-                      resolve();
-                  } catch (error) {
-                      reject(error);
-                  } finally {
-                      pm2.disconnect();
-                  }
-              });
-          });
-          console.log(`[update-env] webui service restarted successfully`);
-      } catch (pmError) {
-          console.error(`[update-env] Error restarting webui:`, pmError);
-      }
-
-      res.json({ 
-          success: true, 
-          message: 'Environment variables updated successfully. Changes will be automatically detected by services.' 
-      });
-
-  } catch (error) {
-      console.error(`[update-env] Error:`, error);
-      res.status(500).json({ 
-          success: false, 
-          error: 'Failed to update environment variables.' 
-      });
-  }
+    } catch (error) {
+        console.error(`[update-env] Error:`, error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Failed to update environment variables.' 
+        });
+    }
 });
 
 // Find Canvas
 app.post("/find-canvas", async (req, res) => {
-    const { uid } = req.body;
+    const { uid, wsId } = req.body;
     if (!uid) {
         console.error(`[${getTimestamp()}] UID is missing in the request.`);
         return res.status(400).json({ error: "UID is required." });
     }
 
-    console.log(`[${getTimestamp()}] Searching for UID: "${uid}"`);
+    console.log(`[${getTimestamp()}] Starting search for UID: "${uid}"`);
+
+    // Function to broadcast progress
+    const broadcastProgress = (progress) => {
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({
+                    type: 'searchProgress',
+                    wsId: wsId,
+                    ...progress
+                }));
+            }
+        });
+    };
 
     try {
-        const response = await axios.get(`${CANVUS_SERVER}/api/v1/canvases`, {
+        // First check the current canvas defined in .env
+        console.log(`[${getTimestamp()}] Checking current canvas first: ${CANVAS_NAME} (${CANVAS_ID})`);
+        
+        const browserUrl = `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/browsers`;
+        console.log(`[${getTimestamp()}] Requesting browsers from: ${browserUrl}`);
+        
+        try {
+            const browsersResponse = await axios.get(browserUrl, {
+                headers: {
+                    "Private-Token": CANVUS_API_KEY,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            const browsers = browsersResponse.data;
+            console.log(`[${getTimestamp()}] Retrieved ${browsers.length} browsers for ${CANVAS_NAME}`);
+            
+            // Check if browser is in current canvas
+            for (const browser of browsers) {
+                if (browser.url && browser.url.includes(uid)) {
+                    console.log(`[${getTimestamp()}] Found matching URL in current canvas: ${browser.url}`);
+                    return res.json({
+                        canvasName: CANVAS_NAME,
+                        canvasId: CANVAS_ID
+                    });
+                }
+            }
+            
+            console.log(`[${getTimestamp()}] Browser not found in current canvas, searching others...`);
+        } catch (error) {
+            console.error(`[${getTimestamp()}] Error checking current canvas:`, error.message);
+            // Continue to search other canvases even if current canvas check fails
+        }
+
+        // If not found in current canvas, get all canvases
+        console.log(`[${getTimestamp()}] Fetching canvas list from ${CANVUS_SERVER}/api/v1/canvases`);
+        const { data: canvases } = await axios.get(`${CANVUS_SERVER}/api/v1/canvases`, {
             headers: {
                 "Private-Token": CANVUS_API_KEY,
                 "Content-Type": "application/json",
             },
         });
 
-        const canvases = response.data;
+        // Filter out the current canvas since we already checked it
+        const otherCanvases = canvases.filter(canvas => canvas.id !== CANVAS_ID);
+        console.log(`[${getTimestamp()}] Searching through ${otherCanvases.length} other canvases...`);
 
-        if (!Array.isArray(canvases)) {
-            throw new Error("Invalid response format: canvases should be an array.");
-        }
+        // Rest of the existing search code...
+        let processedCount = 0;
+        const totalCanvases = otherCanvases.length;
 
-        console.log(`[${getTimestamp()}] Retrieved ${canvases.length} canvases.`);
+        const { results } = await PromisePool
+            .withConcurrency(5)
+            .for(otherCanvases)
+            .process(async (canvas, index) => {
+                const { id: canvasId, name: canvasName } = canvas;
+                
+                // Send progress update
+                processedCount++;
+                broadcastProgress({
+                    current: processedCount,
+                    total: totalCanvases,
+                    currentCanvas: canvasName
+                });
 
-        for (const canvas of canvases) {
-            const { id: canvasId, name: canvasName } = canvas;
-            console.log(`[${getTimestamp()}] Processing Canvas ID: ${canvasId}, Name: "${canvasName}"`);
+                try {
+                console.log(`[${getTimestamp()}] Processing canvas ${processedCount}/${totalCanvases}: ${canvasName} (${canvasId})`);
 
-            try {
-                const browsersResponse = await axios.get(
-                    `${CANVUS_SERVER}/api/v1/canvases/${canvasId}/browsers`,
-                    {
+                    // Log the browser request URL and headers
+                    const browserUrl = `${CANVUS_SERVER}/api/v1/canvases/${canvasId}/browsers`;
+                    console.log(`[${getTimestamp()}] Requesting browsers from: ${browserUrl}`);
+                    
+                    const browsersResponse = await axios.get(browserUrl, {
                         headers: {
                             "Private-Token": CANVUS_API_KEY,
                             "Content-Type": "application/json",
                         },
+                    });
+
+                    const browsers = browsersResponse.data;
+                    console.log(`[${getTimestamp()}] Retrieved ${browsers.length} browsers for ${canvasName}`);
+                    
+                    // Check if any browser's URL contains the uid
+                    for (const browser of browsers) {
+                        if (browser.url && browser.url.includes(uid)) {
+                            console.log(`[${getTimestamp()}] Found matching URL in ${canvasName}: ${browser.url}`);
+                            return { found: true, canvasName, canvasId };
+                        }
                     }
-                );
-
-                const browsers = browsersResponse.data;
-
-                if (!Array.isArray(browsers)) {
-                    throw new Error(`Invalid browsers format for canvas ${canvasId}.`);
-                }
-
-                console.log(`[${getTimestamp()}] Retrieved ${browsers.length} browsers for Canvas ID: ${canvasId}`);
-
-                for (const browser of browsers) {
-                    const browserURL = browser.url || "No URL";
-                    console.log(`[${getTimestamp()}] Checking Browser URL: "${browserURL}" against UID: "${uid}"`);
-
-                    if (browser.url && browser.url.includes(uid)) {
-                        console.log(`[${getTimestamp()}] Match found in Canvas: "${canvasName}" (ID: ${canvasId})`);
-                        return res.json({ canvasName, canvasId });
+                    
+                    return { found: false };
+                } catch (error) {
+                    console.error(`[${getTimestamp()}] Error processing ${canvasName}:`, error.message);
+                    if (error.response) {
+                        console.error(`[${getTimestamp()}] Response status:`, error.response.status);
+                        console.error(`[${getTimestamp()}] Response data:`, error.response.data);
                     }
+                    return { found: false, error: error.message };
                 }
+            });
 
-                console.log(`[${getTimestamp()}] No matching browser found in Canvas ID: ${canvasId}`);
-            } catch (error) {
-                const errorMsg = error.response?.data?.msg || error.message;
-                console.error(`[${getTimestamp()}] Error with Canvas ID: ${canvasId} (${canvasName}): ${errorMsg}`);
+        console.log(`[${getTimestamp()}] Parallel processing complete. Checking results...`);
 
-                if (errorMsg.toLowerCase().includes('archived')) {
-                    console.warn(`[${getTimestamp()}] Skipping archived Canvas ID: ${canvasId} (${canvasName})`);
-                    continue;
-                }
+        // Find the first successful match
+        const match = results.find(result => result.found);
 
-                throw error;
-            }
+        if (match) {
+            console.log(`[${getTimestamp()}] Match found! Canvas: ${match.canvasName}`);
+            return res.json({
+                canvasName: match.canvasName,
+                canvasId: match.canvasId
+            });
         }
 
         console.log(`[${getTimestamp()}] No matching canvas found for UID: "${uid}"`);
         res.status(404).json({ error: "No matching canvas found." });
+
     } catch (error) {
-        console.error(`[${getTimestamp()}] Server Error: ${error.response?.data || error.message}`);
+        console.error(`[${getTimestamp()}] Server Error:`, error.message);
+        if (error.response) {
+            console.error(`[${getTimestamp()}] Response data:`, error.response.data);
+            console.error(`[${getTimestamp()}] Response status:`, error.response.status);
+        }
         res.status(500).json({ error: "Failed to process request." });
     }
 });
@@ -622,22 +672,54 @@ app.get("/check-env", (req, res) => {
 
 // Fetch all anchors (zones) from the canvas
 app.get('/get-zones', async (req, res) => {
-  console.log("[/get-zones] route invoked.");
-  try {
-      const { data: anchors } = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/anchors`, {
-          headers: { "Private-Token": CANVUS_API_KEY }
-      });
+    console.log("[/get-zones] route invoked.");
+    try {
+        console.log(`[/get-zones] Attempting to fetch zones from canvas ${CANVAS_ID} at ${CANVUS_SERVER}`);
+        
+        // First verify the canvas exists
+        const canvasResponse = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}`, {
+            headers: { 
+                "Private-Token": CANVUS_API_KEY,
+                "Content-Type": "application/json"
+            }
+        });
+        
+        console.log(`[/get-zones] Canvas verification successful: ${canvasResponse.data.name}`);
 
-      const response = {
-          zones: anchors
-      };
+        // Then get the anchors
+        const { data: anchors } = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/anchors`, {
+            headers: { 
+                "Private-Token": CANVUS_API_KEY,
+                "Content-Type": "application/json"
+            }
+        });
 
-      console.log("response", response);
-      res.json({ success: true, ...response });
-  } catch (error) {
-      console.error("Error in /get-zones:", error.message);
-      res.status(500).json({ success: false, error: "Failed to fetch zones." });
-  }
+        const response = {
+            zones: anchors
+        };
+
+        console.log(`[/get-zones] Successfully retrieved ${anchors.length} zones`);
+        res.json({ success: true, ...response });
+    } catch (error) {
+        console.error("[/get-zones] Error details:", {
+            message: error.message,
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            data: error.response?.data,
+            url: error.config?.url
+        });
+
+        // Send a more detailed error response
+        res.status(error.response?.status || 500).json({ 
+            success: false, 
+            error: "Failed to fetch zones.",
+            details: {
+                message: error.message,
+                status: error.response?.status,
+                statusText: error.response?.statusText
+            }
+        });
+    }
 });
 
 
@@ -647,6 +729,7 @@ app.get('/get-zones', async (req, res) => {
  * Store and retrieve deletion logs with bounding boxes for Undelete scaling.
  ******************************************************************************/
 const DELETED_RECORDS_FILE = path.join(__dirname, 'macros-deleted-records.json');
+const DELETED_WIDGETS_FILE = path.join(__dirname, 'macros-deleted-widgets.json');
 
 /** readDeletedRecords(), writeDeletedRecords()... */
 function readDeletedRecords() {
@@ -762,62 +845,48 @@ app.post("/api/macros/move", async (req, res) => {
     console.log("[/api/macros/move] route invoked.");
     const { sourceZoneId, targetZoneId } = req.body;
     if (!sourceZoneId || !targetZoneId) {
-      return res.status(400).send("sourceZoneId and targetZoneId are required.");
+        return res.status(400).json({ error: "sourceZoneId and targetZoneId are required." });
     }
+
     try {
-    console.log(`[move] Getting bounding box for sourceZoneId=${sourceZoneId}`);
-      const sourceBB = await getZoneBoundingBox(sourceZoneId);
-    console.log("[move] sourceBB=", sourceBB);
+        const sourceBB = await getZoneBoundingBox(sourceZoneId);
+        const targetBB = await getZoneBoundingBox(targetZoneId);
+        const allWidgets = await getAllWidgets();
 
-    console.log(`[move] Getting bounding box for targetZoneId=${targetZoneId}`);
-      const targetBB = await getZoneBoundingBox(targetZoneId);
-    console.log("[move] targetBB=", targetBB);
-
-    console.log("[move] Fetching all widgets from canvas...");
-      const allWidgets = await getAllWidgets();
-    console.log(`[move] total widgets: ${allWidgets.length}`);
-
-    console.log("[move] Filtering widgets in source zone (excluding anchors, connectors)...");
-    const toMove = [];
-    for (const w of allWidgets) {
-      const wt = (w.widget_type || "").toLowerCase();
-      if (!w.location) {
-        // Possibly a connector or arrow with no location
-        console.log(`[move] Skipping widget ID=${w.id}, no w.location => likely connector or special widget.`);
-        continue;
-      }
-      if (wt === "connector" || wt === "anchor") {
-        console.log(`[move] Skipping widget ID=${w.id}, type=${w.widget_type}.`);
-        continue;
-      }
-      if (widgetIsInZone(w, sourceBB)) {
-        console.log(`[move] => including widget ID=${w.id}, type=${w.widget_type}, location=`, w.location);
-        toMove.push(w);
-      }
-    }
-    console.log(`[move] Found ${toMove.length} widgets to move.`);
-  
-      let movedCount = 0;
-    for (const w of toMove) {
-        const cloned = JSON.parse(JSON.stringify(w));
-        transformWidgetLocationAndScale(cloned, sourceBB, targetBB);
-        const route = getWidgetPatchURL(w);
-
-      console.log(`[move] PATCHing widget ID=${w.id} route=${route} newLoc=`, cloned.location, " newScale=", cloned.scale);
-        await patchWidgetAtURL(route, w.id, {
-          location: cloned.location,
-          scale: cloned.scale
+        // Filter widgets in source zone
+        const widgetsToMove = allWidgets.filter(w => {
+            if (!w.location) return false;
+            const wt = (w.widget_type || "").toLowerCase();
+            if (wt === "connector" || wt === "anchor") return false;
+            return widgetIsInZone(w, sourceBB);
         });
-        movedCount++;
-      }
 
-    console.log(`[move] Done. Moved ${movedCount} widgets.`);
-      return res.json({ success: true, message: `${movedCount} widgets moved.` });
-    } catch (err) {
-      console.error("Error in /api/macros/move:", err.message);
-      return res.status(500).send(err.message);
+        let movedCount = 0;
+        for (const w of widgetsToMove) {
+            const cloned = JSON.parse(JSON.stringify(w));
+            transformWidgetLocationAndScale(cloned, sourceBB, targetBB);
+
+            try {
+                const route = getWidgetPatchURL(w);
+                await patchWidgetAtURL(route, w.id, {
+                    location: cloned.location,
+                    scale: cloned.scale
+                });
+                movedCount++;
+            } catch (err) {
+                console.error(`[move] Error moving widget ${w.id}:`, err.message);
+            }
+        }
+
+        return res.json({
+            success: true,
+            message: `${movedCount} widgets moved successfully.`
+        });
+    } catch (error) {
+        console.error("[move] Error:", error.message);
+        return res.status(500).json({ error: error.message });
     }
-  });
+});
   
 ////////////////////////////////////////////////////////////////////////////////
 // Copy
@@ -2888,8 +2957,6 @@ app.post("/api/macros/copy", async (req, res) => {
 });
 
 // 4) Delete + log => Undelete
-const DELETED_WIDGETS_FILE = path.join(__dirname, 'macros-deleted-widgets.json');
-
 function logDeletedWidgets(deletedItems) {
     let existing = [];
     if (fs.existsSync(DELETED_WIDGETS_FILE)) {
@@ -3748,3 +3815,281 @@ function getFormattedTimestamp() {
         second: '2-digit'
     }).replace(',', '');
 }
+
+// Create HTTP server
+const server = http.createServer(app)
+    .on('error', (err) => {
+        console.error(`[${getTimestamp()}] Server creation error:`, {
+            code: err.code,
+            message: err.message,
+            stack: err.stack
+        });
+    });
+
+// Create WebSocket server
+const wss = new WebSocket.Server({ server })
+    .on('error', (err) => {
+        console.error(`[${getTimestamp()}] WebSocket server error:`, {
+            code: err.code,
+            message: err.message,
+            stack: err.stack
+        });
+    });
+
+// WebSocket connection handling
+wss.on('connection', function connection(ws) {
+    ws.on('error', console.error);
+    console.log(`[${getTimestamp()}] WebSocket client connected`);
+});
+
+// Add graceful shutdown handling
+function gracefulShutdown() {
+    console.log(`[${getTimestamp()}] Starting graceful shutdown...`);
+    
+    // Close all WebSocket connections
+    wss.clients.forEach((client) => {
+        client.close();
+    });
+    
+    // Close WebSocket server
+    wss.close(() => {
+        console.log(`[${getTimestamp()}] WebSocket server closed`);
+        
+        // Close HTTP server
+        server.close(() => {
+            console.log(`[${getTimestamp()}] HTTP server closed`);
+            process.exit(0);
+        });
+    });
+
+    // Force close after 10 seconds
+    setTimeout(() => {
+        console.log(`[${getTimestamp()}] Forcing shutdown after timeout`);
+        process.exit(1);
+    }, 10000);
+}
+
+// Handle process termination signals
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+
+// Modified server startup with error handling and port finding
+function startServer(initialPort) {
+    console.log(`[${getTimestamp()}] Attempting to start server on port ${initialPort}`);
+    
+    const tryPort = (port) => {
+        console.log(`[${getTimestamp()}] Trying port ${port}...`);
+        
+        const net = require('net');
+        const tester = net.createServer()
+            .once('error', (err) => {
+                if (err.code === 'EADDRINUSE') {
+                    console.log(`[${getTimestamp()}] Port ${port} is actually in use`);
+                    tester.close(() => {
+                        tryPort(port + 1);
+                    });
+                } else {
+                    console.error(`[${getTimestamp()}] Error testing port:`, err);
+                }
+            })
+            .once('listening', () => {
+                tester.close(() => {
+                    server.listen(port)
+                        .on('error', (err) => {
+                            console.error(`[${getTimestamp()}] Server startup error:`, {
+                                code: err.code,
+                                message: err.message,
+                                stack: err.stack
+                            });
+                        })
+                        .on('listening', () => {
+                            const actualPort = server.address().port;
+                            console.log(`[${getTimestamp()}] Server successfully running at http://localhost:${actualPort}`);
+                        });
+                });
+            });
+        
+        tester.listen(port);
+    };
+
+    if (server.listening) {
+        console.log(`[${getTimestamp()}] Closing existing server...`);
+        server.close(() => {
+            console.log(`[${getTimestamp()}] Existing server closed, trying new port...`);
+            tryPort(initialPort);
+        });
+    } else {
+        tryPort(initialPort);
+    }
+}
+
+// Start the server
+startServer(PORT);
+
+// Create a persistent agent
+const agent = new https.Agent({ 
+    keepAlive: true,
+    maxSockets: 50,  // Limit concurrent connections
+    keepAliveMsecs: 3000 // Keep connections alive for 3 seconds
+});
+
+// Create an axios instance with the agent
+const canvusApi = axios.create({
+    baseURL: CANVUS_SERVER,
+    headers: {
+        "Private-Token": CANVUS_API_KEY,
+        "Content-Type": "application/json"
+    },
+    httpsAgent: agent
+});
+
+// Then use this instance for all Canvus API calls
+app.post("/find-canvas", async (req, res) => {
+    const { uid, wsId } = req.body;
+    if (!uid) {
+        console.error(`[${getTimestamp()}] UID is missing in the request.`);
+        return res.status(400).json({ error: "UID is required." });
+    }
+
+    console.log(`[${getTimestamp()}] Starting search for UID: "${uid}"`);
+
+    // Function to broadcast progress
+    const broadcastProgress = (progress) => {
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({
+                    type: 'searchProgress',
+                    wsId: wsId,
+                    ...progress
+                }));
+            }
+        });
+    };
+
+    try {
+        // First check the current canvas defined in .env
+        console.log(`[${getTimestamp()}] Checking current canvas first: ${CANVAS_NAME} (${CANVAS_ID})`);
+        
+        const browserUrl = `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/browsers`;
+        console.log(`[${getTimestamp()}] Requesting browsers from: ${browserUrl}`);
+        
+        try {
+            const browsersResponse = await axios.get(browserUrl, {
+                headers: {
+                    "Private-Token": CANVUS_API_KEY,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            const browsers = browsersResponse.data;
+            console.log(`[${getTimestamp()}] Retrieved ${browsers.length} browsers for ${CANVAS_NAME}`);
+            
+            // Check if browser is in current canvas
+            for (const browser of browsers) {
+                if (browser.url && browser.url.includes(uid)) {
+                    console.log(`[${getTimestamp()}] Found matching URL in current canvas: ${browser.url}`);
+                    return res.json({
+                        canvasName: CANVAS_NAME,
+                        canvasId: CANVAS_ID
+                    });
+                }
+            }
+            
+            console.log(`[${getTimestamp()}] Browser not found in current canvas, searching others...`);
+        } catch (error) {
+            console.error(`[${getTimestamp()}] Error checking current canvas:`, error.message);
+            // Continue to search other canvases even if current canvas check fails
+        }
+
+        // If not found in current canvas, get all canvases
+        console.log(`[${getTimestamp()}] Fetching canvas list from ${CANVUS_SERVER}/api/v1/canvases`);
+        const { data: canvases } = await axios.get(`${CANVUS_SERVER}/api/v1/canvases`, {
+            headers: {
+                "Private-Token": CANVUS_API_KEY,
+                "Content-Type": "application/json",
+            },
+        });
+
+        // Filter out the current canvas since we already checked it
+        const otherCanvases = canvases.filter(canvas => canvas.id !== CANVAS_ID);
+        console.log(`[${getTimestamp()}] Searching through ${otherCanvases.length} other canvases...`);
+
+        // Rest of the existing search code...
+        let processedCount = 0;
+        const totalCanvases = otherCanvases.length;
+
+        const { results } = await PromisePool
+            .withConcurrency(5)
+            .for(otherCanvases)
+            .process(async (canvas, index) => {
+                const { id: canvasId, name: canvasName } = canvas;
+                
+                // Send progress update
+                processedCount++;
+                broadcastProgress({
+                    current: processedCount,
+                    total: totalCanvases,
+                    currentCanvas: canvasName
+                });
+
+                try {
+                    console.log(`[${getTimestamp()}] Processing canvas ${processedCount}/${totalCanvases}: ${canvasName} (${canvasId})`);
+                    
+                    // Log the browser request URL and headers
+                    const browserUrl = `${CANVUS_SERVER}/api/v1/canvases/${canvasId}/browsers`;
+                    console.log(`[${getTimestamp()}] Requesting browsers from: ${browserUrl}`);
+                    
+                    const browsersResponse = await axios.get(browserUrl, {
+                        headers: {
+                            "Private-Token": CANVUS_API_KEY,
+                            "Content-Type": "application/json",
+                        },
+                    });
+
+                    const browsers = browsersResponse.data;
+                    console.log(`[${getTimestamp()}] Retrieved ${browsers.length} browsers for ${canvasName}`);
+                    
+                    // Check if any browser's URL contains the uid
+                    for (const browser of browsers) {
+                        if (browser.url && browser.url.includes(uid)) {
+                            console.log(`[${getTimestamp()}] Found matching URL in ${canvasName}: ${browser.url}`);
+                            return { found: true, canvasName, canvasId };
+                        }
+                    }
+                    
+                    return { found: false };
+                } catch (error) {
+                    console.error(`[${getTimestamp()}] Error processing ${canvasName}:`, error.message);
+                    if (error.response) {
+                        console.error(`[${getTimestamp()}] Response status:`, error.response.status);
+                        console.error(`[${getTimestamp()}] Response data:`, error.response.data);
+                    }
+                    return { found: false, error: error.message };
+                }
+            });
+
+        console.log(`[${getTimestamp()}] Parallel processing complete. Checking results...`);
+
+        // Find the first successful match
+        const match = results.find(result => result.found);
+
+        if (match) {
+            console.log(`[${getTimestamp()}] Match found! Canvas: ${match.canvasName}`);
+            return res.json({
+                canvasName: match.canvasName,
+                canvasId: match.canvasId
+            });
+        }
+
+        console.log(`[${getTimestamp()}] No matching canvas found for UID: "${uid}"`);
+        res.status(404).json({ error: "No matching canvas found." });
+
+    } catch (error) {
+        console.error(`[${getTimestamp()}] Server Error:`, error.message);
+        if (error.response) {
+            console.error(`[${getTimestamp()}] Response status:`, error.response.status);
+            console.error(`[${getTimestamp()}] Response data:`, error.response.data);
+        }
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+      });

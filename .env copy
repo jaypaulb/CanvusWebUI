@@ -1,0 +1,8 @@
+CANVUS_SERVER=https://canvus3.multitaction.com
+CANVAS_NAME=test
+CANVAS_ID=test
+CANVUS_API_KEY=BVUpMiYbiMpEwb7COPC9fXxVoXwArlc_EzWK5cV5B5Y
+WEBUI_KEY=Taction123!  #password for the admin functions in the webui
+REDIS_HOST=localhost
+REDIS_PORT=6379
+SESSION_SECRET=your-secure-session-secret

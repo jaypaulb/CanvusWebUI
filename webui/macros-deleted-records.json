@@ -7139,5 +7139,78 @@
         "widget_type": "Browser"
       }
     ]
+  },
+  {
+    "recordId": "rec-1738230345467",
+    "timestamp": "2025-01-30T09:45:45.467Z",
+    "zoneBB": {
+      "x": 6399.00244140625,
+      "y": 1800,
+      "width": 3200,
+      "height": 1800,
+      "scale": 1
+    },
+    "widgets": []
+  },
+  {
+    "recordId": "rec-1738230354108",
+    "timestamp": "2025-01-30T09:45:54.108Z",
+    "zoneBB": {
+      "x": 6399.00244140625,
+      "y": 1800,
+      "width": 3200,
+      "height": 1800,
+      "scale": 1
+    },
+    "widgets": [
+      {
+        "depth": 12.60000228881836,
+        "id": "09883894-a8a1-4a98-93b3-b671f86d29b1",
+        "location": {
+          "x": 8722.5966796875,
+          "y": 2704.875244140625
+        },
+        "main_frame_scroll_offset": {
+          "x": 0,
+          "y": 0
+        },
+        "parent_id": "c8d824ad-ffb2-485d-a189-30b77ddeddf1",
+        "pinned": false,
+        "scale": 0.9999997615814209,
+        "size": {
+          "height": 600,
+          "width": 800
+        },
+        "state": "normal",
+        "title": "Problem loading page",
+        "transparent_mode": false,
+        "url": "https://localhost",
+        "widget_type": "Browser"
+      },
+      {
+        "depth": 12.500001907348633,
+        "id": "2aeb34fe-1680-4c92-9086-7e4dd9c49294",
+        "location": {
+          "x": 7923.3349609375,
+          "y": 2704.87548828125
+        },
+        "main_frame_scroll_offset": {
+          "x": 0,
+          "y": 0
+        },
+        "parent_id": "c8d824ad-ffb2-485d-a189-30b77ddeddf1",
+        "pinned": false,
+        "scale": 0.9990783929824829,
+        "size": {
+          "height": 600,
+          "width": 800
+        },
+        "state": "normal",
+        "title": "Problem loading page",
+        "transparent_mode": false,
+        "url": "https://localhost",
+        "widget_type": "Browser"
+      }
+    ]
   }
 ]
