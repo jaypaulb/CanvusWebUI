@@ -9,7 +9,7 @@
   
   <!-- External CSS -->
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/navbar.css"> <!-- Optional: If navbar has separate styles -->
+  <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
   <!-- Navbar Placeholder -->
@@ -19,33 +19,46 @@
   <div id="password-section" class="container">
     <h2>Admin Authentication</h2>
     <form id="password-form">
-      <label for="admin-password">Enter Admin Password:</label>
-      <input type="password" id="admin-password" name="password" required placeholder="Password">
-      <button type="submit">Authenticate</button>
+      <div class="form-group">
+        <label for="admin-password">Enter Admin Password:</label>
+        <input type="password" id="admin-password" name="password" required placeholder="Password">
+      </div>
+      <div class="button-group">
+        <button type="submit">Authenticate</button>
+      </div>
     </form>
     <div id="password-message" class="message"></div>
   </div>
 
   <!-- Environment Variables Form Section -->
   <div id="env-form-container" class="container" style="display: none;">
-    <h1>Manage Environment Variables</h1>
-  <!-- Form to Edit Environment Variables -->
-  <form id="env-form">
-    <input type="hidden" name="password" value="">
-    <div id="env-variables"></div>
-    <button type="submit">Save Changes</button>
-  </form>
+    <h2>Manage Environment Variables</h2>
+    <!-- Form to Edit Environment Variables -->
+    <form id="env-form">
+      <input type="hidden" name="password" value="">
+      <div id="env-variables" class="form-group"></div>
+      <div class="button-group">
+        <button type="submit">Save Changes</button>
+      </div>
+    </form>
     <div id="env-message" class="message"></div>
-    <!-- Logout button removed -->
   </div>
   
   <!-- Confirmation Modal -->
   <div id="confirm-modal" class="modal">
     <div class="modal-content">
+      <h3>Confirm Changes</h3>
       <p>Are you sure you want to save these changes?</p>
-      <button id="confirm-save" class="confirm-button">Yes</button>
-      <button id="cancel-save" class="cancel-button">No</button>
+      <div class="button-group">
+        <button id="confirm-save" class="confirm-button">Yes</button>
+        <button id="cancel-save" class="cancel-button">No</button>
+      </div>
     </div>
+  </div>
+
+  <!-- Success Notification -->
+  <div id="successNotification" class="success-notification">
+    Changes saved successfully! Environment variables have been updated in .env
   </div>
 
   <!-- External JavaScript -->

@@ -5,33 +5,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="description" content="Canvus Web UI - Main Page">
     <title>Main Page</title>
 
     <!-- External CSS -->
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/navbar.css"> <!-- Optional: If navbar has separate styles -->
+    <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
     <!-- Navbar Placeholder -->
     <div id="navbar-placeholder"></div>
       
     <div class="container">
-    <h1>Welcome to the Main Page</h1>
-    <button id="setTargetButton" disabled>Loading...</button>
-        <span id="confirmation" class="message success"></span>
-        <span id="error" class="message error"></span>
-    </div>
-    <div id="passwordModal" class="modal" style="display: none;">
-        <div class="modal-content">
-          <span id="closeModal" class="close">&times;</span>
-          <h2>Enter Admin Password</h2>
-          <input type="password" id="adminPassword" placeholder="Password" required />
-          <button id="submitPassword">Submit</button>
-          <p id="modalError" class="error" style="display: none;"></p>
+        <h1>Welcome to the Main Page</h1>
+        
+        <div class="action-container">
+            <button id="setTargetButton" class="primary-button" disabled>
+                <span class="button-content">
+                    <span class="loading-spinner" style="display: none;"></span>
+                    <span class="button-text">Loading...</span>
+                </span>
+            </button>
         </div>
-      </div>
+
+        <div class="messages-container">
+            <span id="confirmation" class="message success" role="alert" aria-live="polite"></span>
+            <span id="error" class="message error" role="alert" aria-live="assertive"></span>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="passwordModal" class="modal" style="display: none;" role="dialog" aria-labelledby="modalTitle">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 id="modalTitle">Enter Admin Password</h2>
+                <button id="closeModal" class="close" aria-label="Close modal">&times;</button>
+            </header>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="adminPassword">Password</label>
+                    <input type="password" 
+                           id="adminPassword" 
+                           placeholder="Enter password" 
+                           required 
+                           aria-required="true"
+                           autocomplete="current-password" />
+                </div>
+                <p id="modalError" class="error" style="display: none;" role="alert"></p>
+            </div>
+
+            <footer class="modal-footer">
+                <button id="submitPassword" class="primary-button">
+                    <span class="button-content">
+                        <span class="loading-spinner" style="display: none;"></span>
+                        <span class="button-text">Submit</span>
+                    </span>
+                </button>
+            </footer>
+        </div>
+    </div>
       
     <!-- External JavaScript -->
+    <script src="js/sort-utils.js"></script>
     <script src="js/common.js"></script>
     <script src="js/navbar.js"></script>
     <script src="js/main-page.js"></script>

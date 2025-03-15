@@ -91,8 +91,13 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files from the public directory
+app.use(express.static('public'));
+
+// Default route - serve index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Prepare for file uploads
 const uploadDir = path.join(__dirname, 'uploads');
@@ -260,11 +265,49 @@ function validateAdminPassword(req, res, next) {
     if (!password) {
         return res.status(400).json({ success: false, error: 'Admin password is required.' });
     }
-    if (password !== process.env.WEBUI_KEY) {
+    if (password !== process.env.WEBUI_PWD) {
         return res.status(401).json({ success: false, error: 'Invalid admin password.' });
     }
     next();
 }
+
+// Middleware for admin authentication
+function validateAdminAuth(req, res, next) {
+    const authHeader = req.headers.authorization;
+    
+    console.log(`[${getTimestamp()}] Admin authentication attempt...`);
+    
+    if (!authHeader) {
+        console.error(`[${getTimestamp()}] Authentication failed: No authorization header provided`);
+        return res.status(401).json({ success: false, message: 'No authorization header provided' });
+    }
+    
+    if (!authHeader.startsWith('Bearer ')) {
+        console.error(`[${getTimestamp()}] Authentication failed: Invalid authorization format. Expected 'Bearer token'`);
+        return res.status(401).json({ success: false, message: 'Invalid authorization format' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    const expectedToken = process.env.WEBUI_PWD;
+    
+    if (!expectedToken) {
+        console.error(`[${getTimestamp()}] Server configuration error: WEBUI_PWD not set in environment variables`);
+        return res.status(500).json({ success: false, message: 'Server configuration error' });
+    }
+
+    if (token !== expectedToken) {
+        console.error(`[${getTimestamp()}] Authentication failed: Invalid token provided`);
+        return res.status(401).json({ success: false, message: 'Invalid authorization token' });
+    }
+
+    console.log(`[${getTimestamp()}] Admin authentication successful`);
+    next();
+}
+
+// Validate admin authentication endpoint
+app.post('/validateAdmin', validateAdminAuth, (req, res) => {
+    res.json({ success: true, message: 'Authentication successful' });
+});
 
 // ------------------- Endpoints -------------------
 // Define the /env-variables endpoint
@@ -599,22 +642,27 @@ app.get("/check-env", (req, res) => {
 
 // Fetch all anchors (zones) from the canvas
 app.get('/get-zones', async (req, res) => {
-  console.log("[/get-zones] route invoked.");
-  try {
-      const { data: anchors } = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/anchors`, {
-          headers: { "Private-Token": CANVUS_API_KEY }
-      });
-
-      const response = {
-          zones: anchors
-      };
-
-      console.log("response", response);
-      res.json({ success: true, ...response });
-  } catch (error) {
-      console.error("Error in /get-zones:", error.message);
-      res.status(500).json({ success: false, error: "Failed to fetch zones." });
-  }
+    console.log('[/get-zones] route invoked.');
+    try {
+        const response = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/anchors`, {
+            headers: {
+                "Private-Token": CANVUS_API_KEY,
+                "Content-Type": "application/json"
+            }
+        });
+        res.json({ success: true, zones: response.data });
+    } catch (error) {
+        console.error('[/get-zones] Detailed error:', {
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            data: error.response?.data,
+            headers: error.response?.headers
+        });
+        res.status(error.response?.status || 500).json({
+            error: error.message,
+            details: error.response?.data
+        });
+    }
 });
 
 
@@ -824,7 +872,7 @@ app.post("/api/macros/copy", async (req, res) => {
         }
       }
   
-      // 2) Build a final “inSource” array that includes:
+      // 2) Build a final "inSource" array that includes:
       //    - Normal widgets that are physically in the zone.
       //    - Connectors only if BOTH src/dst are in inZoneSet
       const inSource = [];
@@ -1202,9 +1250,9 @@ function handleDeletionRecordClick(e) {
  * 
  * Instead of using user-defined rows/cols, we:
  * 1) Count how many items we have in the zone.
- * 2) Compute a “gridSize” such that gridSize x gridSize >= numberOfItems.
+ * 2) Compute a "gridSize" such that gridSize x gridSize >= numberOfItems.
  *    Example: if we have 10 items, the nearest uniform grid might be 4x4=16.
- * 3) Compute item scale so each item’s height fits the cell. Then we apply that
+ * 3) Compute item scale so each item's height fits the cell. Then we apply that
  *    scale to its location. We maintain at least 50 units between items.
  *
  * Example Steps:
@@ -1213,7 +1261,7 @@ function handleDeletionRecordClick(e) {
  *   - cellWidth = (zoneBB.width / gridSize)
  *   - cellHeight = (zoneBB.height / gridSize)
  *   - Use the smaller dimension (height or width) to set scale factor. 
- *     The item’s new height <= cellHeight - 50?? Or we fix 50 units between them?
+ *     The item's new height <= cellHeight - 50?? Or we fix 50 units between them?
  *   - Place items left-to-right, top-to-bottom in that grid.
  ******************************************************************************/
 /******************************************************************************
@@ -1327,38 +1375,24 @@ app.post("/api/macros/auto-grid", async (req, res) => {
 app.post("/api/macros/group-color", async (req, res) => {
     console.log("[/api/macros/group-color] route invoked.");
     const { zoneId, tolerance } = req.body;
-    
-    console.log(`Received payload: zoneId=${zoneId}, tolerance=${tolerance}`);
-    
-    if (!zoneId || typeof tolerance === 'undefined') {
-      console.error("Missing zoneId or tolerance in request body.");
+    if (!zoneId || !tolerance) {
       return res.status(400).send("zoneId and tolerance are required for group-color.");
     }
-  
     try {
       const zoneBB = await getZoneBoundingBox(zoneId);
-      console.log(`Zone Bounding Box: ${JSON.stringify(zoneBB)}`);
-      
-      const allWidgets = await getAllWidgets();
-      console.log(`Total widgets fetched: ${allWidgets.length}`);
-      
-      // Filter widgets within the zone, excluding connectors and anchors
-      const inZone = allWidgets.filter(w => {
+      const allW = await getAllWidgets();
+      const inZone = allW.filter(w => {
         if (w.id === zoneId) return false;
         if (!w.location) return false;
-        const type = (w.widget_type || "").toLowerCase();
-        if (type === "connector" || type === "anchor") return false;
+        const t = (w.widget_type || "").toLowerCase();
+        if (t === "connector" || t === "anchor") return false;
         return widgetIsInZone(w, zoneBB);
       });
-      
-      console.log(`Widgets within zone after filtering: ${inZone.length}`);
-      
+  
       if (inZone.length === 0) {
-        console.log("No widgets found to group by color.");
         return res.json({ success: true, message: "No widgets found to group by color." });
       }
-      
-      // Function to calculate color distance
+  
       function colorDistance(c1, c2) {
         const r1 = parseInt(c1.slice(1, 3), 16) || 0;
         const g1 = parseInt(c1.slice(3, 5), 16) || 0;
@@ -1366,108 +1400,88 @@ app.post("/api/macros/group-color", async (req, res) => {
         const r2 = parseInt(c2.slice(1, 3), 16) || 0;
         const g2 = parseInt(c2.slice(3, 5), 16) || 0;
         const b2 = parseInt(c2.slice(5, 7), 16) || 0;
-        return Math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2);
+        return Math.sqrt((r1 - r2)**2 + (g1 - g2)**2 + (b1 - b2)**2);
       }
   
       const threshold = 255 * (parseInt(tolerance, 10) / 100.0);
-      console.log(`Color distance threshold set to: ${threshold}`);
-      
       const clusters = [];
-      
-      // Cluster widgets by color
-      inZone.forEach((w, idx) => {
-        const color = w.background_color || "#FFFFFF";
+      for (const w of inZone) {
+        const color = w.background_color || "#FFFFFF00";
         let placed = false;
-        console.log(`Processing widget ${idx + 1}/${inZone.length}: ID=${w.id}, Color=${color}`);
-        
-        for (const [clIdx, cl] of clusters.entries()) {
+        for (const cl of clusters) {
           const dist = colorDistance(color, cl.representativeColor);
-          console.log(`  Checking against Cluster ${clIdx + 1}: RepresentativeColor=${cl.representativeColor}, Distance=${dist.toFixed(2)}`);
           if (dist <= threshold) {
             cl.widgets.push(w);
             placed = true;
-            console.log(`    Placed in Cluster ${clIdx + 1}`);
             break;
           }
         }
-        
         if (!placed) {
           clusters.push({
             representativeColor: color,
             widgets: [w]
           });
-          console.log(`    Created new Cluster ${clusters.length}`);
         }
-      });
-      
-      console.log(`Total color clusters formed: ${clusters.length}`);
-      
-      const numColumns = clusters.length;
+      }
+  
+      // Calculate available space
       const spacingX = 50; // Horizontal spacing between columns
-      const spacingY = 50; // Vertical spacing between widgets
-      const buffer = 100; // 100-unit buffer around the zone
+      const spacingY = 25; // Vertical spacing between widgets
+      const buffer = 100; // Buffer from zone edges
       
-      const availableWidth = zoneBB.width - buffer * 2 - spacingX * (numColumns - 1);
-      const maxWidthPerColumn = availableWidth / numColumns;
+      const availableWidth = zoneBB.width - buffer * 2;
+      const availableHeight = zoneBB.height - buffer * 2;
       
-      console.log(`Available width for grouping: ${availableWidth}`);
-      console.log(`Max width per column: ${maxWidthPerColumn}`);
+      // Calculate column width based on number of clusters
+      const maxWidthPerColumn = (availableWidth - (spacingX * (clusters.length - 1))) / clusters.length;
       
       let clusterX = zoneBB.x + buffer;
       let updatedCount = 0;
-      
-      for (const [clIdx, cluster] of clusters.entries()) {
-        console.log(`\nProcessing Cluster ${clIdx + 1}: RepresentativeColor=${cluster.representativeColor}, Widgets=${cluster.widgets.length}`);
-        let yPos = zoneBB.y + buffer;
+  
+      for (const cluster of clusters) {
+        // Calculate maximum dimensions for this cluster
+        let maxOriginalWidth = Math.max(...cluster.widgets.map(w => w.size?.width || 300));
+        let totalOriginalHeight = cluster.widgets.reduce((acc, w) => 
+          acc + (w.size?.height || 300), 0);
         
-        // Determine the maximum height in the cluster for uniform scaling
-        let maxOriginalWidth = Math.max(...cluster.widgets.map(w => w.size && w.size.width ? w.size.width : 300));
-        let maxOriginalHeight = Math.max(...cluster.widgets.map(w => w.size && w.size.height ? w.size.height : 300));
+        // Add spacing between widgets in height calculation
+        totalOriginalHeight += spacingY * (cluster.widgets.length - 1);
         
-        // Calculate a uniform scale factor based on the largest widget in the cluster
-        const targetWidth = maxWidthPerColumn - spacingX; // Allow some spacing
-        const scaleFactor = targetWidth / maxOriginalWidth;
+        // Calculate scale factors
+        const scaleFactorWidth = maxWidthPerColumn / maxOriginalWidth;
+        const scaleFactorHeight = availableHeight / totalOriginalHeight;
         
-        console.log(`  Uniform scaleFactor for Cluster ${clIdx + 1}: ${scaleFactor.toFixed(2)}`);
+        // Use the smaller scale factor to ensure widgets fit both dimensions
+        let scaleFactor = Math.min(scaleFactorWidth, scaleFactorHeight);
         
-        cluster.widgets.forEach((w, wIdx) => {
-          console.log(`  Widget ${wIdx + 1}/${cluster.widgets.length}: ID=${w.id}, Original Size=${JSON.stringify(w.size)}`);
+        // Clamp scale factor to reasonable limits
+        const minScale = 0.1;
+        const maxScale = 2.0;
+        scaleFactor = Math.max(minScale, Math.min(maxScale, scaleFactor));
+        
+        let clusterY = zoneBB.y + buffer;
+        
+        for (const w of cluster.widgets) {
+          const widgetHeight = (w.size?.height || 300) * scaleFactor;
           
-          // Calculate scaled dimensions
-          const scaledWidth = w.size && w.size.width ? w.size.width * scaleFactor : 300 * scaleFactor;
-          const scaledHeight = w.size && w.size.height ? w.size.height * scaleFactor : 300 * scaleFactor;
-          
-          console.log(`    Scaled Size: width=${scaledWidth.toFixed(2)}, height=${scaledHeight.toFixed(2)}`);
-          
-          // Patch the widget's location and scale
           const patchData = {
-            location: { x: clusterX, y: yPos },
+            location: { x: clusterX, y: clusterY },
             scale: scaleFactor
           };
-          console.log(`    Patching widget ${w.id} at (${clusterX}, ${yPos}) with scaleFactor=${scaleFactor.toFixed(2)}`);
           
-          // Send the patch request (assuming patchWidgetAtURL handles the request)
-          // Here, we use an IIFE to handle asynchronous operations within forEach
-          (async () => {
+          try {
             await patchWidgetAtURL(getWidgetPatchURL(w), w.id, patchData);
-          })().catch(err => {
-            console.error(`    Error patching widget ${w.id}: ${err.message}`);
-          });
+            updatedCount++;
+          } catch (err) {
+            console.error(`Error updating widget ${w.id}:`, err.message);
+          }
           
-          updatedCount++;
-          
-          // Update yPos for the next widget
-          yPos += scaledHeight + spacingY;
-          console.log(`    Updated yPos for next widget in cluster: ${yPos}`);
-        });
+          clusterY += widgetHeight + spacingY;
+        }
         
-        // Move to the next column
         clusterX += maxWidthPerColumn + spacingX;
-        console.log(`  Moved to next column. New clusterX: ${clusterX}`);
       }
-      
-      console.log(`\nTotal widgets patched: ${updatedCount}`);
-      
+  
       return res.json({
         success: true,
         message: `${updatedCount} widgets grouped by color into ${clusters.length} cluster(s).`
@@ -1479,8 +1493,7 @@ app.post("/api/macros/group-color", async (req, res) => {
   });
   
   
-  
- /******************************************************************************
+   /******************************************************************************
  * GROUP BY TITLE (Enhanced with Intelligent Scaling and Detailed Logging)
  ******************************************************************************/
 app.post("/api/macros/group-title", async (req, res) => {
@@ -3042,9 +3055,9 @@ app.post("/api/macros/delete", async (req, res) => {
  * 
  * Instead of using user-defined rows/cols, we:
  * 1) Count how many items we have in the zone.
- * 2) Compute a “gridSize” such that gridSize x gridSize >= numberOfItems.
+ * 2) Compute a "gridSize" such that gridSize x gridSize >= numberOfItems.
  *    Example: if we have 10 items, the nearest uniform grid might be 4x4=16.
- * 3) Compute item scale so each item’s height fits the cell. Then we apply that
+ * 3) Compute item scale so each item's height fits the cell. Then we apply that
  *    scale to its location. We maintain at least 50 units between items.
  *
  * Example Steps:
@@ -3053,7 +3066,7 @@ app.post("/api/macros/delete", async (req, res) => {
  *   - cellWidth = (zoneBB.width / gridSize)
  *   - cellHeight = (zoneBB.height / gridSize)
  *   - Use the smaller dimension (height or width) to set scale factor. 
- *     The item’s new height <= cellHeight - 50?? Or we fix 50 units between them?
+ *     The item's new height <= cellHeight - 50?? Or we fix 50 units between them?
  *   - Place items left-to-right, top-to-bottom in that grid.
  ******************************************************************************/
 app.post("/api/macros/auto-grid", async (req, res) => {
@@ -3096,12 +3109,12 @@ app.post("/api/macros/auto-grid", async (req, res) => {
       const cellHeight = zoneHeight / gridSize;
   
       // 3) Scale each item so its *height* fits within cellHeight - 50 (for spacing).
-      //    We'll ignore the item’s original aspect ratio except for preserving it (scaling).
+      //    We'll ignore the item's original aspect ratio except for preserving it (scaling).
       //    i.e., newScale = min( (cellHeight-50) / itemOriginalHeight, ... ) 
       //    We must retrieve itemOriginalHeight from the widget's size property.
       //
       //    For simplicity, let's do a 2-pass approach:
-      //    - We'll collect each item’s original height => compute scale => store in an array
+      //    - We'll collect each item's original height => compute scale => store in an array
       //    - Then place them left->right, top->bottom
   
       let index = 0;
@@ -3125,6 +3138,7 @@ app.post("/api/macros/auto-grid", async (req, res) => {
           // final scale = min(scaleByHeight, scaleByWidth)
           newScale = Math.min(newScale, scaleByWidth);
         }
+  
   
         // clamp scale > 0
         if (newScale < 0) newScale = 0.1;
@@ -3434,3 +3448,241 @@ app.listen(PORT, () => console.log(`[${getTimestamp()}] Server running at http:/
 // -----------------------------------------------------------------------------
 // End of script
 // -----------------------------------------------------------------------------
+
+// Get Canvas Info Endpoint
+app.get('/get-canvas-info', (req, res) => {
+    try {
+        const canvasName = process.env.CANVAS_NAME;
+        if (!canvasName) {
+            return res.status(404).json({ error: 'Canvas name not found in environment variables.' });
+        }
+        res.json({ canvasName });
+    } catch (error) {
+        console.error(`[${getTimestamp()}] Error getting canvas info:`, error.message);
+        res.status(500).json({ error: 'Failed to get canvas info.' });
+    }
+});
+
+// Admin Routes
+app.post('/admin/createTargets', validateAdminAuth, async (req, res) => {
+    try {
+        console.log(`[${getTimestamp()}] Creating target notes...`);
+        
+        // Get zones using our existing endpoint
+        const zonesResponse = await axios.get(`http://localhost:${PORT}/get-zones`);
+        if (!zonesResponse.data.success) {
+            throw new Error('Failed to fetch zones');
+        }
+        
+        const zones = zonesResponse.data.zones;
+        if (zones.length < 8) {
+            return res.status(400).json({ success: false, message: 'Not enough zones available' });
+        }
+
+        // Create notes for teams 1-7 (skipping first zone)
+        const createdTeams = [];
+        for (let i = 1; i <= 7; i++) {
+            const zone = zones.find(z => z.anchor_index === i);
+            if (!zone || !zone.location) {
+                console.warn(`[${getTimestamp()}] No zone found with index ${i}. Skipping creation for Team ${i}.`);
+                continue;
+            }
+
+            const noteTitle = `Team_${i}_Target`;
+            const noteText = `Team ${i}`;
+            const noteColor = getTeamBaseColor(i);
+
+            try {
+                await createNoteAtLocation(noteTitle, noteText, noteColor, zone.location);
+                createdTeams.push(i);
+            } catch (error) {
+                console.error(`[${getTimestamp()}] Failed to create target for Team ${i}:`, error.message);
+            }
+        }
+
+        if (createdTeams.length === 0) {
+            return res.json({ success: false, message: "Failed to create any team targets." });
+        }
+
+        const confirmationMessage = `Created Team Targets ${createdTeams.join(", ")}`;
+        console.log(`[${getTimestamp()}] ${confirmationMessage}`);
+        res.json({ success: true, message: confirmationMessage });
+
+    } catch (error) {
+        console.error(`[${getTimestamp()}] Error creating target notes:`, error);
+        res.status(500).json({ success: false, message: 'Failed to create target notes' });
+    }
+});
+
+app.post('/admin/deleteTargets', validateAdminAuth, async (req, res) => {
+    try {
+        console.log(`[${getTimestamp()}] Deleting target notes...`);
+        
+        // Get all widgets from CANVUS
+        const response = await axios.get(
+            `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`,
+            { headers: { 'Private-Token': CANVUS_API_KEY } }
+        );
+
+        // Filter target notes - using correct property names and values
+        const targetNotes = response.data.filter(widget => 
+            widget.widget_type === 'Note' && widget.title && widget.title.match(/^Team_\d+_Target$/)
+        );
+
+        console.log(`[${getTimestamp()}] Found ${targetNotes.length} target notes to delete`);
+
+        // Delete each target note
+        let deletedCount = 0;
+        for (const note of targetNotes) {
+            try {
+                await axios.delete(
+                    `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/notes/${note.id}`,
+                    { headers: { 'Private-Token': CANVUS_API_KEY } }
+                );
+                deletedCount++;
+                console.log(`[${getTimestamp()}] Successfully deleted note "${note.title}"`);
+            } catch (error) {
+                console.error(`[${getTimestamp()}] Failed to delete note "${note.title}":`, error.message);
+            }
+        }
+
+        console.log(`[${getTimestamp()}] Successfully deleted ${deletedCount} target notes`);
+        res.json({ success: true, message: `Deleted ${deletedCount} target notes` });
+    } catch (error) {
+        console.error(`[${getTimestamp()}] Error deleting target notes:`, error);
+        res.status(500).json({ success: false, message: 'Failed to delete target notes' });
+    }
+});
+
+app.get('/admin/listUsers', validateAdminAuth, async (req, res) => {
+    try {
+        console.log(`[${getTimestamp()}] Listing users...`);
+        const usersObj = readUsers();
+        const users = [];
+        
+        // Transform the nested object structure into array of user objects
+        Object.entries(usersObj).forEach(([team, teamUsers]) => {
+            Object.entries(teamUsers).forEach(([name, color]) => {
+                users.push({
+                    team: parseInt(team),
+                    name: name,
+                    color: color
+                });
+            });
+        });
+        
+        res.json({ success: true, users });
+    } catch (error) {
+        console.error(`[${getTimestamp()}] Error listing users:`, error);
+        res.status(500).json({ success: false, message: 'Failed to list users' });
+    }
+});
+
+app.post('/admin/deleteUsers', validateAdminAuth, async (req, res) => {
+    try {
+        console.log(`[${getTimestamp()}] Deleting all users...`);
+        writeUsers({});
+        res.json({ success: true, message: 'All users deleted successfully' });
+    } catch (error) {
+        console.error(`[${getTimestamp()}] Error deleting users:`, error);
+        res.status(500).json({ success: false, message: 'Failed to delete users' });
+    }
+});
+
+/* ------------------------------------------------------------------------- */
+/* Pin/Unpin Functions                                                       */
+/* ------------------------------------------------------------------------- */
+
+app.post("/api/macros/pin-all", async (req, res) => {
+  console.log("[/api/macros/pin-all] route invoked.");
+  const { zoneId } = req.body;
+  if (!zoneId) {
+    return res.status(400).send("zoneId is required for pinning.");
+  }
+
+  try {
+    const zoneBB = await getZoneBoundingBox(zoneId);
+    const allWidgets = await getAllWidgets();
+
+    // Filter widgets within the zone, excluding connectors and anchors
+    const inZone = allWidgets.filter(w => {
+      if (w.id === zoneId) return false;
+      if (!w.location) return false;
+      const type = (w.widget_type || "").toLowerCase();
+      if (type === "connector" || type === "anchor") return false;
+      return widgetIsInZone(w, zoneBB);
+    });
+
+    if (inZone.length === 0) {
+      return res.json({ success: true, message: "No widgets found in zone to pin." });
+    }
+
+    let pinnedCount = 0;
+    for (const w of inZone) {
+      const patchRoute = getWidgetPatchURL(w);
+      try {
+        await patchWidgetAtURL(patchRoute, w.id, {
+          pinned: true  // Changed from is_pinned to pinned
+        });
+        pinnedCount++;
+      } catch (err) {
+        console.error(`Error pinning widget ${w.id}:`, err.message);
+      }
+    }
+
+    return res.json({
+      success: true,
+      message: `${pinnedCount} widgets pinned in the zone.`
+    });
+  } catch (err) {
+    console.error("Error in /api/macros/pin-all:", err.message);
+    return res.status(500).send(err.message);
+  }
+});
+
+app.post("/api/macros/unpin-all", async (req, res) => {
+  console.log("[/api/macros/unpin-all] route invoked.");
+  const { zoneId } = req.body;
+  if (!zoneId) {
+    return res.status(400).send("zoneId is required for unpinning.");
+  }
+
+  try {
+    const zoneBB = await getZoneBoundingBox(zoneId);
+    const allWidgets = await getAllWidgets();
+
+    // Filter widgets within the zone, excluding connectors and anchors
+    const inZone = allWidgets.filter(w => {
+      if (w.id === zoneId) return false;
+      if (!w.location) return false;
+      const type = (w.widget_type || "").toLowerCase();
+      if (type === "connector" || type === "anchor") return false;
+      return widgetIsInZone(w, zoneBB);
+    });
+
+    if (inZone.length === 0) {
+      return res.json({ success: true, message: "No widgets found in zone to unpin." });
+    }
+
+    let unpinnedCount = 0;
+    for (const w of inZone) {
+      const patchRoute = getWidgetPatchURL(w);
+      try {
+        await patchWidgetAtURL(patchRoute, w.id, {
+          pinned: false  // Changed from is_pinned to pinned
+        });
+        unpinnedCount++;
+      } catch (err) {
+        console.error(`Error unpinning widget ${w.id}:`, err.message);
+      }
+    }
+
+    return res.json({
+      success: true,
+      message: `${unpinnedCount} widgets unpinned in the zone.`
+    });
+  } catch (err) {
+    console.error("Error in /api/macros/unpin-all:", err.message);
+    return res.status(500).send(err.message);
+  }
+});

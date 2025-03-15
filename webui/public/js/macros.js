@@ -8,26 +8,32 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchZones();
 
   // 3) Bind button clicks for Manage (Move/Copy/Delete)
-  document.getElementById("manageMoveBtn").addEventListener("click", manageMove);
-  document.getElementById("manageCopyBtn").addEventListener("click", manageCopy);
-  document.getElementById("manageDeleteBtn").addEventListener("click", manageDelete);
+  document.getElementById("moveButton").addEventListener("click", manageMove);
+  document.getElementById("copyButton").addEventListener("click", manageCopy);
+  document.getElementById("deleteButton").addEventListener("click", manageDelete);
 
   // 4) Bind Undelete logic
   document.getElementById("refreshDeletedRecordsBtn").addEventListener("click", refreshDeletedRecords);
-  // The deletedRecordsList items will be generated in refreshDeletedRecords()
-  // Each item is clickable, calling handleRecordClick()
 
   // 5) Bind Grouping logic
-  document.getElementById("autoGridExecuteBtn").addEventListener("click", autoGrid);
-  document.getElementById("groupByColorBtn").addEventListener("click", groupByColor);
-  document.getElementById("groupByTitleBtn").addEventListener("click", groupByTitle);
+  document.getElementById("autoGridButton").addEventListener("click", autoGrid);
+  document.getElementById("groupColorButton").addEventListener("click", groupByColor);
+  document.getElementById("groupTitleButton").addEventListener("click", groupByTitle);
 
-  // 6) Color tolerance slider
+  // 6) Bind Pinning logic
+  document.getElementById("pinAllButton").addEventListener("click", pinAll);
+  document.getElementById("unpinAllButton").addEventListener("click", unpinAll);
+
+  // 7) Color tolerance slider
   setupColorToleranceSlider();
 
   // Modal confirmation
   document.getElementById("undeleteConfirmBtn").addEventListener("click", confirmUndelete);
   document.getElementById("undeleteCancelBtn").addEventListener("click", hideUndeleteModal);
+
+  // Initialize sorting functionality
+  sortZoneDropdowns();
+  sortDeletedRecords();
 });
 
 /* ------------------------------------------------------------------------- */
@@ -40,38 +46,32 @@ let selectedRecordTypes = {};
 
 /* ------------------------------ TAB SWITCHING ------------------------------ */
 function setupTabs() {
-  const tabs = [
-    { tabId: "tab-manage", panelId: "panel-manage" },
-    { tabId: "tab-undelete", panelId: "panel-undelete" },
-    { tabId: "tab-grouping", panelId: "panel-grouping" },
-  ];
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
 
-  tabs.forEach(({ tabId, panelId }) => {
-    const tabEl = document.getElementById(tabId);
-    const panelEl = document.getElementById(panelId);
-    tabEl.addEventListener("click", (e) => {
-      e.preventDefault();
-      // Deactivate all tabs/panels
-      tabs.forEach(({ tabId: tId, panelId: pId }) => {
-        document.getElementById(tId).classList.remove("active");
-        document.getElementById(pId).classList.remove("active");
-      });
-      // Activate the clicked tab/panel
-      tabEl.classList.add("active");
-      panelEl.classList.add("active");
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove active class from all buttons and contents
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabContents.forEach(content => content.classList.remove('active'));
+
+      // Add active class to clicked button and corresponding content
+      button.classList.add('active');
+      const tabId = button.getAttribute('data-tab');
+      document.getElementById(`${tabId}-content`).classList.add('active');
     });
   });
-
-  // By default, show the first tab (Manage)
-  document.getElementById("tab-manage").classList.add("active");
-  document.getElementById("panel-manage").classList.add("active");
 }
 
 /* ------------------------------ FETCH ZONES ------------------------------ */
 async function fetchZones() {
   try {
     console.log("[fetchZones] Fetching zones and canvas details...");
-    const res = await fetch("/get-zones");
+    const res = await fetch("/get-zones", {
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    });
     const data = await res.json();
 
     if (!data.success || !data.zones) {
@@ -89,33 +89,45 @@ async function fetchZones() {
 }
 
 function populateZoneDropdowns(zones) {
-  // Manage panel uses manageSourceZone, manageTargetZone
-  // Undelete panel uses undeleteTargetZone
-  // Grouping panel uses groupingSourceZone
-  const manageSource = document.getElementById("manageSourceZone");
-  const manageTarget = document.getElementById("manageTargetZone");
-  const undeleteTarget = document.getElementById("undeleteTargetZone");
-  const groupingSource = document.getElementById("groupingSourceZone");
+  try {
+    const dropdowns = {
+      "manageSourceZone": document.getElementById("manageSourceZone"),
+      "manageTargetZone": document.getElementById("manageTargetZone"),
+      "undeleteTargetZone": document.getElementById("undeleteTargetZone"),
+      "groupingSourceZone": document.getElementById("groupingSourceZone"),
+      "pinningSourceZone": document.getElementById("pinningSourceZone")
+    };
 
-  // Clear existing
-  manageSource.innerHTML = "";
-  manageTarget.innerHTML = "";
-  undeleteTarget.innerHTML = "";
-  groupingSource.innerHTML = "";
+    // Verify all dropdowns exist
+    Object.entries(dropdowns).forEach(([id, element]) => {
+      if (!element) {
+        throw new Error(`Dropdown element ${id} not found`);
+      }
+    });
 
-  // Populate dropdowns
-  zones.forEach((zone) => {
-    const zoneName = zone.anchor_name || `Zone ${zone.id}`;
-    const option = document.createElement("option");
-    option.value = zone.id;
-    option.textContent = zoneName;
+    // Clear existing options
+    Object.values(dropdowns).forEach(dropdown => {
+      dropdown.innerHTML = '<option value="">Select a zone...</option>';
+    });
 
-    // Clone the option for each dropdown
-    manageSource.appendChild(option.cloneNode(true));
-    manageTarget.appendChild(option.cloneNode(true));
-    undeleteTarget.appendChild(option.cloneNode(true));
-    groupingSource.appendChild(option.cloneNode(true));
-  });
+    // Add zone options
+    zones.forEach((zone) => {
+      const zoneName = zone.anchor_name || `Zone ${zone.id}`;
+      const option = document.createElement("option");
+      option.value = zone.id;
+      option.textContent = zoneName;
+
+      // Add to each dropdown
+      Object.values(dropdowns).forEach(dropdown => {
+        dropdown.appendChild(option.cloneNode(true));
+      });
+    });
+
+    sortZoneDropdowns();
+  } catch (err) {
+    console.error("[populateZoneDropdowns] Error:", err.message);
+    displayMessage("Error populating zone dropdowns: " + err.message);
+  }
 }
 
 /* ------------------------------ MANAGE ACTIONS ------------------------------ */
@@ -175,6 +187,7 @@ async function manageDelete() {
 async function refreshDeletedRecords() {
   const listEl = document.getElementById("deletedRecordsList");
   listEl.innerHTML = "Loading deleted records...";
+  
   try {
     const res = await fetch("/api/macros/deleted-records");
     if (!res.ok) {
@@ -184,33 +197,41 @@ async function refreshDeletedRecords() {
     if (!data.success || !data.records) {
       throw new Error("Invalid response retrieving deleted records.");
     }
+    
     if (data.records.length === 0) {
       listEl.innerHTML = "No deleted records found.";
       return;
     }
 
-    // Sort in descending order (most recent first)
+    // Sort records by timestamp (most recent first)
     data.records.sort((a, b) => {
       if (a.timestamp < b.timestamp) return 1;
       if (a.timestamp > b.timestamp) return -1;
       return 0;
     });
 
-    // If too many records, prompt a cleanup
-    if (data.records.length > 5) {
-      displayMessage(`There are ${data.records.length} delete history items. Consider cleaning older ones.`);
-      // Optionally, you can implement automatic cleanup here or provide a button for it
-    }
-
-    // Render the records
+    // Clear and populate the list
     listEl.innerHTML = "";
-    data.records.forEach(rec => {
+    data.records.forEach(record => {
       const div = document.createElement("div");
       div.classList.add("deletion-record");
-      div.textContent = `Deleted at: ${rec.timestamp}, ID: ${rec.recordId}`;
-      // We'll store the recordId in a data attribute
-      div.dataset.recordId = rec.recordId;
-      // Then we can handle a click
+      
+      // Format the timestamp
+      const date = new Date(record.timestamp);
+      const formattedDate = date.toLocaleString('en-GB', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      
+      div.textContent = `Deleted at: ${formattedDate}, ID: ${record.recordId}`;
+      div.dataset.recordId = record.recordId;
+      div.dataset.timestamp = record.timestamp;
+      
+      // Add click handler
       div.addEventListener("click", handleDeletionRecordClick);
       listEl.appendChild(div);
     });
@@ -220,103 +241,92 @@ async function refreshDeletedRecords() {
   }
 }
 
-/**
- * When user clicks a record in the #deletedRecordsList,
- * we undelete that record to the chosen target zone.
- */
 async function handleDeletionRecordClick(e) {
   const div = e.currentTarget;
-  selectedRecordId = div.dataset.recordId;
-  if (!selectedRecordId) {
-    displayMessage("Invalid recordId for undelete.");
-    return;
-  }
+  const recordId = div.dataset.recordId;
   const targetZoneId = document.getElementById("undeleteTargetZone").value;
+
   if (!targetZoneId) {
-    displayMessage("Please select a target zone for undelete.");
+    displayMessage("Please select a target zone first.");
     return;
   }
-  // We fetch extra info from the server if needed:
-  showUndeleteModal(selectedRecordId);
-}
 
-/* 
-   Show the modal overlay with a custom message 
-*/
-async function showUndeleteModal(recordId) {
-  const overlay = document.getElementById("undeleteConfirmOverlay");
-  const msgEl = document.getElementById("undeleteConfirmMessage");
-  const listEl = document.getElementById("undeleteWidgetList");
-
-  msgEl.textContent = `Restore deleted record [${recordId}]?`;
+  if (!recordId) {
+    displayMessage("Invalid record selected.");
+    return;
+  }
 
   try {
-    const info = await getDeletedRecordDetails(recordId);
-    // info.count, info.types
-    listEl.innerHTML = `Will restore <strong>${info.count}</strong> widgets:<br/>`;
-    if (Object.keys(info.types).length > 0) {
-      listEl.innerHTML += "<ul>";
-      for (const [t, cnt] of Object.entries(info.types)) {
-        listEl.innerHTML += `<li>${t}: ${cnt}</li>`;
-      }
-      listEl.innerHTML += "</ul>";
+    // Fetch details about the deleted record
+    const res = await fetch(`/api/macros/deleted-details?recordId=${recordId}`);
+    if (!res.ok) {
+      throw new Error("Failed to fetch record details");
     }
+    
+    const data = await res.json();
+    if (!data.success) {
+      throw new Error(data.error || "Failed to load record details");
+    }
+
+    // Show confirmation dialog with details
+    const msgEl = document.getElementById("undeleteConfirmMessage");
+    const listEl = document.getElementById("undeleteWidgetList");
+    
+    msgEl.textContent = `Restore deleted record [${recordId}]?`;
+    
+    // Format the widget count and types
+    let detailsHtml = `Will restore ${data.count} widgets:<br/>`;
+    if (Object.keys(data.types).length > 0) {
+      detailsHtml += "<ul>";
+      for (const [type, count] of Object.entries(data.types)) {
+        detailsHtml += `<li>${type}: ${count}</li>`;
+      }
+      detailsHtml += "</ul>";
+    }
+    
+    listEl.innerHTML = detailsHtml;
+
+    // Store the selected record ID for the confirmation handler
+    selectedRecordId = recordId;
+
+    // Show the modal
+    document.getElementById("undeleteConfirmOverlay").style.display = "block";
   } catch (err) {
-    listEl.innerHTML = "No additional info. (Failed to load details)";
-    console.log("[showUndeleteModal]", err);
+    displayMessage(err.message);
   }
-
-  overlay.style.display = "block";
 }
 
-/*
-   Hide the modal
-*/
-function hideUndeleteModal() {
-  selectedRecordId = null;
-  const overlay = document.getElementById("undeleteConfirmOverlay");
-  overlay.style.display = "none";
-}
-
-/* 
-   Confirm -> calls POST /api/macros/undelete
-*/
 async function confirmUndelete() {
   if (!selectedRecordId) {
     displayMessage("No record selected to undelete.");
     hideUndeleteModal();
     return;
   }
+
   const targetZoneId = document.getElementById("undeleteTargetZone").value;
   if (!targetZoneId) {
-    displayMessage("No target zone selected.");
+    displayMessage("Please select a target zone.");
     hideUndeleteModal();
     return;
   }
+
   try {
     const payload = { recordId: selectedRecordId, targetZoneId };
     const resp = await postJson("/api/macros/undelete", payload);
-    displayMessage(resp.message || "Undelete success.");
+    displayMessage(resp.message || "Undelete successful.");
+    
+    // Refresh the deleted records list
     refreshDeletedRecords();
   } catch (err) {
     displayMessage(err.message);
   }
+  
   hideUndeleteModal();
 }
 
-/* 
-   Fetch deleted record details (optional)
-*/
-async function getDeletedRecordDetails(recordId) {
-  const res = await fetch(`/api/macros/deleted-details?recordId=${recordId}`);
-  if (!res.ok) {
-    throw new Error("Failed to retrieve details for recordId=" + recordId);
-  }
-  const data = await res.json();
-  if (!data.success) {
-    throw new Error(data.error || "Invalid response from details route");
-  }
-  return data; // { success:true, count: <number>, types: {...} }
+function hideUndeleteModal() {
+  selectedRecordId = null;
+  document.getElementById("undeleteConfirmOverlay").style.display = "none";
 }
 
 /* ------------------------------------------------------------------------- */
@@ -402,10 +412,101 @@ async function postJson(url, bodyObj) {
 }
 
 function displayMessage(msg) {
-  const msgEl = document.getElementById("macro-message");
+  const msgEl = document.getElementById("message");
   if (msgEl) {
-  msgEl.textContent = msg;
+    msgEl.textContent = msg;
+    msgEl.style.display = "block"; // Make sure message is visible
+    
+    // Optional: Hide message after 5 seconds
+    setTimeout(() => {
+      msgEl.style.display = "none";
+    }, 5000);
   } else {
     console.log("[displayMessage]", msg);
+  }
+}
+
+/* ------------------------------------------------------------------------- */
+/* Sorting Functions                                                          */
+/* ------------------------------------------------------------------------- */
+
+// Sort zone dropdowns
+function sortZoneDropdowns() {
+  const dropdowns = [
+    'manageSourceZone',
+    'manageTargetZone',
+    'undeleteTargetZone',
+    'groupingSourceZone',
+    'pinningSourceZone'
+  ];
+
+  dropdowns.forEach(id => {
+    const dropdown = document.getElementById(id);
+    if (dropdown) {
+      const options = Array.from(dropdown.options);
+      options.sort((a, b) => a.text.localeCompare(b.text, undefined, { numeric: true }));
+      
+      dropdown.innerHTML = '';
+      options.forEach(option => dropdown.appendChild(option));
+    }
+  });
+}
+
+// Sort deleted records list
+function sortDeletedRecords() {
+  const list = document.getElementById('deletedRecordsList');
+  if (!list) return;
+
+  const records = Array.from(list.children);
+  records.sort((a, b) => {
+    const aTime = new Date(a.dataset.timestamp || 0);
+    const bTime = new Date(b.dataset.timestamp || 0);
+    return bTime - aTime; // Most recent first
+  });
+
+  list.innerHTML = '';
+  records.forEach(record => list.appendChild(record));
+}
+
+// Sort widgets by title
+function sortWidgetsByTitle(widgets) {
+  return widgets.sort((a, b) => {
+    const aTitle = a.title || '';
+    const bTitle = b.title || '';
+    return aTitle.localeCompare(bTitle, undefined, { numeric: true });
+  });
+}
+
+/* ------------------------------------------------------------------------- */
+/* Pinning Functions                                                         */
+/* ------------------------------------------------------------------------- */
+
+async function pinAll() {
+  const zoneId = document.getElementById("pinningSourceZone").value;
+  if (!zoneId) {
+    displayMessage("Please select a Source zone for pinning.");
+    return;
+  }
+  try {
+    const payload = { zoneId };
+    const resp = await postJson("/api/macros/pin-all", payload);
+    displayMessage(resp.message);
+  } catch (err) {
+    displayMessage(err.message);
+  }
+}
+
+async function unpinAll() {
+  const zoneId = document.getElementById("pinningSourceZone").value;
+  if (!zoneId) {
+    displayMessage("Please select a Source zone for unpinning.");
+    return;
+  }
+  try {
+    const payload = { zoneId };
+    const resp = await postJson("/api/macros/unpin-all", payload);
+    displayMessage(resp.message);
+  } catch (err) {
+    displayMessage(err.message);
   }
 }

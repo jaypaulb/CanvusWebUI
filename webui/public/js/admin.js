@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmModal = document.getElementById('confirm-modal');
     const confirmSaveButton = document.getElementById('confirm-save');
     const cancelSaveButton = document.getElementById('cancel-save');
+    const successNotification = document.getElementById('successNotification');
   
     // Function to display messages
     function displayMessage(element, text, type) {
@@ -23,6 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
       element.textContent = "";
       element.className = "message";
       element.style.display = "none";
+    }
+  
+    // Function to show success notification
+    function showSuccessNotification() {
+        successNotification.classList.add('show');
+        setTimeout(() => {
+            successNotification.classList.remove('show');
+        }, 3000);
     }
   
     // Handle Password Form Submission
@@ -50,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
         const data = await response.json();
   
-        if (response.ok && data.success) {
+        if (data.success) {
           displayMessage(passwordMessage, "Authentication successful.", "success");
           // Hide the password section and show the environment form
           document.getElementById('password-section').style.display = 'none';
@@ -58,14 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
           // Set the hidden password field
           envForm.querySelector('input[name="password"]').value = enteredPassword;
           // Fetch and populate environment variables
-          fetchAndPopulateEnvVariables();
+          await fetchAndPopulateEnvVariables();
         } else {
-          displayMessage(passwordMessage, data.error || "Authentication failed.", "error");
+          displayMessage(passwordMessage, "Invalid password.", "error");
         }
   
       } catch (error) {
-        console.error('Error during authentication:', error);
-        displayMessage(passwordMessage, "An error occurred during authentication.", "error");
+        console.error('Error:', error);
+        displayMessage(passwordMessage, "An error occurred. Please try again.", "error");
       }
     });
   
@@ -75,47 +84,35 @@ document.addEventListener('DOMContentLoaded', () => {
       displayMessage(envMessage, "Loading environment variables...", "loading");
   
       try {
-        const response = await fetch('/env-variables', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
+        const response = await fetch('/env-variables');
+        const data = await response.json();
+        const envVariablesDiv = document.getElementById('env-variables');
+        envVariablesDiv.innerHTML = ''; // Clear existing content
   
-        if (!response.ok) {
-          throw new Error('Failed to fetch environment variables.');
-        }
-  
-        const envData = await response.json();
-  
-        // Display the environment variables in editable fields
-        const envContainer = document.getElementById('env-variables');
-        envContainer.innerHTML = ''; // Clear any existing content
-  
-        for (const [key, value] of Object.entries(envData)) {
-          const fieldDiv = document.createElement('div');
-          fieldDiv.className = 'env-field';
+        // Create form fields for each environment variable
+        for (const [key, value] of Object.entries(data)) {
+          const formGroup = document.createElement('div');
+          formGroup.className = 'form-group';
   
           const label = document.createElement('label');
-          label.setAttribute('for', key);
-          label.textContent = `${key}:`;
+          label.textContent = key;
+          label.htmlFor = `env-${key}`;
   
           const input = document.createElement('input');
           input.type = 'text';
+          input.id = `env-${key}`;
           input.name = key;
-          input.id = key;
           input.value = value;
-          input.required = true;
   
-          fieldDiv.appendChild(label);
-          fieldDiv.appendChild(input);
-          envContainer.appendChild(fieldDiv);
+          formGroup.appendChild(label);
+          formGroup.appendChild(input);
+          envVariablesDiv.appendChild(formGroup);
         }
   
         clearMessage(envMessage); // Clear the loading message
       } catch (error) {
-        console.error('Error fetching environment variables:', error);
-        displayMessage(envMessage, "Error fetching environment variables.", "error");
+        console.error('Error:', error);
+        displayMessage(envMessage, "Failed to load environment variables.", "error");
       }
     }
   
@@ -135,12 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
       displayMessage(envMessage, "Saving changes...", "loading");
   
       const formData = new FormData(envForm);
-      const updatedValues = {};
+      const updatedVars = {};
   
-      // Collect all form data, including the password
-      formData.forEach((value, key) => {
-        updatedValues[key] = value.trim();
-      });
+      // Convert FormData to object, excluding the password
+      for (const [key, value] of formData.entries()) {
+        if (key !== 'password') {
+          updatedVars[key] = value;
+        }
+      }
   
       try {
         const response = await fetch('/update-env', {
@@ -148,19 +147,23 @@ document.addEventListener('DOMContentLoaded', () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(updatedValues)
+          body: JSON.stringify({
+            password: formData.get('password'),
+            ...updatedVars
+          }),
         });
   
-        const result = await response.json();
+        const data = await response.json();
   
-        if (response.ok && result.success) {
+        if (data.success) {
+          showSuccessNotification();
           displayMessage(envMessage, "Environment variables updated successfully.", "success");
         } else {
-          displayMessage(envMessage, result.error || "Failed to update environment variables.", "error");
+          displayMessage(envMessage, data.error || "Failed to update environment variables.", "error");
         }
   
       } catch (error) {
-        console.error("Error updating environment variables:", error);
+        console.error('Error:', error);
         displayMessage(envMessage, "An error occurred while saving changes.", "error");
       }
     });

@@ -8,267 +8,99 @@
 
     <!-- External CSS -->
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/navbar.css"> <!-- If needed -->
-
-    <!-- Inline Styles for Admin Frame and Modal (Can be moved to styles.css for better organization) -->
-    <style>
-        /* Additional styles for team tabs and admin frame */
-        .team-tabs {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .team-tab {
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: transform 0.2s, box-shadow 0.3s, opacity 0.3s;
-            font-size: 16px;
-            color: #ffffff;
-        }
-
-        .team-tab.active-team {
-            transform: scale(1.1);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            opacity: 1;
-        }
-
-        /* Define team-specific colors */
-        .team-1 { background-color: #FF0000FF; } /* Red */
-        .team-2 { background-color: #FF7F00FF; } /* Orange */
-        .team-3 { background-color: #FFFF00FF; } /* Yellow */
-        .team-4 { background-color: #00FF00FF; } /* Green */
-        .team-5 { background-color: #0000FFFF; } /* Blue */
-        .team-6 { background-color: #4B0082FF; } /* Indigo */
-        .team-7 { background-color: #8B00FFFF; } /* Violet */
-
-        /* Style for unselected tabs matching their color group */
-        .team-tab:not(.active-team) {
-            opacity: 0.7;
-        }
-
-        /* Admin layout */
-        .admin-container {
-            margin-top: 40px;
-        }
-
-        .admin-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .admin-frame {
-            display: flex;
-            flex-direction: row;
-            border: 2px dashed #ccc;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            min-height: 300px;
-        }
-
-        /* Left side nav as vertical navbar */
-        .admin-frame-left {
-            width: 25%;
-            border-right: 1px solid #ccc;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Use the .navbar and .nav-tabs classes for styling */
-        .admin-frame-left .navbar {
-            background-color: #333;
-            border-radius: 0; /* Adjust if needed */
-        }
-
-        .admin-frame-left .nav-tabs {
-            display: flex;
-            flex-direction: column; /* Vertical orientation */
-            padding: 0;
-            margin: 0;
-        }
-
-        .admin-frame-left .nav-item {
-            width: 100%;
-        }
-
-        .admin-frame-left .nav-link {
-            display: block;
-            color: #f2f2f2;
-            text-align: left;
-            padding: 14px 16px;
-            text-decoration: none;
-            transition: background-color 0.3s;
-            border-bottom: 1px solid #444; /* Slight separator */
-        }
-
-        .admin-frame-left .nav-link:hover {
-            background-color: #575757;
-        }
-
-        .admin-frame-left .nav-link.active {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        /* Right side content */
-        .admin-frame-right {
-            width: 75%;
-            padding: 20px;
-            position: relative;
-        }
-
-        .message {
-            margin-top: 10px;
-        }
-
-        .action-panel {
-            display: none;
-        }
-
-        .action-panel.active {
-            display: block;
-        }
-
-        .action-panel h3 {
-            margin-top: 0;
-        }
-
-        #target-notes-list label, #users-list label {
-            display: block;
-            margin: 5px 0;
-        }
-
-        /* Confirmation modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top:0; left:0;
-            width:100%; height:100%;
-            background: rgba(0,0,0,0.4);
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 10% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 90%;
-            max-width: 400px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .modal-content button {
-            margin: 5px;
-            padding: 10px 20px;
-            font-size: 14px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .close-modal { background: #f44336; color: #fff; }
-        .confirm-action { background: #4CAF50; color: #fff; }
-    </style>
+    <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
     <!-- Navbar Placeholder -->
     <div id="navbar-placeholder"></div>
 
     <!-- User Identification Section -->
-    <div class="container" id="user-identification">
-        <h2>Identify Yourself</h2>
-        <div class="section">
-            <label>Select Your Team:</label>
-            <div class="team-tabs">
-                <button class="team-tab team-1" data-team="1">Team 1</button>
-                <button class="team-tab team-2" data-team="2">Team 2</button>
-                <button class="team-tab team-3" data-team="3">Team 3</button>
-                <button class="team-tab team-4" data-team="4">Team 4</button>
-                <button class="team-tab team-5" data-team="5">Team 5</button>
-                <button class="team-tab team-6" data-team="6">Team 6</button>
-                <button class="team-tab team-7" data-team="7">Team 7</button>
+    <div id="user-identification" class="container">
+        <h2>User Testing</h2>
+        <div class="form-group">
+            <label for="username">Your Name:</label>
+            <input type="text" id="username" required placeholder="Enter your name">
+        </div>
+
+        <div class="team-selection">
+            <h3>Select Your Team:</h3>
+            <div class="team-buttons">
+                <button class="team-button" data-team="1">Team 1</button>
+                <button class="team-button" data-team="2">Team 2</button>
+                <button class="team-button" data-team="3">Team 3</button>
+                <button class="team-button" data-team="4">Team 4</button>
+                <button class="team-button" data-team="5">Team 5</button>
+                <button class="team-button" data-team="6">Team 6</button>
+                <button class="team-button" data-team="7">Team 7</button>
             </div>
         </div>
-        <div class="section">
-            <label for="userName">Enter Your Name:</label>
-            <input type="text" id="userName" placeholder="Your Name" required>
+
+        <div id="message" class="message"></div>
+    </div>
+
+    <!-- User Dashboard Section (Hidden initially) -->
+    <div id="user-dashboard" class="container" style="display: none;">
+        <div class="button-group" style="justify-content: flex-start;">
+            <button id="backButton" class="btn-secondary">Back to Testing</button>
         </div>
-        <button id="identifyButton">Identify</button>
-        <div id="identification-message" class="message"></div>
+        <h2 id="welcomeMessage"></h2>
+        
+        <div class="note-section">
+            <div id="noteSquare" class="note-square" contenteditable="true" placeholder="Enter your note here..."></div>
+            <div class="button-group">
+                <button id="postNoteButton">Post Note</button>
+                <button id="uploadItemButton">Upload File</button>
+            </div>
+        </div>
     </div>
 
     <!-- Admin Section -->
-    <div class="container admin-container">
-        <h2>Admin Functions</h2>
-        <div class="admin-frame">
-        <div class="admin-frame-left">
-                <div class="navbar">
-                    <ul class="nav-tabs">
-                        <li class="nav-item"><a href="#" id="tab-create-targets" class="nav-link">Create Targets</a></li>
-                        <li class="nav-item"><a href="#" id="tab-delete-targets" class="nav-link">Delete Targets</a></li>
-                        <li class="nav-item"><a href="#" id="tab-clear-users" class="nav-link">Clear Stored Users</a></li>
-                    </ul>
-                </div>
-        </div>
-        <div class="admin-frame-right">
-            <div id="admin-message" class="message"></div>
-
-            <!-- Create Targets Panel -->
-            <div id="panel-create-targets" class="action-panel">
-                <h3>Create Team Targets</h3>
-                <p>Click confirm to create team targets.</p>
-                <button id="create-targets-confirm">Confirm</button>
-                <button id="create-targets-cancel">Cancel</button>
-            </div>
-
-            <!-- Delete Targets Panel -->
-            <div id="panel-delete-targets" class="action-panel">
-                <h3>Delete Targets</h3>
-                <div id="target-notes-list"></div>
-                <button id="delete-targets-confirm">Confirm Delete</button>
-                <button id="delete-targets-cancel">Cancel</button>
-            </div>
-
-            <!-- Clear Users Panel -->
-            <div id="panel-clear-users" class="action-panel">
-                <h3>Clear Stored Users</h3>
-                <div id="users-list"></div>
-                <button id="delete-selected-users-btn">Delete Selected</button>
-                <button id="delete-all-users-btn">Delete All</button>
-                <button id="clear-users-cancel">Cancel</button>
-                </div>
-            </div>
+    <div id="admin-section" class="container">
+        <h2>Admin Actions</h2>
+        <div class="button-group">
+            <button id="createTargetsBtn" class="btn btn-primary">Create Target Notes</button>
+            <button id="deleteTargetsBtn" class="btn btn-danger">Delete Target Notes</button>
+            <button id="listUsersBtn" class="btn btn-info">List Users</button>
+            <button id="deleteUsersBtn" class="btn btn-warning">Delete Users</button>
         </div>
     </div>
 
-    <!-- User Dashboard Section -->
-    <div class="container" id="user-dashboard" style="display: none;">
-        <h2 id="welcomeMessage"></h2>
-        <div class="note-section">
-            <div class="colored-square" id="noteSquare" contenteditable="true" placeholder="Enter your note here..."></div>
-            <div class="button-group">
-                <button id="uploadItemButton">Upload Item</button>
-                <button id="postNoteButton">Post Note</button>
-            </div>
-            <div id="upload-message" class="message"></div>
-            <div id="note-message" class="message"></div>
+    <!-- User List Section -->
+    <div class="user-list-section-container">
+        <h2>User List</h2>
+        <div class="user-list-container">
+            <table id="userListTable">
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th>Name</th>
+                        <th>Color</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- User rows will be populated here -->
+                </tbody>
+            </table>
+            <div id="userListMessage" class="message">No users to display. Click "List Users" to refresh.</div>
         </div>
     </div>
 
-    <!-- Confirmation Modal -->
-    <div id="confirm-modal" class="modal-overlay">
+    <!-- Admin Modal -->
+    <div id="adminModal" class="modal">
         <div class="modal-content">
-            <h3 id="confirm-modal-title">Confirm Action</h3>
-            <p id="confirm-modal-message">Are you sure?</p>
-            <button id="confirm-modal-confirm" class="confirm-action">Confirm</button>
-            <button id="confirm-modal-cancel" class="close-modal">Cancel</button>
+            <h3>Admin Authentication</h3>
+            <div class="form-group">
+                <label for="adminPassword">Enter Admin Password:</label>
+                <input type="password" id="adminPassword" placeholder="Password">
+            </div>
+            <div class="button-group">
+                <button id="adminConfirm" class="btn btn-primary">Confirm</button>
+                <button id="adminCancel" class="btn btn-secondary">Cancel</button>
+            </div>
         </div>
     </div>
 
+    <!-- External JavaScript -->
     <script src="js/common.js"></script>
     <script src="js/navbar.js"></script>
     <script src="js/upload.js"></script>

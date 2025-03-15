@@ -42,13 +42,20 @@ document.addEventListener('DOMContentLoaded', () => {
   
           // Check if data.zones is an array
           if (Array.isArray(data.zones)) {
-            data.zones.forEach(zone => {
+            // Sort zones by anchor_name
+            const sortedZones = [...data.zones].sort((a, b) => {
+              const nameA = (a.anchor_name || '').toLowerCase();
+              const nameB = (b.anchor_name || '').toLowerCase();
+              return nameA.localeCompare(nameB, undefined, { numeric: true });
+            });
+  
+            sortedZones.forEach(zone => {
               const option = document.createElement('option');
               option.value = zone.id;
               option.textContent = zone.anchor_name;
               subZoneSelect.appendChild(option);
             });
-            console.log("Dropdown updated with new zones.");
+            console.log("Dropdown updated with sorted zones.");
           } else {
             console.error("data.zones is not an array:", data.zones);
             displayMessage("Unexpected data format received.", "error");
@@ -82,7 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const response = await fetch("/create-zones", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({
             gridSize,
             gridPattern,
@@ -121,7 +130,9 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const response = await fetch("/delete-zones", {
           method: "DELETE",
-          headers: { "Content-Type": "application/json" }
+          headers: { 
+            "Content-Type": "application/json"
+          }
         });
   
         const data = await response.json();

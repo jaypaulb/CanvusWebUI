@@ -4,6 +4,21 @@ This project is a demonstration of the capabilities of the CanvusAPI combined wi
 
 ---
 
+## Project Structure
+
+```
+CanvusWebUI/
+├── webui/               # Main application directory
+│   ├── server.js       # Main server application
+│   ├── public/         # Static files
+│   ├── uploads/        # File upload directory
+│   ├── canvusapi/     # API integration
+│   └── package.json    # Dependencies
+├── old/                # Archived files
+├── .env               # Environment configuration
+└── README.md          # This file
+```
+
 ## Features
 
 ### Web UI
@@ -18,6 +33,22 @@ This project is a demonstration of the capabilities of the CanvusAPI combined wi
   - Assigns a unique color to each user and attaches their uploads to their team's reference note.
   - Admin options for creating team target notes.
 - **Admin**: Displays and allows manual updates to the `.env` configuration.
+
+---
+
+## Development Environment
+
+### Requirements
+- Windows 11
+- Node.js
+- PowerShell
+
+### IDE Support
+This project includes configuration for Cursor.ai IDE. The following files are automatically ignored in git:
+- `.cursor/`
+- `.cursor.json`
+- `cursor.json`
+- `.cursorcache/`
 
 ---
 
