@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "start:dev": "node server.js",
+    "start:prod": "pm2 start ecosystem.config.js --env production"
   },
   "keywords": [],
   "author": "",
