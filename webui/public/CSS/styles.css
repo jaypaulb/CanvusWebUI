@@ -21,7 +21,7 @@
   --color-white: #ffffff;
   --color-surface: #ffffff;
   
-  /* Dark theme colors - updated for better contrast and less eye strain */
+  /* Dark theme colors */
   --color-dark-primary: #66bb6a;
   --color-dark-primary-dark: #4caf50;
   --color-dark-danger: #ef5350;
@@ -31,6 +31,39 @@
   --color-dark-border: #424242;
   --color-dark-background: #1a1a1a;
   --color-dark-surface: #242424;
+
+  /* KPMG theme colors */
+  --kpmg-blue: #00338D;        /* Primary KPMG Blue */
+  --kpmg-medium-blue: #005EB8; /* Secondary Medium Blue */
+  --kpmg-light-blue: #0091DA;  /* Secondary Light Blue */
+  --kpmg-purple: #483698;      /* Secondary Purple */
+  --kpmg-violet: #470A68;      /* Secondary Violet */
+  --kpmg-light-purple: #6D2077;/* Secondary Light Purple */
+  --kpmg-green: #00A3A1;       /* Secondary Green */
+  
+  /* KPMG Light theme */
+  --color-kpmg-light-primary: var(--kpmg-blue);
+  --color-kpmg-light-primary-dark: #002D7A;
+  --color-kpmg-light-danger: #E31B23;
+  --color-kpmg-light-danger-dark: #C41017;
+  --color-kpmg-light-text: #333333;
+  --color-kpmg-light-text-light: #666666;
+  --color-kpmg-light-border: #CCCCCC;
+  --color-kpmg-light-background: #F5F5F5;
+  --color-kpmg-light-surface: #FFFFFF;
+  --color-kpmg-light-accent: var(--kpmg-light-blue);
+
+  /* KPMG Dark theme */
+  --color-kpmg-dark-primary: var(--kpmg-light-blue);
+  --color-kpmg-dark-primary-dark: var(--kpmg-blue);
+  --color-kpmg-dark-danger: #E31B23;
+  --color-kpmg-dark-danger-dark: #C41017;
+  --color-kpmg-dark-text: #FFFFFF;
+  --color-kpmg-dark-text-light: #E0E0E0;
+  --color-kpmg-dark-border: #333333;
+  --color-kpmg-dark-background: #1A1A1A;
+  --color-kpmg-dark-surface: #242424;
+  --color-kpmg-dark-accent: var(--kpmg-medium-blue);
   
   /* Other variables remain unchanged */
   --border-radius-sm: 4px;
@@ -46,6 +79,9 @@
   --font-size-lg: 1.25rem;
   --font-size-xl: 1.5rem;
   --font-size-2xl: 1.75rem;
+
+  /* Set default font to Arial for web as per KPMG guidelines */
+  --font-family: Arial, system-ui, -apple-system, sans-serif;
 }
 
 /* Dark theme class */
@@ -60,10 +96,74 @@
   --color-background: var(--color-dark-background);
   --color-surface: var(--color-dark-surface);
   --color-white: var(--color-dark-surface);
+}
+
+/* KPMG Light theme */
+[data-theme="kpmg-light"] {
+  --color-primary: var(--kpmg-blue);
+  --color-primary-dark: #002D7A;
+  --color-secondary: var(--kpmg-medium-blue);
+  --color-secondary-dark: var(--kpmg-blue);
+  --color-danger: #E31B23;
+  --color-danger-dark: #C41017;
+  --color-text: #333333;
+  --color-text-light: #666666;
+  --color-border: #CCCCCC;
+  --color-background: #F5F5F5;
+  --color-surface: #FFFFFF;
+  --color-white: #FFFFFF;
+  --color-accent: var(--kpmg-light-blue);
+  font-family: var(--font-family);
   
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-  --shadow-md: 0 4px 6px rgba(0,0,0,0.25);
-  --shadow-lg: 0 10px 15px rgba(0,0,0,0.25);
+  /* Button styles */
+  --btn-primary-gradient: linear-gradient(45deg, var(--kpmg-blue), var(--kpmg-medium-blue));
+  --btn-secondary-gradient: linear-gradient(45deg, var(--kpmg-medium-blue), var(--kpmg-light-blue));
+  --btn-hover-shadow: 0 4px 8px rgba(0, 51, 141, 0.2);
+}
+
+/* KPMG Dark theme */
+[data-theme="kpmg-dark"] {
+  --color-primary: var(--kpmg-light-blue);
+  --color-primary-dark: var(--kpmg-blue);
+  --color-secondary: var(--kpmg-medium-blue);
+  --color-secondary-dark: var(--kpmg-blue);
+  --color-danger: #E31B23;
+  --color-danger-dark: #C41017;
+  --color-text: #FFFFFF;
+  --color-text-light: #E0E0E0;
+  --color-border: #333333;
+  --color-background: #1A1A1A;
+  --color-surface: #242424;
+  --color-white: #FFFFFF;
+  --color-accent: var(--kpmg-medium-blue);
+  font-family: var(--font-family);
+  
+  /* Button styles */
+  --btn-primary-gradient: linear-gradient(45deg, var(--kpmg-light-blue), var(--kpmg-blue));
+  --btn-secondary-gradient: linear-gradient(45deg, var(--kpmg-medium-blue), var(--kpmg-light-blue));
+  --btn-hover-shadow: 0 4px 8px rgba(0, 145, 218, 0.2);
+}
+
+/* Apply KPMG-specific button styles */
+[data-theme^="kpmg"] .btn-primary {
+  background: var(--btn-primary-gradient);
+  color: var(--color-white);
+  transition: all 0.3s ease;
+}
+
+[data-theme^="kpmg"] .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--btn-hover-shadow);
+}
+
+[data-theme^="kpmg"] .btn-secondary {
+  background: var(--btn-secondary-gradient);
+  color: var(--color-white);
+}
+
+[data-theme^="kpmg"] .btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--btn-hover-shadow);
 }
 
 /* Theme toggle styles */
@@ -860,4 +960,188 @@ button.loading .loading-spinner {
         border-color: var(--border-color);
     }
 }
+
+/* Theme Preview Styles */
+.theme-preview-section {
+  margin: var(--spacing-lg) 0;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.theme-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.theme-actions button {
+  min-width: 120px;
+}
+
+#save-theme-changes {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+#save-theme-changes:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.preview-frame {
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-lg);
+  margin: var(--spacing-md) 0;
+  background-color: var(--color-surface);
+}
+
+.preview-frame[data-editable="true"] .preview-element {
+  cursor: pointer;
+  position: relative;
+}
+
+.preview-frame[data-editable="true"] .preview-element:hover {
+  outline: 2px dashed var(--color-primary);
+  outline-offset: 2px;
+}
+
+.preview-frame[data-editable="true"] .preview-element.selected {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.preview-elements {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* Color Picker Panel */
+.color-picker-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--color-surface);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    display: none;
+    min-width: 300px;
+}
+
+.color-picker-panel.show {
+    display: block;
+}
+
+.picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.picker-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.picker-content #apply-color {
+    margin-bottom: var(--spacing-sm);
+    width: 100%;
+}
+
+.color-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.color-group label {
+    min-width: 100px;
+}
+
+.color-group input[type="color"] {
+    width: 60px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    color: var(--color-text);
+    opacity: 0.7;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}
+
+/* Theme Select Container */
+.theme-select-container {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: flex-end;
+  margin-bottom: var(--spacing-lg);
+}
+
+.theme-select-container .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+#apply-theme {
+  min-width: 120px;
+}
+
+/* QR Code Section Styles */
+#qr-section {
+    text-align: center;
+    padding: 2rem;
+    margin-top: 2rem;
+    background-color: var(--color-surface);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#qrcode {
+    display: inline-block;
+    padding: 1rem;
+    background-color: white; /* Always white for QR code readability */
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    margin: 1rem 0;
+}
+
+[data-theme="dark"] #qr-section {
+    background-color: var(--color-surface);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] #qrcode {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.qr-description {
+    color: var(--color-text);
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
   
+
+

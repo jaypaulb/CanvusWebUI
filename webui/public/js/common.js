@@ -151,7 +151,7 @@ const AdminModal = {
 // Admin Authentication Service
 let adminToken = null;
 
-async function makeAdminRequest(url, method = 'POST') {
+async function makeAdminRequest(url, method = 'POST', body = null) {
     console.log('Making admin request to', url);
     
     try {
@@ -170,7 +170,8 @@ async function makeAdminRequest(url, method = 'POST') {
             headers: {
                 'Authorization': `Bearer ${adminToken}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            ...(body ? { body: JSON.stringify(body) } : {})
         });
 
         const data = await response.json();
@@ -179,7 +180,7 @@ async function makeAdminRequest(url, method = 'POST') {
             // If auth failed, clear token and retry once
             if (response.status === 401) {
                 adminToken = null;
-                return makeAdminRequest(url, method);
+                return makeAdminRequest(url, method, body);
             }
             throw new Error(data.error || 'Request failed');
         }

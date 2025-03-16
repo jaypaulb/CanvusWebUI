@@ -1,9 +1,6 @@
 // /public/js/admin.js
 
-document.addEventListener('DOMContentLoaded', () => {
-    const passwordForm = document.getElementById('password-form');
-    const passwordInput = document.getElementById('admin-password');
-    const passwordMessage = document.getElementById('password-message');
+document.addEventListener('DOMContentLoaded', async () => {
     const envFormContainer = document.getElementById('env-form-container');
     const envForm = document.getElementById('env-form');
     const envMessage = document.getElementById('env-message');
@@ -11,6 +8,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmSaveButton = document.getElementById('confirm-save');
     const cancelSaveButton = document.getElementById('cancel-save');
     const successNotification = document.getElementById('successNotification');
+    const themeSection = document.getElementById('theme-section');
+    const themeSelect = document.getElementById('theme-select');
+    const applyThemeBtn = document.getElementById('apply-theme');
+    const editThemeBtn = document.getElementById('edit-theme');
+    const previewFrame = document.getElementById('preview-frame');
+    const colorPickerPanel = document.getElementById('color-picker-panel');
+    const selectedElementText = document.getElementById('selected-element');
+    const elementColor = document.getElementById('element-color');
+    const elementBackground = document.getElementById('element-background');
+    const applyColorBtn = document.getElementById('apply-color');
+    const closePickerBtn = document.getElementById('close-picker');
+    const saveThemeBtn = document.getElementById('save-theme');
+    const cancelThemeBtn = document.getElementById('cancel-theme');
+    const editorPreview = document.getElementById('editor-preview');
+    const saveThemeChangesBtn = document.getElementById('save-theme-changes');
+    const createThemeBtn = document.getElementById('create-theme');
+    const createThemeModal = document.getElementById('create-theme-modal');
+    const confirmCreateThemeBtn = document.getElementById('confirm-create-theme');
+    const cancelCreateThemeBtn = document.getElementById('cancel-create-theme');
+    const newThemeNameInput = document.getElementById('new-theme-name');
+  
+    let currentTheme = localStorage.getItem('theme') || 'default';
+    let selectedElement = null;
+    let isEditing = false;
+    let editingTheme = null;
   
     // Function to display messages
     function displayMessage(element, text, type) {
@@ -27,159 +49,338 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   
     // Function to show success notification
-    function showSuccessNotification() {
+    function showSuccessNotification(message = 'Changes saved successfully!') {
+        successNotification.textContent = message;
         successNotification.classList.add('show');
         setTimeout(() => {
             successNotification.classList.remove('show');
         }, 3000);
     }
-  
-    // Handle Password Form Submission
-    passwordForm.addEventListener('submit', async (event) => {
-      event.preventDefault(); // Prevent form from submitting normally
-      clearMessage(passwordMessage);
-      clearMessage(envMessage);
-  
-      const enteredPassword = passwordInput.value.trim();
-  
-      if (!enteredPassword) {
-        displayMessage(passwordMessage, "Password cannot be empty.", "error");
-        return;
-      }
-  
-      try {
-        // Authenticate the password by sending it to the server
-        const response = await fetch('/validateAdminPassword', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ password: enteredPassword }),
+
+    // Function to apply theme to preview only
+    function applyThemeToPreview(theme) {
+        const isDark = localStorage.getItem('theme')?.includes('dark') || false;
+        const actualTheme = theme === 'kpmg-light' ? 
+            (isDark ? 'kpmg-dark' : 'kpmg-light') : 
+            (isDark ? 'dark' : 'default');
+        
+        previewFrame.setAttribute('data-theme', actualTheme);
+        
+        // Clone current theme variables to preview frame
+        const computedStyle = getComputedStyle(document.documentElement);
+        const themeVars = {};
+        for (const prop of computedStyle) {
+            if (prop.startsWith('--')) {
+                themeVars[prop] = computedStyle.getPropertyValue(prop);
+            }
+        }
+        // Apply theme variables to preview frame
+        Object.entries(themeVars).forEach(([prop, value]) => {
+            previewFrame.style.setProperty(prop, value);
         });
-  
-        const data = await response.json();
-  
-        if (data.success) {
-          displayMessage(passwordMessage, "Authentication successful.", "success");
-          // Hide the password section and show the environment form
-          document.getElementById('password-section').style.display = 'none';
-          envFormContainer.style.display = 'block';
-          // Set the hidden password field
-          envForm.querySelector('input[name="password"]').value = enteredPassword;
-          // Fetch and populate environment variables
-          await fetchAndPopulateEnvVariables();
-        } else {
-          displayMessage(passwordMessage, "Invalid password.", "error");
-        }
-  
-      } catch (error) {
-        console.error('Error:', error);
-        displayMessage(passwordMessage, "An error occurred. Please try again.", "error");
-      }
-    });
-  
-    // Function to fetch and populate Environment Variables
-    async function fetchAndPopulateEnvVariables() {
-      clearMessage(envMessage);
-      displayMessage(envMessage, "Loading environment variables...", "loading");
-  
-      try {
-        const response = await fetch('/env-variables');
-        const data = await response.json();
-        const envVariablesDiv = document.getElementById('env-variables');
-        envVariablesDiv.innerHTML = ''; // Clear existing content
-  
-        // Create form fields for each environment variable
-        for (const [key, value] of Object.entries(data)) {
-          const formGroup = document.createElement('div');
-          formGroup.className = 'form-group';
-  
-          const label = document.createElement('label');
-          label.textContent = key;
-          label.htmlFor = `env-${key}`;
-  
-          const input = document.createElement('input');
-          input.type = 'text';
-          input.id = `env-${key}`;
-          input.name = key;
-          input.value = value;
-  
-          formGroup.appendChild(label);
-          formGroup.appendChild(input);
-          envVariablesDiv.appendChild(formGroup);
-        }
-  
-        clearMessage(envMessage); // Clear the loading message
-      } catch (error) {
-        console.error('Error:', error);
-        displayMessage(envMessage, "Failed to load environment variables.", "error");
-      }
     }
-  
-    // Function to handle Environment Variables Form Submission
-    envForm.addEventListener('submit', (event) => {
-      event.preventDefault(); // Prevent default form submission behavior
-      clearMessage(envMessage);
-  
-      // Show the confirmation modal
-      confirmModal.style.display = 'block';
-    });
-  
-    // Handle Confirm Save Button Click
-    confirmSaveButton.addEventListener('click', async () => {
-      // Hide the confirmation modal
-      confirmModal.style.display = 'none';
-      displayMessage(envMessage, "Saving changes...", "loading");
-  
-      const formData = new FormData(envForm);
-      const updatedVars = {};
-  
-      // Convert FormData to object, excluding the password
-      for (const [key, value] of formData.entries()) {
-        if (key !== 'password') {
-          updatedVars[key] = value;
-        }
-      }
-  
-      try {
-        const response = await fetch('/update-env', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            password: formData.get('password'),
-            ...updatedVars
-          }),
+
+    // Function to apply theme globally
+    function applyThemeGlobally(theme) {
+        const isDark = localStorage.getItem('theme')?.includes('dark') || false;
+        const actualTheme = theme === 'kpmg-light' ? 
+            (isDark ? 'kpmg-dark' : 'kpmg-light') : 
+            (isDark ? 'dark' : 'default');
+        
+        document.documentElement.setAttribute('data-theme', actualTheme);
+        localStorage.setItem('theme', actualTheme);
+        showSuccessNotification('Theme applied successfully!');
+    }
+
+    // Initialize theme selection
+    if (themeSelect) {
+        themeSelect.value = currentTheme.includes('kpmg') ? 'kpmg-light' : 'default';
+        applyThemeToPreview(themeSelect.value);
+
+        // Handle theme changes in preview
+        themeSelect.addEventListener('change', (e) => {
+            applyThemeToPreview(e.target.value);
         });
-  
-        const data = await response.json();
-  
-        if (data.success) {
-          showSuccessNotification();
-          displayMessage(envMessage, "Environment variables updated successfully.", "success");
-        } else {
-          displayMessage(envMessage, data.error || "Failed to update environment variables.", "error");
+    }
+
+    // Handle apply theme button
+    if (applyThemeBtn) {
+        applyThemeBtn.addEventListener('click', () => {
+            const selectedTheme = themeSelect.value;
+            applyThemeGlobally(selectedTheme);
+        });
+    }
+
+    // Handle edit theme button
+    if (editThemeBtn) {
+        editThemeBtn.addEventListener('click', () => {
+            isEditing = !isEditing;
+            previewFrame.setAttribute('data-editable', isEditing);
+            editThemeBtn.textContent = isEditing ? 'Stop Editing' : 'Edit Theme';
+            saveThemeChangesBtn.style.display = isEditing ? 'inline-block' : 'none';
+            colorPickerPanel.classList.remove('show');
+            selectedElement = null;
+        });
+    }
+
+    // Handle preview element clicks
+    if (previewFrame) {
+        previewFrame.addEventListener('click', (e) => {
+            if (!isEditing) return;
+            
+            const element = e.target.closest('.preview-element');
+            if (!element) return;
+
+            // Remove selected class from all elements
+            previewFrame.querySelectorAll('.preview-element').forEach(el => {
+                el.classList.remove('selected');
+            });
+
+            // Add selected class to clicked element
+            element.classList.add('selected');
+            selectedElement = element;
+
+            // Update color picker
+            const computedStyle = getComputedStyle(element);
+            elementColor.value = rgbToHex(computedStyle.color);
+            elementBackground.value = rgbToHex(computedStyle.backgroundColor);
+            
+            // Update selected element text
+            selectedElementText.textContent = `Editing: ${element.dataset.element}`;
+            
+            // Show color picker panel
+            colorPickerPanel.classList.add('show');
+        });
+    }
+
+    // Handle color picker close
+    if (closePickerBtn) {
+        closePickerBtn.addEventListener('click', () => {
+            colorPickerPanel.classList.remove('show');
+            if (selectedElement) {
+                selectedElement.classList.remove('selected');
+                selectedElement = null;
+            }
+        });
+    }
+
+    // Handle color application
+    if (applyColorBtn) {
+        applyColorBtn.addEventListener('click', () => {
+            if (!selectedElement) return;
+
+            const elementType = selectedElement.dataset.element;
+            const color = elementColor.value;
+            const background = elementBackground.value;
+
+            // Apply colors to the element
+            selectedElement.style.color = color;
+            selectedElement.style.backgroundColor = background;
+
+            // Store the colors in CSS variables
+            const varPrefix = `--color-${elementType}`;
+            document.documentElement.style.setProperty(`${varPrefix}-text`, color);
+            document.documentElement.style.setProperty(`${varPrefix}-bg`, background);
+        });
+    }
+
+    // Handle theme save
+    if (saveThemeBtn) {
+        saveThemeBtn.addEventListener('click', () => {
+            // Save theme logic here
+            // For now, just close the modal
+            colorPickerPanel.classList.remove('show');
+            showSuccessNotification('Theme saved successfully!');
+        });
+    }
+
+    // Handle theme editor cancel
+    if (cancelThemeBtn) {
+        cancelThemeBtn.addEventListener('click', () => {
+            colorPickerPanel.classList.remove('show');
+        });
+    }
+
+    // Handle save theme changes
+    if (saveThemeChangesBtn) {
+        saveThemeChangesBtn.addEventListener('click', async () => {
+            const themeStyles = {};
+            previewFrame.querySelectorAll('.preview-element').forEach(element => {
+                const elementType = element.dataset.element;
+                const computedStyle = getComputedStyle(element);
+                themeStyles[`--color-${elementType}-text`] = computedStyle.color;
+                themeStyles[`--color-${elementType}-bg`] = computedStyle.backgroundColor;
+            });
+
+            try {
+                // Save theme changes to CSS
+                await makeAdminRequest('/admin/update-theme', 'POST', {
+                    theme: themeSelect.value,
+                    styles: themeStyles
+                });
+                showSuccessNotification('Theme changes saved successfully!');
+            } catch (error) {
+                console.error('Error saving theme:', error);
+                showSuccessNotification('Error saving theme changes');
+            }
+        });
+    }
+
+    // Handle create theme button
+    if (createThemeBtn) {
+        createThemeBtn.addEventListener('click', () => {
+            createThemeModal.style.display = 'block';
+            newThemeNameInput.value = '';
+        });
+    }
+
+    // Handle create theme confirmation
+    if (confirmCreateThemeBtn) {
+        confirmCreateThemeBtn.addEventListener('click', async () => {
+            const newThemeName = newThemeNameInput.value.trim();
+            if (!newThemeName) {
+                showSuccessNotification('Please enter a theme name');
+                return;
+            }
+
+            try {
+                // Create new theme based on current theme
+                await makeAdminRequest('/admin/create-theme', 'POST', {
+                    name: newThemeName,
+                    baseTheme: themeSelect.value
+                });
+                
+                // Add new theme to select dropdown
+                const option = document.createElement('option');
+                option.value = newThemeName;
+                option.textContent = newThemeName;
+                themeSelect.appendChild(option);
+                themeSelect.value = newThemeName;
+                
+                // Apply the new theme to preview
+                applyThemeToPreview(newThemeName);
+                
+                createThemeModal.style.display = 'none';
+                showSuccessNotification('New theme created successfully!');
+            } catch (error) {
+                console.error('Error creating theme:', error);
+                showSuccessNotification('Error creating new theme');
+            }
+        });
+    }
+
+    // Handle create theme cancellation
+    if (cancelCreateThemeBtn) {
+        cancelCreateThemeBtn.addEventListener('click', () => {
+            createThemeModal.style.display = 'none';
+        });
+    }
+
+    // Close modals when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === colorPickerPanel) {
+            colorPickerPanel.classList.remove('show');
         }
-  
-      } catch (error) {
-        console.error('Error:', error);
-        displayMessage(envMessage, "An error occurred while saving changes.", "error");
-      }
+        if (e.target === createThemeModal) {
+            createThemeModal.style.display = 'none';
+        }
     });
-  
-    // Handle Cancel Save Button Click
-    cancelSaveButton.addEventListener('click', () => {
-      // Hide the confirmation modal
-      confirmModal.style.display = 'none';
-      // Optionally, display a message or take other actions
-    });
-  
-    // Optional: Close the modal when clicking outside the modal content
-    window.addEventListener('click', (event) => {
-      if (event.target == confirmModal) {
-        confirmModal.style.display = 'none';
-      }
-    });
-  });
+
+    // Helper function to convert RGB to Hex
+    function rgbToHex(rgb) {
+        if (!rgb || rgb === 'transparent' || rgb === 'none') return '#000000';
+        
+        // Check if already hex
+        if (rgb.startsWith('#')) return rgb;
+        
+        // Convert rgb(r, g, b) to hex
+        const rgbMatch = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        if (!rgbMatch) return '#000000';
+        
+        const r = parseInt(rgbMatch[1]);
+        const g = parseInt(rgbMatch[2]);
+        const b = parseInt(rgbMatch[3]);
+        
+        return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
+    // Function to load environment variables
+    async function loadEnvironmentVariables() {
+        try {
+            // Use makeAdminRequest from common.js
+            const data = await makeAdminRequest('/admin/env-variables', 'GET');
+            
+            if (data) {
+                const envVariables = document.getElementById('env-variables');
+                envVariables.innerHTML = '';
+                
+                Object.entries(data).forEach(([key, value]) => {
+                    const field = document.createElement('div');
+                    field.className = 'env-field';
+                    field.innerHTML = `
+                        <label for="${key}">${key}:</label>
+                        <input type="text" id="${key}" name="${key}" value="${value || ''}" />
+                    `;
+                    envVariables.appendChild(field);
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            displayMessage(envMessage, error.message || 'An error occurred while loading environment variables', 'error');
+            
+            // Hide content if authentication fails
+            if (error.message === 'Authentication failed' || error.message === 'Authentication cancelled') {
+                envFormContainer.style.display = 'none';
+                themeSection.style.display = 'none';
+            }
+        }
+    }
+
+    // Handle environment form submission
+    if (envForm) {
+        envForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            confirmModal.style.display = 'block';
+        });
+    }
+
+    // Handle confirmation modal buttons
+    if (confirmSaveButton) {
+        confirmSaveButton.addEventListener('click', async () => {
+            const formData = new FormData(envForm);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const result = await makeAdminRequest('/admin/update-env', 'POST', data);
+                if (result && result.success) {
+                    showSuccessNotification('Environment variables updated successfully!');
+                    confirmModal.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                displayMessage(envMessage, error.message || 'An error occurred while updating environment variables', 'error');
+            }
+        });
+    }
+
+    if (cancelSaveButton) {
+        cancelSaveButton.addEventListener('click', () => {
+            confirmModal.style.display = 'none';
+        });
+    }
+
+    // Initially hide content until authenticated
+    envFormContainer.style.display = 'none';
+    themeSection.style.display = 'none';
+
+    // Trigger authentication and content loading immediately
+    try {
+        await loadEnvironmentVariables();
+        // Show content after successful authentication
+        envFormContainer.style.display = 'block';
+        themeSection.style.display = 'block';
+    } catch (error) {
+        console.error('Initial authentication failed:', error);
+    }
+});
   

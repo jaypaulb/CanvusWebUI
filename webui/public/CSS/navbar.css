@@ -28,6 +28,30 @@
     gap: var(--spacing-sm);
 }
 
+/* Theme toggle styles */
+.theme-toggle {
+    background: none;
+    border: none;
+    padding: var(--spacing-xs);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.theme-toggle:hover {
+    background-color: var(--color-background);
+}
+
+.theme-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
 .nav-brand {
     font-size: var(--font-size-base);
     font-weight: 600;

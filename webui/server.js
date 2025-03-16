@@ -32,6 +32,7 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const { body, validationResult } = require('express-validator');
 const FormData = require('form-data');
+const themeRoutes = require('./routes/theme');
 
 // Function to load environment variables
 function loadEnv() {
@@ -82,9 +83,6 @@ if (!CANVUS_SERVER || !CANVAS_ID || !CANVUS_API_KEY) {
 console.log("[Server Startup] Environment variables loaded successfully.");
 console.log(`[Server Startup] CANVUS_SERVER=${CANVUS_SERVER}, CANVAS_ID=${CANVAS_ID}`);
 
-
-
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -98,6 +96,149 @@ app.use(express.static('public'));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+// ------------------- Admin Endpoints -------------------
+
+// Middleware for admin authentication
+function validateAdminAuth(req, res, next) {
+    const authHeader = req.headers.authorization;
+    
+    console.log(`[${getTimestamp()}] Admin authentication attempt...`);
+    
+    if (!authHeader) {
+        console.error(`[${getTimestamp()}] Authentication failed: No authorization header provided`);
+        return res.status(401).json({ success: false, message: 'No authorization header provided' });
+    }
+    
+    if (!authHeader.startsWith('Bearer ')) {
+        console.error(`[${getTimestamp()}] Authentication failed: Invalid authorization format. Expected 'Bearer token'`);
+        return res.status(401).json({ success: false, message: 'Invalid authorization format' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    const expectedToken = process.env.WEBUI_PWD;
+    
+    if (!expectedToken) {
+        console.error(`[${getTimestamp()}] Server configuration error: WEBUI_PWD not set in environment variables`);
+        return res.status(500).json({ success: false, message: 'Server configuration error' });
+    }
+
+    if (token !== expectedToken) {
+        console.error(`[${getTimestamp()}] Authentication failed: Invalid token provided`);
+        return res.status(401).json({ success: false, message: 'Invalid authorization token' });
+    }
+
+    console.log(`[${getTimestamp()}] Admin authentication successful`);
+    next();
+}
+
+// Validate admin authentication endpoint
+app.post('/validateAdmin', validateAdminAuth, (req, res) => {
+    res.json({ success: true, message: 'Authentication successful' });
+});
+
+// Define the admin environment variables endpoint
+app.get('/admin/env-variables', validateAdminAuth, (req, res) => {
+    // Define the path to the .env file (adjust if your structure is different)
+    const envPath = path.resolve(__dirname, '..', '.env');
+
+    try {
+        // Read the .env file synchronously
+        const envFile = fs.readFileSync(envPath, 'utf8');
+
+        // Parse the .env file content
+        const envConfig = dotenv.parse(envFile);
+
+        // Filter out variables that contain 'key' in their names (case-insensitive)
+        const filteredEnv = {};
+        for (const [key, value] of Object.entries(envConfig)) {
+            if (!key.toLowerCase().includes('key')) {
+                filteredEnv[key] = value;
+            }
+        }
+
+        // Return the filtered environment variables as JSON
+        res.json(filteredEnv);
+        console.log(`[${getTimestamp()}] Environment variables retrieved successfully`);
+    } catch (error) {
+        console.error(`[${getTimestamp()}] Error reading .env file:`, error);
+        res.status(500).json({ success: false, error: 'Failed to read environment variables.' });
+    }
+});
+
+// Update Environment Variables (admin authentication required)
+app.post('/admin/update-env', validateAdminAuth, (req, res) => {
+  const updatedVars = req.body;
+  const envPath = path.join(__dirname, '..', '.env');
+
+  console.log(`[${getTimestamp()}] Updating .env file at: ${envPath}`);
+  console.log(`[${getTimestamp()}] Variables to update:`, updatedVars);
+
+  // Read existing .env file
+  let envContent;
+  try {
+      envContent = fs.readFileSync(envPath, 'utf8');
+      console.log(`[${getTimestamp()}] Successfully read .env file.`);
+  } catch (err) {
+      console.error(`[${getTimestamp()}] Failed to read .env file:`, err.message);
+      return res.status(500).json({ success: false, error: 'Failed to read .env file.' });
+  }
+
+  // Convert .env content into an object
+  const envObject = {};
+  envContent.split('\n').forEach(line => {
+      const trimmedLine = line.trim();
+      if (trimmedLine && !trimmedLine.startsWith('#')) {
+          const [key, ...vals] = trimmedLine.split('=');
+          envObject[key.trim()] = vals.join('=').trim();
+      }
+  });
+
+  // Update variables
+  let updated = false;
+  Object.entries(updatedVars).forEach(([key, value]) => {
+      const envKey = key.toUpperCase(); // Assume all keys are uppercased in .env
+      if (envObject.hasOwnProperty(envKey)) {
+          console.log(`[${getTimestamp()}] Updating ${envKey}: "${envObject[envKey]}" => "${value}"`);
+          envObject[envKey] = value;
+          process.env[envKey] = value; // Update in process.env
+          updated = true;
+      } else {
+          console.warn(`[${getTimestamp()}] Variable ${envKey} not found in .env. Skipping.`);
+      }
+  });
+
+  if (!updated) {
+      console.warn(`[${getTimestamp()}] No variables updated.`);
+      return res.status(400).json({ success: false, error: 'No valid environment variables provided for update.' });
+  }
+
+  // Convert back to .env file format and write it
+  const updatedEnvContent = Object.entries(envObject)
+      .map(([key, val]) => `${key}=${val}`)
+      .join('\n');
+
+  try {
+      fs.writeFileSync(envPath, updatedEnvContent, 'utf8');
+      console.log(`[${getTimestamp()}] Successfully updated .env file.`);
+  } catch (err) {
+      console.error(`[${getTimestamp()}] Failed to write to .env file:`, err.message);
+      return res.status(500).json({ success: false, error: 'Failed to update .env file.' });
+  }
+
+  // Reload environment variables
+  try {
+      const reloadResult = loadEnv(); // Assumes the loadEnv function is defined
+      console.log(`[${getTimestamp()}] Environment variables reloaded:`, reloadResult);
+  } catch (err) {
+      console.error(`[${getTimestamp()}] Error reloading environment variables:`, err.message);
+      return res.status(500).json({ success: false, error: 'Failed to reload environment variables.' });
+  }
+
+  res.json({ success: true, message: 'Environment variables updated and reloaded successfully.' });
+});
+
+// ------------------- Other Endpoints -------------------
 
 // Prepare for file uploads
 const uploadDir = path.join(__dirname, 'uploads');
@@ -271,47 +412,9 @@ function validateAdminPassword(req, res, next) {
     next();
 }
 
-// Middleware for admin authentication
-function validateAdminAuth(req, res, next) {
-    const authHeader = req.headers.authorization;
-    
-    console.log(`[${getTimestamp()}] Admin authentication attempt...`);
-    
-    if (!authHeader) {
-        console.error(`[${getTimestamp()}] Authentication failed: No authorization header provided`);
-        return res.status(401).json({ success: false, message: 'No authorization header provided' });
-    }
-    
-    if (!authHeader.startsWith('Bearer ')) {
-        console.error(`[${getTimestamp()}] Authentication failed: Invalid authorization format. Expected 'Bearer token'`);
-        return res.status(401).json({ success: false, message: 'Invalid authorization format' });
-    }
-
-    const token = authHeader.split(' ')[1];
-    const expectedToken = process.env.WEBUI_PWD;
-    
-    if (!expectedToken) {
-        console.error(`[${getTimestamp()}] Server configuration error: WEBUI_PWD not set in environment variables`);
-        return res.status(500).json({ success: false, message: 'Server configuration error' });
-    }
-
-    if (token !== expectedToken) {
-        console.error(`[${getTimestamp()}] Authentication failed: Invalid token provided`);
-        return res.status(401).json({ success: false, message: 'Invalid authorization token' });
-    }
-
-    console.log(`[${getTimestamp()}] Admin authentication successful`);
-    next();
-}
-
-// Validate admin authentication endpoint
-app.post('/validateAdmin', validateAdminAuth, (req, res) => {
-    res.json({ success: true, message: 'Authentication successful' });
-});
-
 // ------------------- Endpoints -------------------
 // Define the /env-variables endpoint
-app.get('/env-variables', (req, res) => {
+/*app.get('/env-variables', (req, res) => {
     // Define the path to the .env file (adjust if your structure is different)
     const envPath = path.resolve(__dirname, '..', '.env');
 
@@ -337,7 +440,7 @@ app.get('/env-variables', (req, res) => {
         console.error('Error reading .env file:', error);
         res.status(500).json({ success: false, error: 'Failed to read environment variables.' });
     }
-});
+});*/
 
 app.get("/api/macros/deleted-records", (req, res) => {
     console.log("[/api/macros/deleted-records] route invoked.");
@@ -3686,3 +3789,6 @@ app.post("/api/macros/unpin-all", async (req, res) => {
     return res.status(500).send(err.message);
   }
 });
+
+// Add theme routes
+app.use('/admin', themeRoutes);

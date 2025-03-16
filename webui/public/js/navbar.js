@@ -9,9 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div id="canvasInfo" class="canvas-info">Currently Connected to: Loading...</div>
             </div>
             <div class="nav-right">
-                <button class="theme-toggle">
-                    <span>🌙</span>
-                    <span style="margin-left: 0.5rem">Dark Mode</span>
+                <button class="theme-toggle" aria-label="Toggle dark mode">
+                    <span class="theme-icon">🌙</span>
                 </button>
                 <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">
                     <span class="hamburger-line"></span>
@@ -23,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <a href="/macros.html" class="nav-link">Macros</a>
                     <a href="/pages.html" class="nav-link">Pages</a>
                     <a href="/upload.html" class="nav-link">Upload</a>
+                    <a href="/rcu.html" class="nav-link">RCU</a>
                     <a href="/admin.html" class="nav-link">Admin</a>
                 </div>
             </div>
@@ -43,24 +43,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Theme toggle functionality
     const themeToggle = document.querySelector('.theme-toggle');
-    if (themeToggle) {
-        // Set initial theme (dark by default)
-        if (!localStorage.getItem('theme')) {
-            localStorage.setItem('theme', 'dark');
-        }
-        
-        // Apply theme from localStorage
-        const currentTheme = localStorage.getItem('theme');
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        updateThemeToggle(themeToggle, currentTheme);
+    const themeIcon = document.querySelector('.theme-icon');
+    
+    // Set initial theme
+    const currentTheme = localStorage.getItem('theme') || 'default';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    updateThemeIcon(currentTheme);
 
-        // Toggle theme
+    // Handle theme toggle click
+    if (themeToggle) {
         themeToggle.addEventListener('click', () => {
-            const currentTheme = localStorage.getItem('theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            const currentTheme = localStorage.getItem('theme') || 'default';
+            const isDark = currentTheme.includes('dark');
+            
+            // Determine the base theme and new theme
+            let newTheme;
+            if (currentTheme === 'default' || currentTheme === 'dark') {
+                newTheme = isDark ? 'default' : 'dark';
+            } else if (currentTheme === 'kpmg-light' || currentTheme === 'kpmg-dark') {
+                newTheme = isDark ? 'kpmg-light' : 'kpmg-dark';
+            } else {
+                // Fallback to default theme
+                newTheme = isDark ? 'default' : 'dark';
+            }
+            
             localStorage.setItem('theme', newTheme);
             document.documentElement.setAttribute('data-theme', newTheme);
-            updateThemeToggle(themeToggle, newTheme);
+            updateThemeIcon(newTheme);
+            
+            // Update theme select in admin page if it exists
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) {
+                themeSelect.value = newTheme;
+            }
         });
     }
 
@@ -138,11 +153,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Helper function to update theme toggle button
-function updateThemeToggle(button, theme) {
-    button.innerHTML = `
-        <span>${theme === 'dark' ? '☀️' : '🌙'}</span>
-        <span style="margin-left: 0.5rem">${theme === 'dark' ? 'Light' : 'Dark'} Mode</span>
-    `;
+// Helper function to update theme icon
+function updateThemeIcon(theme) {
+    const themeIcon = document.querySelector('.theme-icon');
+    if (themeIcon) {
+        themeIcon.textContent = theme.includes('dark') ? '☀️' : '🌙';
+    }
 }
   

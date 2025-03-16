@@ -1,9 +1,16 @@
-{check out the curent image of the undelete page and you will see a very different aproach to what is implemented.
-please update the undelete section in macros to follow this approach.
-button that populates the list of delete history 
-see server.js for the api endpoint for this.
-then slecting a zone and clicking an item from the list shows a dialog with details of hat will be restored and seeks confirmation.
-confirning actions the creation of the items in that delete history json again check the server.js for the relevent endpoint.}
+{env var still not loading on admin page
+network age lient end shows 404 errors
+Request URL:
+http://localhost:3000/admin/env-variables
+Request Method:
+GET
+Status Code:
+404 Not Found
+Remote Address:
+[::1]:3000
+Referrer Policy:
+strict-origin-when-cross-origin
+i see nothing in the server logs}}
 
 ---
 
