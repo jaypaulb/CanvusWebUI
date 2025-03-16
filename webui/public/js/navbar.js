@@ -2,12 +2,15 @@
 
 // Navbar functionality
 document.addEventListener('DOMContentLoaded', function() {
+    const isRCUPage = window.location.pathname.includes('rcu.html');
+    
     const navbar = `
         <nav class="navbar">
             <div class="nav-left">
-                <a href="/" class="nav-brand">Canvus Web UI</a>
+                <a href="${isRCUPage ? '#' : '/'}" class="nav-brand">Canvus Web UI</a>
                 <div id="canvasInfo" class="canvas-info">Currently Connected to: Loading...</div>
             </div>
+            ${!isRCUPage ? `
             <div class="nav-right">
                 <button class="theme-toggle" aria-label="Toggle dark mode">
                     <span class="theme-icon">🌙</span>
@@ -26,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <a href="/admin.html" class="nav-link">Admin</a>
                 </div>
             </div>
+            ` : ''}
         </nav>
     `;
 
@@ -33,13 +37,15 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('navbar-placeholder').innerHTML = navbar;
 
     // Set active link
-    const currentPage = window.location.pathname;
-    document.querySelectorAll('.nav-link').forEach(link => {
-        if (link.getAttribute('href') === currentPage || 
-            (currentPage === '/' && link.getAttribute('href') === '/main.html')) {
-            link.classList.add('active');
-        }
-    });
+    if (!isRCUPage) {
+        const currentPage = window.location.pathname;
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === currentPage || 
+                (currentPage === '/' && link.getAttribute('href') === '/main.html')) {
+                link.classList.add('active');
+            }
+        });
+    }
 
     // Theme toggle functionality
     const themeToggle = document.querySelector('.theme-toggle');

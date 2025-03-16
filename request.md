@@ -1,6 +1,8 @@
-{please action the folllowing
-move any files no longer being used in the codease to the old folder
-update the readme.md, gitignore and other files relevent to git (include all cursor.ai ide related files in the git ignore pls)
+{Please update the readme to cover the current function set.  Specific attention should be paid to talk about the Remote Content Upload (RUC) page being a public facing page.
+
+The readme should have clear instructions on how to deploy the webui on a remote windows or linux server.
+
+We also need to update the Nav Bar on the RCU page to remove the other page references.  Once we go to the RCU page or hard link to it - it should be that we can't exit to the other pages as this is a user only page.
 }
 
 ---

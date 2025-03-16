@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const noteSquare = document.getElementById('noteSquare');
     const uploadItemButton = document.getElementById('uploadItemButton');
     const postNoteButton = document.getElementById('postNoteButton');
-    const backButton = document.getElementById('backButton');
 
     // QR Code Elements
     const qrCodeDiv = document.getElementById('qrcode');
@@ -76,22 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
             identificationMessage.style.display = 'block';
         }
     }
-
-    // Back button functionality
-    backButton.addEventListener('click', () => {
-        userDashboard.style.display = "none";
-        userIdentification.style.display = "block";
-        // Clear the note square
-        noteSquare.textContent = "";
-        // Reset team selection
-        teamButtons.forEach(btn => btn.classList.remove('active'));
-        // Clear user input
-        userNameInput.value = "";
-        // Reset variables
-        selectedTeam = null;
-        userName = null;
-        userColor = null;
-    });
 
     // Team selection and immediate identification
     teamButtons.forEach(button => {
