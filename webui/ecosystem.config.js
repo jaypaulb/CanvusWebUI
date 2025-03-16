@@ -6,10 +6,11 @@ module.exports = {
     interpreter_args: "--deep node",
     env: {
       NODE_ENV: "development",
+      PORT: 3000
     },
     env_production: {
       NODE_ENV: "production",
-      PORT: 443
+      PORT: 3000
     }
   }]
 } 
