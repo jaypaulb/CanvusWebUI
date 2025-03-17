@@ -71,9 +71,9 @@ if (!envLoadResult.success) {
 }
 
 // Validate essential environment variables
-const CANVUS_SERVER = process.env.CANVUS_SERVER;
-const CANVAS_ID = process.env.CANVAS_ID;
-const CANVUS_API_KEY = process.env.CANVUS_API_KEY;
+let CANVUS_SERVER = process.env.CANVUS_SERVER;
+let CANVAS_ID = process.env.CANVAS_ID;
+let CANVUS_API_KEY = process.env.CANVUS_API_KEY;
 
 if (!CANVUS_SERVER || !CANVAS_ID || !CANVUS_API_KEY) {
     console.error("[Server Startup] Missing required environment variables.");
@@ -167,75 +167,94 @@ app.get('/admin/env-variables', validateAdminAuth, (req, res) => {
 });
 
 // Update Environment Variables (admin authentication required)
-app.post('/admin/update-env', validateAdminAuth, (req, res) => {
-  const updatedVars = req.body;
-  const envPath = path.join(__dirname, '..', '.env');
+app.post('/admin/update-env', validateAdminAuth, async (req, res) => {
+    const updatedVars = req.body;
+    const envPath = path.join(__dirname, '..', '.env');
 
-  console.log(`[${getTimestamp()}] Updating .env file at: ${envPath}`);
-  console.log(`[${getTimestamp()}] Variables to update:`, updatedVars);
+    console.log(`[${getTimestamp()}] Updating .env file at: ${envPath}`);
+    console.log(`[${getTimestamp()}] Variables to update:`, updatedVars);
 
-  // Read existing .env file
-  let envContent;
-  try {
-      envContent = fs.readFileSync(envPath, 'utf8');
-      console.log(`[${getTimestamp()}] Successfully read .env file.`);
-  } catch (err) {
-      console.error(`[${getTimestamp()}] Failed to read .env file:`, err.message);
-      return res.status(500).json({ success: false, error: 'Failed to read .env file.' });
-  }
+    try {
+        // Verify canvas ID if it's being updated
+        if (updatedVars.CANVAS_ID) {
+            const verifyResponse = await axios.get(`http://localhost:${PORT}/verifycanvas/${updatedVars.CANVAS_ID}`);
+            
+            if (!verifyResponse.data.exists) {
+                return res.status(400).json({ 
+                    success: false, 
+                    error: 'Canvas ID does not exist on server.' 
+                });
+            }
 
-  // Convert .env content into an object
-  const envObject = {};
-  envContent.split('\n').forEach(line => {
-      const trimmedLine = line.trim();
-      if (trimmedLine && !trimmedLine.startsWith('#')) {
-          const [key, ...vals] = trimmedLine.split('=');
-          envObject[key.trim()] = vals.join('=').trim();
-      }
-  });
+            // If canvas name is different, update it
+            if (verifyResponse.data.name && updatedVars.CANVAS_NAME !== verifyResponse.data.name) {
+                console.log(`[${getTimestamp()}] Updating canvas name from "${updatedVars.CANVAS_NAME}" to "${verifyResponse.data.name}"`);
+                updatedVars.CANVAS_NAME = verifyResponse.data.name;
+            }
+        }
 
-  // Update variables
-  let updated = false;
-  Object.entries(updatedVars).forEach(([key, value]) => {
-      const envKey = key.toUpperCase(); // Assume all keys are uppercased in .env
-      if (envObject.hasOwnProperty(envKey)) {
-          console.log(`[${getTimestamp()}] Updating ${envKey}: "${envObject[envKey]}" => "${value}"`);
-          envObject[envKey] = value;
-          process.env[envKey] = value; // Update in process.env
-          updated = true;
-      } else {
-          console.warn(`[${getTimestamp()}] Variable ${envKey} not found in .env. Skipping.`);
-      }
-  });
+        // Read existing .env file
+        let envContent = fs.readFileSync(envPath, 'utf8');
+        console.log(`[${getTimestamp()}] Successfully read .env file.`);
 
-  if (!updated) {
-      console.warn(`[${getTimestamp()}] No variables updated.`);
-      return res.status(400).json({ success: false, error: 'No valid environment variables provided for update.' });
-  }
+        // Convert .env content into an object
+        const envObject = {};
+        envContent.split('\n').forEach(line => {
+            const trimmedLine = line.trim();
+            if (trimmedLine && !trimmedLine.startsWith('#')) {
+                const [key, ...vals] = trimmedLine.split('=');
+                envObject[key.trim()] = vals.join('=').trim();
+            }
+        });
 
-  // Convert back to .env file format and write it
-  const updatedEnvContent = Object.entries(envObject)
-      .map(([key, val]) => `${key}=${val}`)
-      .join('\n');
+        // Update variables
+        let updated = false;
+        Object.entries(updatedVars).forEach(([key, value]) => {
+            const envKey = key.toUpperCase();
+            if (envObject.hasOwnProperty(envKey)) {
+                console.log(`[${getTimestamp()}] Updating ${envKey}: "${envObject[envKey]}" => "${value}"`);
+                envObject[envKey] = value;
+                process.env[envKey] = value; // Update in process.env
+                updated = true;
+            }
+        });
 
-  try {
-      fs.writeFileSync(envPath, updatedEnvContent, 'utf8');
-      console.log(`[${getTimestamp()}] Successfully updated .env file.`);
-  } catch (err) {
-      console.error(`[${getTimestamp()}] Failed to write to .env file:`, err.message);
-      return res.status(500).json({ success: false, error: 'Failed to update .env file.' });
-  }
+        if (!updated) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'No valid environment variables provided for update.' 
+            });
+        }
 
-  // Reload environment variables
-  try {
-      const reloadResult = loadEnv(); // Assumes the loadEnv function is defined
-      console.log(`[${getTimestamp()}] Environment variables reloaded:`, reloadResult);
-  } catch (err) {
-      console.error(`[${getTimestamp()}] Error reloading environment variables:`, err.message);
-      return res.status(500).json({ success: false, error: 'Failed to reload environment variables.' });
-  }
+        // Convert back to .env file format and write it
+        const updatedEnvContent = Object.entries(envObject)
+            .map(([key, val]) => `${key}=${val}`)
+            .join('\n');
 
-  res.json({ success: true, message: 'Environment variables updated and reloaded successfully.' });
+        fs.writeFileSync(envPath, updatedEnvContent, 'utf8');
+        console.log(`[${getTimestamp()}] Successfully updated .env file.`);
+
+        // Reload environment variables globally
+        const reloadResult = loadEnv();
+        console.log(`[${getTimestamp()}] Environment variables reloaded:`, reloadResult);
+
+        // Update all global variables
+        CANVUS_SERVER = process.env.CANVUS_SERVER;
+        CANVAS_ID = process.env.CANVAS_ID;
+        CANVUS_API_KEY = process.env.CANVUS_API_KEY;
+
+        res.json({ 
+            success: true, 
+            message: 'Environment variables updated and reloaded successfully.',
+            updatedVars: updatedVars // Include any auto-updated values
+        });
+    } catch (error) {
+        console.error(`[${getTimestamp()}] Error updating environment:`, error);
+        res.status(500).json({ 
+            success: false, 
+            error: error.message || 'Failed to update environment variables.' 
+        });
+    }
 });
 
 // ------------------- Other Endpoints -------------------
@@ -577,17 +596,37 @@ app.post('/update-env', [
   res.json({ success: true, message: 'Environment variables updated and reloaded successfully.' });
 });
 
+// Find Canvas Progress Endpoint
+app.get("/find-canvas-progress", (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    
+    // Store the response object in app.locals for use in other routes
+    app.locals.sseRes = res;
+    
+    // Send an initial message
+    res.write('data: Initializing search...\n\n');
+});
+
+// Helper function to send SSE messages
+function sendSSEMessage(message) {
+    console.log(message); // Keep console logging
+    if (app.locals.sseRes) {
+        app.locals.sseRes.write(`data: ${message}\n\n`);
+    }
+}
+
 // Find Canvas
 app.post("/find-canvas", async (req, res) => {
     const { uid } = req.body;
     if (!uid) {
-        console.error(`[${getTimestamp()}] UID is missing in the request.`);
+        sendSSEMessage("Error: UID is required.");
         return res.status(400).json({ error: "UID is required." });
     }
 
-    console.log(`[${getTimestamp()}] Searching for UID: "${uid}"`);
-
     try {
+        sendSSEMessage(`Searching for UID: "${uid}"`);
         const response = await axios.get(`${CANVUS_SERVER}/api/v1/canvases`, {
             headers: {
                 "Private-Token": CANVUS_API_KEY,
@@ -596,16 +635,16 @@ app.post("/find-canvas", async (req, res) => {
         });
 
         const canvases = response.data;
-
         if (!Array.isArray(canvases)) {
             throw new Error("Invalid response format: canvases should be an array.");
         }
 
-        console.log(`[${getTimestamp()}] Retrieved ${canvases.length} canvases.`);
+        sendSSEMessage(`Retrieved ${canvases.length} canvases.`);
+        let foundMatch = false;
 
         for (const canvas of canvases) {
             const { id: canvasId, name: canvasName } = canvas;
-            console.log(`[${getTimestamp()}] Processing Canvas ID: ${canvasId}, Name: "${canvasName}"`);
+            sendSSEMessage(`Processing Canvas ID: ${canvasId}`);
 
             try {
                 const browsersResponse = await axios.get(
@@ -619,41 +658,52 @@ app.post("/find-canvas", async (req, res) => {
                 );
 
                 const browsers = browsersResponse.data;
-
                 if (!Array.isArray(browsers)) {
                     throw new Error(`Invalid browsers format for canvas ${canvasId}.`);
                 }
 
-                console.log(`[${getTimestamp()}] Retrieved ${browsers.length} browsers for Canvas ID: ${canvasId}`);
+                sendSSEMessage(`Retrieved ${browsers.length} browsers for Canvas ID: ${canvasId}`);
 
-                for (const browser of browsers) {
-                    const browserURL = browser.url || "No URL";
-                    console.log(`[${getTimestamp()}] Checking Browser URL: "${browserURL}" against UID: "${uid}"`);
+                for (let i = 1; i <= browsers.length; i++) {
+                    const browser = browsers[i-1];
+                    sendSSEMessage(`Checking Browser ${i}`);
 
                     if (browser.url && browser.url.includes(uid)) {
-                        console.log(`[${getTimestamp()}] Match found in Canvas: "${canvasName}" (ID: ${canvasId})`);
+                        foundMatch = true;
+                        sendSSEMessage(`Match found in Canvas: "${canvasName}" (ID: ${canvasId})`);
+                        if (app.locals.sseRes) {
+                            app.locals.sseRes.end();
+                            app.locals.sseRes = null;
+                        }
                         return res.json({ canvasName, canvasId });
                     }
                 }
 
-                console.log(`[${getTimestamp()}] No matching browser found in Canvas ID: ${canvasId}`);
+                sendSSEMessage(`No matching browser found in Canvas ID: ${canvasId}`);
             } catch (error) {
                 const errorMsg = error.response?.data?.msg || error.message;
-                console.error(`[${getTimestamp()}] Error with Canvas ID: ${canvasId} (${canvasName}): ${errorMsg}`);
-
                 if (errorMsg.toLowerCase().includes('archived')) {
-                    console.warn(`[${getTimestamp()}] Skipping archived Canvas ID: ${canvasId} (${canvasName})`);
+                    sendSSEMessage(`Skipping archived Canvas ID: ${canvasId} (${canvasName})`);
                     continue;
                 }
-
                 throw error;
             }
         }
 
-        console.log(`[${getTimestamp()}] No matching canvas found for UID: "${uid}"`);
-        res.status(404).json({ error: "No matching canvas found." });
+        if (!foundMatch) {
+            sendSSEMessage(`No matching canvas found for UID: "${uid}"`);
+            if (app.locals.sseRes) {
+                app.locals.sseRes.end();
+                app.locals.sseRes = null;
+            }
+            res.status(404).json({ error: "No matching canvas found." });
+        }
     } catch (error) {
-        console.error(`[${getTimestamp()}] Server Error: ${error.response?.data || error.message}`);
+        sendSSEMessage(`Error occurred during search: ${error.message}`);
+        if (app.locals.sseRes) {
+            app.locals.sseRes.end();
+            app.locals.sseRes = null;
+        }
         res.status(500).json({ error: "Failed to process request." });
     }
 });
@@ -3792,3 +3842,37 @@ app.post("/api/macros/unpin-all", async (req, res) => {
 
 // Add theme routes
 app.use('/admin', themeRoutes);
+
+// Verify Canvas endpoint
+app.get('/verifycanvas/:canvasId', async (req, res) => {
+    const { canvasId } = req.params;
+    
+    console.log(`[${getTimestamp()}] Verifying canvas ID: ${canvasId}`);
+    
+    try {
+        const response = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${canvasId}`, {
+            headers: {
+                "Private-Token": CANVUS_API_KEY,
+                "Content-Type": "application/json"
+            }
+        });
+        
+        if (response.data) {
+            console.log(`[${getTimestamp()}] Canvas verified. Name: ${response.data.name}`);
+            res.json({ 
+                exists: true, 
+                name: response.data.name,
+                id: response.data.id
+            });
+        } else {
+            console.log(`[${getTimestamp()}] Canvas not found`);
+            res.json({ exists: false });
+        }
+    } catch (error) {
+        console.error(`[${getTimestamp()}] Error verifying canvas:`, error.response?.data || error.message);
+        res.status(error.response?.status || 500).json({ 
+            exists: false, 
+            error: error.response?.data?.error || 'Failed to verify canvas' 
+        });
+    }
+});

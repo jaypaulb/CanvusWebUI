@@ -49,14 +49,29 @@ const AdminModal = {
     cleanup: null,
     
     initialize() {
+        if (this.modal) return; // Already initialized
+        
         this.modal = document.getElementById('adminModal');
         this.passwordInput = document.getElementById('adminPassword');
         this.confirmBtn = document.getElementById('adminConfirm');
         this.cancelBtn = document.getElementById('adminCancel');
         
         if (!this.modal || !this.passwordInput || !this.confirmBtn || !this.cancelBtn) {
+            console.error('Required modal elements not found:', {
+                modal: !!this.modal,
+                passwordInput: !!this.passwordInput,
+                confirmBtn: !!this.confirmBtn,
+                cancelBtn: !!this.cancelBtn
+            });
             throw new Error('Required modal elements not found');
         }
+
+        // Add click outside handler
+        this.modal.addEventListener('click', (e) => {
+            if (e.target === this.modal) {
+                this.hide();
+            }
+        });
     },
     
     show() {
@@ -103,6 +118,9 @@ const AdminModal = {
                     if (event.key === 'Enter' && document.activeElement === this.passwordInput) {
                         event.preventDefault();
                         handleConfirm();
+                    } else if (event.key === 'Escape') {
+                        event.preventDefault();
+                        handleCancel();
                     }
                 };
                 
@@ -123,12 +141,10 @@ const AdminModal = {
                     document.removeEventListener('keydown', handleKeydown);
                 };
                 
-                // Show modal
-                this.modal.classList.add('show');
+                // Reset and show modal
                 this.passwordInput.value = '';
-                this.passwordInput.focus();
-                
-                MessageSystem.display("Admin password is required", "info");
+                this.modal.classList.add('show');
+                setTimeout(() => this.passwordInput.focus(), 100); // Focus after animation starts
                 
             } catch (error) {
                 console.error('Modal initialization failed:', error);
@@ -144,6 +160,7 @@ const AdminModal = {
                 this.cleanup();
                 this.cleanup = null;
             }
+            this.passwordInput.value = '';
         }
     }
 };

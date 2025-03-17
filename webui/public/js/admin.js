@@ -351,10 +351,80 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = Object.fromEntries(formData.entries());
 
             try {
+                // First verify the canvas if CANVAS_ID is being changed
+                if (data.CANVAS_ID) {
+                    try {
+                        const verifyResponse = await fetch(`/verifycanvas/${data.CANVAS_ID}`);
+                        const verifyData = await verifyResponse.json();
+                        
+                        if (!verifyData.exists) {
+                            displayMessage(envMessage, 'Canvas ID does not exist on server.', 'error');
+                            return;
+                        }
+                        
+                        // If canvas name is different, update the form field
+                        if (verifyData.name && data.CANVAS_NAME !== verifyData.name) {
+                            const canvasNameInput = envForm.querySelector('[name="CANVAS_NAME"]');
+                            if (canvasNameInput) {
+                                canvasNameInput.value = verifyData.name;
+                                data.CANVAS_NAME = verifyData.name;
+                            }
+                        }
+                    } catch (verifyError) {
+                        displayMessage(envMessage, 'Failed to verify Canvas ID.', 'error');
+                        return;
+                    }
+                }
+
                 const result = await makeAdminRequest('/admin/update-env', 'POST', data);
                 if (result && result.success) {
                     showSuccessNotification('Environment variables updated successfully!');
                     confirmModal.style.display = 'none';
+                    
+                    // If any variables were auto-updated (like CANVAS_NAME), update the form
+                    if (result.updatedVars) {
+                        Object.entries(result.updatedVars).forEach(([key, value]) => {
+                            const input = envForm.querySelector(`[name="${key}"]`);
+                            if (input && input.value !== value) {
+                                input.value = value;
+                            }
+                        });
+                    }
+                    
+                    // Broadcast the environment update event
+                    const event = new CustomEvent('env-updated', { 
+                        detail: { 
+                            canvasId: data.CANVAS_ID,
+                            canvasName: data.CANVAS_NAME,
+                            timestamp: Date.now()
+                        } 
+                    });
+                    window.dispatchEvent(event);
+                    
+                    // Store the last update timestamp
+                    localStorage.setItem('lastEnvUpdate', Date.now().toString());
+                    
+                    // Force reload all active endpoints with cache busting
+                    const timestamp = Date.now();
+                    await Promise.all([
+                        fetch(`/get-zones?t=${timestamp}`, { 
+                            headers: { 
+                                'Cache-Control': 'no-cache',
+                                'Pragma': 'no-cache'
+                            }
+                        }),
+                        fetch(`/get-canvas-info?t=${timestamp}`, { 
+                            headers: { 
+                                'Cache-Control': 'no-cache',
+                                'Pragma': 'no-cache'
+                            }
+                        })
+                    ]);
+                    
+                    // Reload the page after a short delay to ensure all updates are applied
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -369,6 +439,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // Add event listener for storage changes to sync across tabs
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'lastEnvUpdate') {
+            // Reload the page when environment is updated in another tab
+            window.location.reload();
+        }
+    });
+
     // Initially hide content until authenticated
     envFormContainer.style.display = 'none';
     themeSection.style.display = 'none';
@@ -382,5 +460,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error('Initial authentication failed:', error);
     }
+
+    // Add event listener for environment updates
+    window.addEventListener('env-updated', async (event) => {
+        try {
+            // Reload environment variables
+            await loadEnvironmentVariables();
+            
+            // Update navbar canvas info
+            const canvasInfo = document.getElementById('canvasInfo');
+            if (canvasInfo && event.detail.canvasName) {
+                canvasInfo.textContent = `Currently Connected to: ${event.detail.canvasName}`;
+            }
+            
+            // Force reload any cached data
+            const endpoints = ['/get-zones', '/get-canvas-info'];
+            await Promise.all(endpoints.map(endpoint => 
+                fetch(endpoint, { headers: { 'Cache-Control': 'no-cache' }})
+            ));
+        } catch (error) {
+            console.error('Error handling environment update:', error);
+        }
+    });
 });
   

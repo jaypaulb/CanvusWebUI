@@ -35,20 +35,20 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div id="passwordModal" class="modal" style="display: none;" role="dialog" aria-labelledby="modalTitle">
+    <!-- Admin Authentication Modal -->
+    <div id="adminModal" class="modal" role="dialog" aria-labelledby="adminModalTitle">
         <div class="modal-content">
             <header class="modal-header">
-                <h2 id="modalTitle">Enter Admin Password</h2>
-                <button id="closeModal" class="close" aria-label="Close modal">&times;</button>
+                <h2 id="adminModalTitle">Admin Authentication Required</h2>
+                <button id="adminCancel" class="close" aria-label="Close modal">&times;</button>
             </header>
             
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="adminPassword">Password</label>
+                    <label for="adminPassword">Admin Password</label>
                     <input type="password" 
                            id="adminPassword" 
-                           placeholder="Enter password" 
+                           placeholder="Enter admin password" 
                            required 
                            aria-required="true"
                            autocomplete="current-password" />
@@ -57,7 +57,7 @@
             </div>
 
             <footer class="modal-footer">
-                <button id="submitPassword" class="primary-button">
+                <button id="adminConfirm" class="primary-button">
                     <span class="button-content">
                         <span class="loading-spinner" style="display: none;"></span>
                         <span class="button-text">Submit</span>

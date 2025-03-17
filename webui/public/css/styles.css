@@ -319,13 +319,21 @@ button:not(.team-tab):hover {
 
 /* Message Styles */
 .message {
-  margin-top: var(--spacing-lg);
+  margin-top: var(--spacing-xl); /* Increased margin to prevent overlap */
   padding: var(--spacing-md);
   border-radius: var(--border-radius-sm);
   background-color: var(--color-surface);
   color: var(--color-text);
   text-align: center;
   font-weight: 500;
+  clear: both; /* Ensure it clears any floated elements */
+  position: relative; /* Enable positioning context */
+  z-index: 1; /* Ensure proper stacking */
+}
+
+.messages-container {
+  margin-top: var(--spacing-xl); /* Add space after the button container */
+  position: relative; /* Enable positioning context */
 }
 
 .success {
@@ -356,11 +364,11 @@ button:not(.team-tab):hover {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 9999; /* Increased z-index */
 }
 
 .modal.show {
-    display: block;
+    display: block !important; /* Force display with !important */
 }
 
 .modal-content {
@@ -371,38 +379,76 @@ button:not(.team-tab):hover {
     width: 90%;
     max-width: 400px;
     position: relative;
-    margin: 20px auto; /* Position from top */
+    margin: 15vh auto 0;
 }
 
-.modal-content h3 {
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: var(--spacing-lg);
-    text-align: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: var(--font-size-xl);
     color: var(--color-text);
+}
+
+.modal-header .close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--color-text);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.modal-body {
+    margin-bottom: var(--spacing-lg);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
 }
 
 .modal .form-group {
     margin-bottom: var(--spacing-lg);
 }
 
-.modal .button-group {
-    display: flex;
-    gap: var(--spacing-md);
-    justify-content: flex-end;
-}
-
 .modal input[type="password"] {
     width: 100%;
-    padding: var(--spacing-sm);
+    padding: var(--spacing-md);
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius-sm);
     background-color: var(--color-background);
     color: var(--color-text);
+    font-size: var(--font-size-base);
+}
+
+.modal input[type="password"]:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
 }
 
 /* Dark theme adjustments for modal */
 [data-theme="dark"] .modal-content {
     background-color: var(--color-dark-surface);
     border: 1px solid var(--color-dark-border);
+}
+
+[data-theme="dark"] .modal-header .close {
+    color: var(--color-text-light);
+}
+
+[data-theme="dark"] .modal input[type="password"] {
+    background-color: var(--color-dark-background);
+    color: var(--color-text-light);
+    border-color: var(--color-dark-border);
 }
 
 /* Admin Frame Styles */
@@ -1143,5 +1189,6 @@ button.loading .loading-spinner {
     font-size: 0.9rem;
 }
   
+
 
 

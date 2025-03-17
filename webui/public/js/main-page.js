@@ -11,11 +11,45 @@ document.addEventListener("DOMContentLoaded", () => {
     const adminPasswordInput = document.getElementById("adminPassword");
     const modalError = document.getElementById("modalError");
   
+    // Initialize common components
+    MessageSystem.initialize();
+    AdminModal.initialize();
+  
     const params = new URLSearchParams(window.location.search);
     const uid = params.get("uid");
+    console.log("URL Parameters:", window.location.search);
+    console.log("Extracted UID:", uid);
+
+    // Update button text to initial state
+    setTargetButton.innerHTML = `
+        <span class="button-content">
+            <span class="loading-spinner" style="display: none;"></span>
+            <span class="button-text">Searching for current canvas to control...</span>
+        </span>
+    `;
   
     if (uid) {
-      // Step 1: Fetch canvas details based on UID
+      console.log("Starting canvas search for UID:", uid);
+      // Show searching state
+      setTargetButton.querySelector('.loading-spinner').style.display = 'inline-block';
+      
+      // Set up message display
+      confirmationSpan.textContent = '';
+      confirmationSpan.className = "message success";
+      confirmationSpan.style.display = "inline";
+      
+      // Connect to SSE endpoint
+      const eventSource = new EventSource(`/find-canvas-progress`);
+      
+      eventSource.onmessage = function(event) {
+        confirmationSpan.textContent = event.data;
+      };
+      
+      eventSource.onerror = function() {
+        eventSource.close();
+      };
+
+      // Make the search request
       fetch("/find-canvas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -23,17 +57,27 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then(response => response.json())
         .then(data => {
+          eventSource.close();
+          
           if (data.canvasName && data.canvasId) {
             checkEnvAndUpdateButton(data.canvasName, data.canvasId);
           } else {
+            setTargetButton.querySelector('.loading-spinner').style.display = 'none';
+            setTargetButton.querySelector('.button-text').textContent = 'No Canvas Found';
             displayError(data.error || "Canvas not found.");
           }
         })
         .catch(error => {
-          console.error("Error:", error);
+          eventSource.close();
+          console.error("Error during canvas search:", error);
+          setTargetButton.querySelector('.loading-spinner').style.display = 'none';
+          setTargetButton.querySelector('.button-text').textContent = 'Error Finding Canvas';
           displayError("An error occurred while fetching canvas data.");
         });
     } else {
+      console.log("No UID found in URL parameters");
+      setTargetButton.querySelector('.loading-spinner').style.display = 'none';
+      setTargetButton.querySelector('.button-text').textContent = 'No Canvas UID Provided';
       displayError("UID not found in the URL.");
     }
   
@@ -42,77 +86,88 @@ document.addEventListener("DOMContentLoaded", () => {
       fetch(`/check-env?canvasName=${encodeURIComponent(canvasName)}&canvasId=${encodeURIComponent(canvasId)}`)
         .then(response => response.json())
         .then(data => {
+          setTargetButton.querySelector('.loading-spinner').style.display = 'none';
+          
           if (data.matches) {
             // Redirect to pages.html if .env matches
             window.location.href = "/pages.html";
           } else {
             // Update the button with canvas details
-            setTargetButton.textContent = `Set Target for AI Control to ${canvasName}`;
+            setTargetButton.querySelector('.button-text').textContent = `Click here to update target to ${canvasName}`;
             setTargetButton.dataset.canvasId = canvasId;
             setTargetButton.dataset.canvasName = canvasName;
             setTargetButton.disabled = false; // Enable the button
+            
+            // Display warning message
+            displayError("DANGER: You are not currently controlling the canvas you opened WebUI from. Please update or proceed with caution.");
           }
         })
         .catch(error => {
           console.error("Error:", error);
+          setTargetButton.querySelector('.loading-spinner').style.display = 'none';
+          setTargetButton.querySelector('.button-text').textContent = 'Error Checking Environment';
           displayError("An error occurred while checking environment variables.");
         });
     }
   
     // Function to handle button click with modal password prompt
-    setTargetButton.addEventListener("click", () => {
-      // Open the password modal
-      passwordModal.style.display = "block";
-      modalError.style.display = "none";
-      adminPasswordInput.value = "";
-    });
-  
-    // Handle modal close
-    closeModal.addEventListener("click", () => {
-      passwordModal.style.display = "none";
-    });
-  
-    // Handle password submission
-    submitPassword.addEventListener("click", () => {
-      const password = adminPasswordInput.value.trim();
-      if (!password) {
-        modalError.textContent = "Password is required.";
-        modalError.style.display = "block";
-        return;
-      }
-  
-      const canvasId = setTargetButton.dataset.canvasId;
-      const canvasName = setTargetButton.dataset.canvasName;
-  
-      fetch("/update-env", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          password, 
-          canvasId, 
-          canvasName 
-        })
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            displayConfirmation("Environment updated successfully! Redirecting...");
-            passwordModal.style.display = "none";
-            // Redirect to pages.html after a short delay
-            setTimeout(() => {
-              window.location.href = data.redirect || "/pages.html";
-            }, 1500);
-          } else {
-            const errorMessage = data.error || (data.errors && data.errors.map(e => e.msg).join(", ")) || "Failed to update environment.";
-            modalError.textContent = errorMessage;
-            modalError.style.display = "block";
-          }
-        })
-        .catch(error => {
-          console.error("Error:", error);
-          modalError.textContent = "An error occurred while updating the environment.";
-          modalError.style.display = "block";
-        });
+    setTargetButton.addEventListener("click", async () => {
+        const canvasId = setTargetButton.dataset.canvasId;
+        const canvasName = setTargetButton.dataset.canvasName;
+        
+        if (!canvasId || !canvasName) {
+            displayError("Missing canvas information. Please try refreshing the page.");
+            return;
+        }
+
+        try {
+            // Show admin modal and wait for authentication
+            const password = await AdminModal.show();
+            if (!password) {
+                displayError("Authentication cancelled");
+                return;
+            }
+            
+            // Show loading state
+            setTargetButton.querySelector('.loading-spinner').style.display = 'inline-block';
+            setTargetButton.querySelector('.button-text').textContent = 'Updating...';
+            setTargetButton.disabled = true;
+            
+            // Make the update request
+            const response = await fetch("/admin/update-env", {
+                method: "POST",
+                headers: { 
+                    'Authorization': `Bearer ${password}`,
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({ 
+                    CANVAS_ID: canvasId, 
+                    CANVAS_NAME: canvasName 
+                })
+            });
+            
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to update environment');
+            }
+            
+            if (data.success) {
+                displayConfirmation("Environment updated successfully! Redirecting...");
+                // Redirect to pages.html after a short delay
+                setTimeout(() => {
+                    window.location.href = "/pages.html";
+                }, 1500);
+            } else {
+                throw new Error(data.error || "Failed to update environment.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            displayError(error.message || "An error occurred while updating the environment.");
+            // Reset button state
+            setTargetButton.querySelector('.loading-spinner').style.display = 'none';
+            setTargetButton.querySelector('.button-text').textContent = `Click here to update target to ${canvasName}`;
+            setTargetButton.disabled = false;
+        }
     });
   
     // Close modal when clicking outside of it
@@ -122,12 +177,22 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   
+    function updateSearchStatus(status) {
+      const searchMsg = document.createElement('div');
+      searchMsg.textContent = status;
+      
+      const updatesContainer = confirmationSpan.querySelector('.search-updates');
+      if (updatesContainer) {
+        updatesContainer.appendChild(searchMsg);
+        updatesContainer.scrollTop = updatesContainer.scrollHeight;
+      }
+    }
+  
     // Function to display confirmation messages
     function displayConfirmation(message) {
       confirmationSpan.textContent = message;
       confirmationSpan.className = "message success";
       confirmationSpan.style.display = "inline";
-      // Clear any existing error messages
       errorSpan.textContent = "";
       errorSpan.className = "message";
       errorSpan.style.display = "none";
@@ -138,10 +203,12 @@ document.addEventListener("DOMContentLoaded", () => {
       errorSpan.textContent = message;
       errorSpan.className = "message error";
       errorSpan.style.display = "inline";
-      // Clear any existing confirmation messages
-      confirmationSpan.textContent = "";
-      confirmationSpan.className = "message";
-      confirmationSpan.style.display = "none";
+      // Only clear confirmation if not during search
+      if (!message.includes("Searching") && !confirmationSpan.querySelector('.search-updates')) {
+        confirmationSpan.textContent = "";
+        confirmationSpan.className = "message";
+        confirmationSpan.style.display = "none";
+      }
     }
   });
   
