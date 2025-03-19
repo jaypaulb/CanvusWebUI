@@ -15,7 +15,7 @@ cd canvus-demo/webui  # Important: The app lives in webui!
 
 # 3. Set it up
 npm install
-copy .env.example .env
+copy example.env .env  # Creates your local config file (not tracked in Git)
 notepad .env  # Put in your Canvus details
 
 # 4. Fire it up!
@@ -28,12 +28,12 @@ npm start
 # Use your package manager or https://nodejs.org
 
 # 2. Grab the code & jump in
-git clone <repository-url> canvus-demo
-cd canvus-demo/webui  # Important: The app lives in webui!
+git clone <repository-url> canvus-webui
+cd canvus-webui/webui  # Important: The app lives in webui!
 
 # 3. Set it up
 npm install
-cp .env.example .env
+cp example.env .env  # Creates your local config file (not tracked in Git)
 nano .env  # Put in your Canvus details
 
 # 4. Fire it up!
@@ -59,7 +59,8 @@ canvus-demo/
 │   ├── server.js      # The server code
 │   ├── public/        # Web stuff
 │   └── uploads/       # Where files go
-└── .env               # Your settings
+├── example.env        # Template for your settings
+└── .env               # Your local settings (not tracked in Git)
 ```
 
 ### Features
@@ -86,7 +87,37 @@ CANVUS_API_KEY=your_api_key
 # Optional tweaks
 PORT=3000              # Change this if 3000 is taken
 WEBUI_PWD=admin123     # Password for admin stuff
+
+# Security settings
+ALLOW_SELF_SIGNED_CERTS=false  # Only set to 'true' in development/testing environments
 ```
+
+#### SSL Certificate Settings
+
+The application uses secure HTTPS connections to communicate with your Canvus server. There are two modes of operation:
+
+1. **Production Mode** (Default, Recommended)
+   - `ALLOW_SELF_SIGNED_CERTS=false`
+   - Only accepts valid SSL certificates signed by trusted Certificate Authorities
+   - Provides maximum security for production environments
+   - Required for compliance with security standards
+
+2. **Development/Testing Mode**
+   - `ALLOW_SELF_SIGNED_CERTS=true`
+   - Accepts self-signed certificates
+   - ⚠️ **Security Warning**: This mode is less secure and should ONLY be used in:
+     - Development environments
+     - Testing environments
+     - Internal networks where you control the certificate infrastructure
+   - Risks of using self-signed certificates:
+     - Vulnerable to man-in-the-middle attacks
+     - No third-party verification of server identity
+     - May expose sensitive data if network is compromised
+
+🔒 **Best Practices**:
+- Always use properly signed certificates in production
+- Never enable self-signed certificates on public-facing servers
+- If you must use self-signed certificates, restrict access to trusted networks only
 
 ### Running as a Service (Optional)
 
@@ -120,6 +151,14 @@ pm2 startup
    - Check your Canvus details in `.env`
    - Can you ping your Canvus server?
    - Firewall blocking port 3000?
+
+3. **SSL Certificate Issues?**
+   - Getting certificate errors? Check if your Canvus server uses:
+     - A valid certificate from a trusted CA (recommended)
+     - A self-signed certificate (requires `ALLOW_SELF_SIGNED_CERTS=true`)
+   - In production, always use valid CA-signed certificates
+   - For development/testing, you can enable self-signed certificates (see SSL Certificate Settings above)
+   - Never ignore certificate errors in production environments
 
 Need more help? Open an issue on GitHub or ping the maintainer.
 
