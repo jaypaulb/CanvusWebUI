@@ -24,64 +24,56 @@
 // server.js - All-in-one version with Macro Endpoints
 
 const express = require('express');
-const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
+
+// Load environment variables first
+const envPath = path.resolve(__dirname, '../.env');
+const result = dotenv.config({ path: envPath });
+
+if (result.error) {
+    console.error('[Server Startup] Error loading environment variables:', result.error);
+    process.exit(1);
+}
+
+// Validate essential environment variables
+const essentialVars = ['CANVUS_SERVER', 'CANVAS_ID', 'CANVUS_API_KEY'];
+const missingVars = essentialVars.filter(v => !process.env[v]);
+
+if (missingVars.length > 0) {
+    console.error('[Server Startup] Missing essential environment variables:', missingVars.join(', '));
+    process.exit(1);
+}
+
+// Create a safe version of environment variables for logging (obscuring sensitive data)
+const safeEnvVars = Object.entries(process.env)
+    .filter(([key]) => key.startsWith('CANVUS_') || key === 'CANVAS_NAME' || key === 'CANVAS_ID' || key === 'PORT' || key === 'ALLOW_SELF_SIGNED_CERTS')
+    .reduce((acc, [key, value]) => {
+        // Obscure API keys and sensitive data
+        if (key.toLowerCase().includes('key') || key.toLowerCase().includes('pwd') || key.toLowerCase().includes('password')) {
+            acc[key] = '********';
+        } else {
+            acc[key] = value;
+        }
+        return acc;
+    }, {});
+
+console.log('\n[Server Startup] Environment loaded from:', envPath);
+console.log('[Server Startup] Loaded variables:');
+console.table(safeEnvVars);
+
+console.log('[Server Startup] Environment variables loaded successfully.');
+console.log(`[Server Startup] CANVUS_SERVER=${process.env.CANVUS_SERVER}, CANVAS_ID=${process.env.CANVAS_ID}`);
+console.log('[Server Startup] ALLOW_SELF_SIGNED_CERTS:', process.env.ALLOW_SELF_SIGNED_CERTS);
+
+// Now require other dependencies after environment is set up
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const { body, validationResult } = require('express-validator');
 const FormData = require('form-data');
 const themeRoutes = require('./routes/theme');
-
-// Function to load environment variables
-function loadEnv() {
-  const envPath = path.resolve(__dirname, '../.env');
-  try {
-      // Load and parse the .env file
-      const envData = fs.readFileSync(envPath, 'utf-8');
-      const parsedEnv = dotenv.parse(envData);
-
-      // Update process.env dynamically
-      for (const key in parsedEnv) {
-          process.env[key] = parsedEnv[key];
-      }
-
-      console.log("[loadEnv] Environment variables successfully loaded.");
-
-      // Validate essential variables
-      if (!process.env.CANVUS_SERVER || !process.env.CANVAS_ID || !process.env.CANVUS_API_KEY) {
-          console.error("[loadEnv] Missing essential environment variables (CANVUS_SERVER, CANVAS_ID, CANVUS_API_KEY).");
-          process.exit(1);
-      }
-
-      console.log("[loadEnv] Essential environment variables validated.");
-      return { success: true, message: "Environment variables successfully loaded and validated." };
-  } catch (err) {
-      console.error("[loadEnv] Error loading environment variables:", err.message);
-      return { success: false, error: "Failed to load environment variables." };
-  }
-}
-
-// Initially load the Env variables
-const envLoadResult = loadEnv();
-if (!envLoadResult.success) {
-    console.error(`[Server Startup] Environment loading failed: ${envLoadResult.error}`);
-    process.exit(1); // Exit if environment loading fails
-}
-
-// Validate essential environment variables
-let CANVUS_SERVER = process.env.CANVUS_SERVER;
-let CANVAS_ID = process.env.CANVAS_ID;
-let CANVUS_API_KEY = process.env.CANVUS_API_KEY;
-
-if (!CANVUS_SERVER || !CANVAS_ID || !CANVUS_API_KEY) {
-    console.error("[Server Startup] Missing required environment variables.");
-    process.exit(1); // Exit if essential variables are missing
-}
-
-console.log("[Server Startup] Environment variables loaded successfully.");
-console.log(`[Server Startup] CANVUS_SERVER=${CANVUS_SERVER}, CANVAS_ID=${CANVAS_ID}`);
+const apiClient = require('./utils/apiClient');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -139,25 +131,27 @@ app.post('/validateAdmin', validateAdminAuth, (req, res) => {
 
 // Define the admin environment variables endpoint
 app.get('/admin/env-variables', validateAdminAuth, (req, res) => {
-    // Define the path to the .env file (adjust if your structure is different)
     const envPath = path.resolve(__dirname, '..', '.env');
 
     try {
-        // Read the .env file synchronously
         const envFile = fs.readFileSync(envPath, 'utf8');
-
-        // Parse the .env file content
         const envConfig = dotenv.parse(envFile);
 
-        // Filter out variables that contain 'key' in their names (case-insensitive)
+        // Filter out sensitive variables (only API keys and security settings)
         const filteredEnv = {};
+        const excludedPatterns = [
+            'api_key',
+            'apikey',
+            'allow_self_signed_certs'
+        ];
+        
         for (const [key, value] of Object.entries(envConfig)) {
-            if (!key.toLowerCase().includes('key')) {
+            const lowerKey = key.toLowerCase();
+            if (!excludedPatterns.some(pattern => lowerKey.includes(pattern))) {
                 filteredEnv[key] = value;
             }
         }
 
-        // Return the filtered environment variables as JSON
         res.json(filteredEnv);
         console.log(`[${getTimestamp()}] Environment variables retrieved successfully`);
     } catch (error) {
@@ -165,6 +159,30 @@ app.get('/admin/env-variables', validateAdminAuth, (req, res) => {
         res.status(500).json({ success: false, error: 'Failed to read environment variables.' });
     }
 });
+
+// Helper function to verify canvas existence and get details
+async function verifyCanvas(canvasId) {
+    console.log(`[${getTimestamp()}] Verifying canvas ID: ${canvasId}`);
+    
+    try {
+        const response = await apiClient.get(`/api/v1/canvases/${canvasId}`);
+        
+        if (response.data) {
+            console.log(`[${getTimestamp()}] Canvas verified. Name: ${response.data.name}`);
+            return { 
+                exists: true, 
+                name: response.data.name,
+                id: response.data.id
+            };
+        } else {
+            console.log(`[${getTimestamp()}] Canvas not found`);
+            return { exists: false };
+        }
+    } catch (error) {
+        console.error(`[${getTimestamp()}] Error verifying canvas:`, error.response?.data || error.message);
+        throw new Error(error.response?.data?.error || 'Failed to verify canvas');
+    }
+}
 
 // Update Environment Variables (admin authentication required)
 app.post('/admin/update-env', validateAdminAuth, async (req, res) => {
@@ -175,21 +193,45 @@ app.post('/admin/update-env', validateAdminAuth, async (req, res) => {
     console.log(`[${getTimestamp()}] Variables to update:`, updatedVars);
 
     try {
+        // Check for restricted variables
+        const excludedPatterns = [
+            'api_key',
+            'apikey',
+            'allow_self_signed_certs'
+        ];
+        const restrictedVars = Object.keys(updatedVars).filter(key => 
+            excludedPatterns.some(pattern => key.toLowerCase().includes(pattern))
+        );
+
+        if (restrictedVars.length > 0) {
+            return res.status(403).json({
+                success: false,
+                error: `Cannot modify restricted variables: ${restrictedVars.join(', ')}`
+            });
+        }
+
         // Verify canvas ID if it's being updated
         if (updatedVars.CANVAS_ID) {
-            const verifyResponse = await axios.get(`http://localhost:${PORT}/verifycanvas/${updatedVars.CANVAS_ID}`);
-            
-            if (!verifyResponse.data.exists) {
+            try {
+                const verifyResult = await verifyCanvas(updatedVars.CANVAS_ID);
+                
+                if (!verifyResult.exists) {
+                    return res.status(400).json({ 
+                        success: false, 
+                        error: 'Canvas ID does not exist on server.' 
+                    });
+                }
+
+                // If canvas name is different, update it
+                if (verifyResult.name && updatedVars.CANVAS_NAME !== verifyResult.name) {
+                    console.log(`[${getTimestamp()}] Updating canvas name from "${updatedVars.CANVAS_NAME}" to "${verifyResult.name}"`);
+                    updatedVars.CANVAS_NAME = verifyResult.name;
+                }
+            } catch (error) {
                 return res.status(400).json({ 
                     success: false, 
-                    error: 'Canvas ID does not exist on server.' 
+                    error: error.message 
                 });
-            }
-
-            // If canvas name is different, update it
-            if (verifyResponse.data.name && updatedVars.CANVAS_NAME !== verifyResponse.data.name) {
-                console.log(`[${getTimestamp()}] Updating canvas name from "${updatedVars.CANVAS_NAME}" to "${verifyResponse.data.name}"`);
-                updatedVars.CANVAS_NAME = verifyResponse.data.name;
             }
         }
 
@@ -234,15 +276,6 @@ app.post('/admin/update-env', validateAdminAuth, async (req, res) => {
         fs.writeFileSync(envPath, updatedEnvContent, 'utf8');
         console.log(`[${getTimestamp()}] Successfully updated .env file.`);
 
-        // Reload environment variables globally
-        const reloadResult = loadEnv();
-        console.log(`[${getTimestamp()}] Environment variables reloaded:`, reloadResult);
-
-        // Update all global variables
-        CANVUS_SERVER = process.env.CANVUS_SERVER;
-        CANVAS_ID = process.env.CANVAS_ID;
-        CANVUS_API_KEY = process.env.CANVUS_API_KEY;
-
         res.json({ 
             success: true, 
             message: 'Environment variables updated and reloaded successfully.',
@@ -253,6 +286,21 @@ app.post('/admin/update-env', validateAdminAuth, async (req, res) => {
         res.status(500).json({ 
             success: false, 
             error: error.message || 'Failed to update environment variables.' 
+        });
+    }
+});
+
+// Verify Canvas endpoint (now using the shared verification function)
+app.get('/verifycanvas/:canvasId', async (req, res) => {
+    const { canvasId } = req.params;
+    
+    try {
+        const result = await verifyCanvas(canvasId);
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ 
+            exists: false, 
+            error: error.message 
         });
     }
 });
@@ -627,12 +675,7 @@ app.post("/find-canvas", async (req, res) => {
 
     try {
         sendSSEMessage(`Searching for UID: "${uid}"`);
-        const response = await axios.get(`${CANVUS_SERVER}/api/v1/canvases`, {
-            headers: {
-                "Private-Token": CANVUS_API_KEY,
-                "Content-Type": "application/json",
-            },
-        });
+        const response = await apiClient.get(`/api/v1/canvases`);
 
         const canvases = response.data;
         if (!Array.isArray(canvases)) {
@@ -647,14 +690,8 @@ app.post("/find-canvas", async (req, res) => {
             sendSSEMessage(`Processing Canvas ID: ${canvasId}`);
 
             try {
-                const browsersResponse = await axios.get(
-                    `${CANVUS_SERVER}/api/v1/canvases/${canvasId}/browsers`,
-                    {
-                        headers: {
-                            "Private-Token": CANVUS_API_KEY,
-                            "Content-Type": "application/json",
-                        },
-                    }
+                const browsersResponse = await apiClient.get(
+                    `/api/v1/canvases/${canvasId}/browsers`
                 );
 
                 const browsers = browsersResponse.data;
@@ -797,12 +834,7 @@ app.get("/check-env", (req, res) => {
 app.get('/get-zones', async (req, res) => {
     console.log('[/get-zones] route invoked.');
     try {
-        const response = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/anchors`, {
-            headers: {
-                "Private-Token": CANVUS_API_KEY,
-                "Content-Type": "application/json"
-            }
-        });
+        const response = await apiClient.get(`/api/v1/canvases/${process.env.CANVAS_ID}/anchors`);
         res.json({ success: true, zones: response.data });
     } catch (error) {
         console.error('[/get-zones] Detailed error:', {
@@ -841,24 +873,14 @@ function writeDeletedRecords(records) {
  * CORE HELPERS
  ******************************************************************************/
 async function getAllWidgets() {
-    const url = `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`;
-    const { data } = await axios.get(url, {
-      headers: {
-        "Private-Token": CANVUS_API_KEY,
-        "Content-Type": "application/json",
-      },
-    });
+    const url = `/api/v1/canvases/${process.env.CANVAS_ID}/widgets`;
+    const { data } = await apiClient.get(url);
     return data;
   }
   
   async function getZoneBoundingBox(zoneId) {
-    const url = `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/anchors/${zoneId}`;
-    const { data } = await axios.get(url, {
-      headers: {
-        "Private-Token": CANVUS_API_KEY,
-        "Content-Type": "application/json",
-      },
-    });
+    const url = `/api/v1/canvases/${process.env.CANVAS_ID}/anchors/${zoneId}`;
+    const { data } = await apiClient.get(url);
     if (!data || !data.location || !data.size) {
       throw new Error(`Invalid or missing anchor data for zone ID: ${zoneId}`);
     }
@@ -907,18 +929,13 @@ async function getAllWidgets() {
   }
   
   async function patchWidgetAtURL(routePrefix, widgetId, body) {
-    const patchEndpoint = `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}${routePrefix}/${widgetId}`;
+    const patchEndpoint = `/api/v1/canvases/${process.env.CANVAS_ID}${routePrefix}/${widgetId}`;
     let tries = 0;
     let success = false;
     let lastError = null;
     while (tries < 3 && !success) {
       try {
-        await axios.patch(patchEndpoint, body, {
-          headers: {
-            "Private-Token": CANVUS_API_KEY,
-            "Content-Type": "application/json"
-          }
-        });
+        await apiClient.patch(patchEndpoint, body);
         success = true;
       } catch (err) {
         tries++;
@@ -1103,16 +1120,11 @@ app.post("/api/macros/copy", async (req, res) => {
             }
   
             const route = getWidgetPatchURL(w).replace("/", "");
-            const postURL = `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/${route}`;
+            const postURL = `/api/v1/canvases/${process.env.CANVAS_ID}/${route}`;
             console.log(`[copy] POST new widget oldID=${w.id}`, JSON.stringify(cloned));
   
             try {
-              const resp = await axios.post(postURL, cloned, {
-                headers: {
-                  "Private-Token": CANVUS_API_KEY,
-                  "Content-Type": "application/json"
-                }
-              });
+              const resp = await apiClient.post(postURL, cloned);
               copiedMap.set(w.id, resp.data.id);
             } catch (postErr) {
               console.error(`[copy] POST error ID=${w.id}:`, postErr.message);
@@ -1199,15 +1211,10 @@ app.post("/api/macros/copy", async (req, res) => {
       let deletedCount = 0;
       for (const w of toDelete) {
         const route = getWidgetPatchURL(w);
-        const url = `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}${route}/${w.id}`;
+        const url = `/api/v1/canvases/${process.env.CANVAS_ID}${route}/${w.id}`;
         console.log(`[delete] Deleting ID=${w.id}, route=${route}`);
         try {
-          await axios.delete(url, {
-            headers: {
-              "Private-Token": CANVUS_API_KEY,
-              "Content-Type": "application/json"
-            }
-          });
+          await apiClient.delete(url);
           deletedCount++;
         } catch (delErr) {
           console.error(`[delete] Error removing ID=${w.id}:`, delErr.message);
@@ -1321,16 +1328,11 @@ app.post("/api/macros/copy", async (req, res) => {
   
             // POST the cloned data
             const route = getWidgetPatchURL(w).replace("/", "");
-            const postURL = `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/${route}`;
+            const postURL = `/api/v1/canvases/${process.env.CANVAS_ID}/${route}`;
             console.log(`[undelete] POST new widget from old ID=${w.id}, route=${route}`, JSON.stringify(cloned, null, 2));
   
             try {
-              const resp = await axios.post(postURL, cloned, {
-                headers: {
-                  "Private-Token": CANVUS_API_KEY,
-                  "Content-Type": "application/json"
-                }
-              });
+              const resp = await apiClient.post(postURL, cloned);
               restoredMap.set(w.id, resp.data.id);
               restoredCount++;
             } catch (postErr) {
@@ -1853,12 +1855,7 @@ async function createNoteAtLocation(title, text, color, location) {
     };
 
     try {
-        const response = await axios.post(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/notes`, payload, {
-            headers: {
-                "Private-Token": CANVUS_API_KEY,
-                "Content-Type": "application/json"
-            }
-        });
+        const response = await apiClient.post(`/api/v1/canvases/${process.env.CANVAS_ID}/notes`, payload);
 
         if (response.status === 201 || response.status === 200) {
             console.log(`[${getTimestamp()}] Note "${title}" created successfully.`);
@@ -1878,17 +1875,12 @@ app.post('/create-team-targets', async (req, res) => {
     try {
         // Fetch zones
         console.log(`[${getTimestamp()}] Fetching zones via /get-zones route.`);
-        const zonesResponse = await axios.get(`http://localhost:${PORT}/get-zones`);
+        const zonesResponse = await apiClient.get(`/get-zones`);
         const zones = zonesResponse.data.zones;
 
         // Fetch existing widgets to find existing team targets
         console.log(`[${getTimestamp()}] Fetching widgets to identify existing team targets.`);
-        const widgetsResponse = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`, {
-            headers: {
-                "Private-Token": CANVUS_API_KEY,
-                "Content-Type": "application/json"
-            }
-        });
+        const widgetsResponse = await apiClient.get(`/api/v1/canvases/${process.env.CANVAS_ID}/widgets`);
         const widgets = widgetsResponse.data;
 
         const existingTeamTargets = new Set();
@@ -2068,12 +2060,7 @@ async function createInitialZones(gridSize, gridPattern) {
   }
 
   console.log(`[${getTimestamp()}] Fetching widgets to determine SharedCanvas size.`);
-  const { data: widgets } = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`, {
-      headers: {
-          "Private-Token": CANVUS_API_KEY,
-          "Content-Type": "application/json"
-      }
-  });
+  const { data: widgets } = await apiClient.get(`/api/v1/canvases/${process.env.CANVAS_ID}/widgets`);
 
   const sharedCanvas = widgets.find(widget => widget.widget_type === 'SharedCanvas');
   if (!sharedCanvas) {
@@ -2142,15 +2129,9 @@ async function createInitialZones(gridSize, gridPattern) {
       console.log(`[${getTimestamp()}] Creating anchor '${anchorName}'`);
 
       try {
-          const response = await axios.post(
-              `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/anchors`,
-              payload,
-              {
-                  headers: {
-                      "Private-Token": CANVUS_API_KEY,
-                      "Content-Type": "application/json"
-                  }
-              }
+          const response = await apiClient.post(
+              `/api/v1/canvases/${process.env.CANVAS_ID}/anchors`,
+              payload
           );
           console.log(`[${getTimestamp()}] Successfully created anchor '${anchorName}'`);
           createdCount++;
@@ -2180,12 +2161,7 @@ app.post("/create-zones", async (req, res) => {
       if (subZoneId && subZoneArray) {
           // SubZone creation
           console.log(`[${getTimestamp()}] Fetching details for zone ID: ${subZoneId}`);
-          const { data: selectedZone } = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/anchors/${subZoneId}`, {
-              headers: {
-                  "Private-Token": CANVUS_API_KEY,
-                  "Content-Type": "application/json"
-              }
-          });
+          const { data: selectedZone } = await apiClient.get(`/api/v1/canvases/${process.env.CANVAS_ID}/anchors/${subZoneId}`);
 
           const [cols, rows] = subZoneArray.split('x').map(Number);
           if (isNaN(cols) || isNaN(rows) || cols <= 0 || rows <= 0) {
@@ -2217,12 +2193,7 @@ app.post("/create-zones", async (req, res) => {
 
           for (const subZone of subZones) {
               try {
-                  await axios.post(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/anchors`, subZone, {
-                      headers: {
-                          "Private-Token": CANVUS_API_KEY,
-                          "Content-Type": "application/json"
-                      }
-                  });
+                  await apiClient.post(`/api/v1/canvases/${process.env.CANVAS_ID}/anchors`, subZone);
                   createdCount++;
               } catch (err) {
                   console.error(`[${getTimestamp()}] Error creating subzone '${subZone.anchor_name}':`, err.response?.data || err.message);
@@ -2251,13 +2222,8 @@ app.post("/create-zones", async (req, res) => {
 // Delete Zones (no password)
 app.delete("/delete-zones", async (req, res) => {
     try {
-        console.log(`[${getTimestamp()}] Fetching all anchors for canvas ID: ${CANVAS_ID}`);
-        const { data: anchors } = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/anchors`, {
-            headers: {
-                "Private-Token": CANVUS_API_KEY,
-                "Content-Type": "application/json"
-            }
-        });
+        console.log(`[${getTimestamp()}] Fetching all anchors for canvas ID: ${process.env.CANVAS_ID}`);
+        const { data: anchors } = await apiClient.get(`/api/v1/canvases/${process.env.CANVAS_ID}/anchors`);
 
         // Identify script-created anchors
         const scriptAnchors = anchors.filter(anchor => anchor.anchor_name && anchor.anchor_name.endsWith("(Script Made)"));
@@ -2277,14 +2243,8 @@ app.delete("/delete-zones", async (req, res) => {
 
             console.log(`[${getTimestamp()}] Deleting anchor '${anchorName}' (ID: ${anchorId})`);
             try {
-                await axios.delete(
-                    `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/anchors/${anchorId}`,
-                    {
-                        headers: {
-                            "Private-Token": CANVUS_API_KEY,
-                            "Content-Type": "application/json"
-                        }
-                    }
+                await apiClient.delete(
+                    `/api/v1/canvases/${process.env.CANVAS_ID}/anchors/${anchorId}`
                 );
                 console.log(`[${getTimestamp()}] Successfully deleted anchor '${anchorName}' (ID: ${anchorId})`);
                 deletedCount++;
@@ -2324,12 +2284,7 @@ app.post("/create-note", [
     try {
         const iconTitle = `Team_${team}_Target`;
         console.log(`[${getTimestamp()}] Fetching widgets to locate ${iconTitle}.`);
-        const widgetsResponse = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`, {
-            headers: {
-                "Private-Token": CANVUS_API_KEY,
-                "Content-Type": "application/json"
-            }
-        });
+        const widgetsResponse = await apiClient.get(`/api/v1/canvases/${process.env.CANVAS_ID}/widgets`);
         const widgets = widgetsResponse.data;
 
         const teamIcon = widgets.find(widget => widget.title === iconTitle);
@@ -2378,15 +2333,9 @@ app.post("/create-note", [
 
         console.log(`[${getTimestamp()}] Creating new note with payload:`, payload);
 
-        const createNoteResponse = await axios.post(
-            `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/notes`,
-            payload,
-            {
-                headers: {
-                    "Private-Token": CANVUS_API_KEY,
-                    "Content-Type": "application/json"
-                }
-            }
+        const createNoteResponse = await apiClient.post(
+            `/api/v1/canvases/${process.env.CANVAS_ID}/notes`,
+            payload
         );
 
         if (createNoteResponse.status === 201 || createNoteResponse.status === 200) {
@@ -2450,12 +2399,7 @@ app.post("/upload-item", upload.single('file'), async (req, res) => {
 
         // Fetch widgets to find Team_X_Target location
         console.log(`[${getTimestamp()}] Fetching widgets to locate Team_${team}_Target.`);
-        const widgetsResponse = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`, {
-            headers: {
-                "Private-Token": CANVUS_API_KEY,
-                "Content-Type": "application/json"
-            }
-        });
+        const widgetsResponse = await apiClient.get(`/api/v1/canvases/${process.env.CANVAS_ID}/widgets`);
         const widgets = widgetsResponse.data;
         const iconTitle = `Team_${team}_Target`;
         const teamIcon = widgets.find(widget => widget.title === iconTitle);
@@ -2502,11 +2446,10 @@ app.post("/upload-item", upload.single('file'), async (req, res) => {
 
         console.log(`[${getTimestamp()}] Creating widget of type "${widgetType}" near Team_${team}_Target at (${newX}, ${newY}) using multipart/form-data`);
 
-        const widgetCreationURL = `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}${widgetEndpoint}`;
+        const widgetCreationURL = `/api/v1/canvases/${process.env.CANVAS_ID}${widgetEndpoint}`;
 
-        const widgetResponse = await axios.post(widgetCreationURL, form, {
+        const widgetResponse = await apiClient.post(widgetCreationURL, form, {
             headers: {
-                "Private-Token": CANVUS_API_KEY,
                 ...form.getHeaders()
             }
         });
@@ -2531,12 +2474,7 @@ app.post("/upload-item", upload.single('file'), async (req, res) => {
 app.get('/list-target-notes', async (req, res) => {
     try {
         console.log(`[${getTimestamp()}] Fetching widgets to list target notes.`);
-        const widgetsResponse = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`, {
-            headers: {
-                "Private-Token": CANVUS_API_KEY,
-                "Content-Type": "application/json"
-            }
-        });
+        const widgetsResponse = await apiClient.get(`/api/v1/canvases/${process.env.CANVAS_ID}/widgets`);
         const widgets = widgetsResponse.data;
 
         const targetNotes = widgets.filter(w => w.title && /^Team_(\d+)_Target$/.test(w.title));
@@ -2559,12 +2497,7 @@ app.post('/delete-target-notes', async (req, res) => {
 
     for (const id of noteIds) {
         try {
-            await axios.delete(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/notes/${id}`, {
-                headers: {
-                    "Private-Token": CANVUS_API_KEY,
-                    "Content-Type": "application/json"
-                }
-            });
+            await apiClient.delete(`/api/v1/canvases/${process.env.CANVAS_ID}/notes/${id}`);
             deletedCount++;
         } catch (error) {
             console.error(`[${getTimestamp()}] Error deleting note ID ${id}:`, error.response?.data || error.message);
@@ -2726,12 +2659,8 @@ async function createInitialZones(gridSize, gridPattern) {
         throw new Error(`Invalid grid pattern. Choose one of: ${validPatterns.join(", ")}`);
     }
 
-    const { data: widgets } = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`, {
-        headers: {
-            "Private-Token": CANVUS_API_KEY,
-            "Content-Type": "application/json"
-        }
-    });
+    const widgetsResponse = await apiClient.get(`/api/v1/canvases/${process.env.CANVAS_ID}/widgets`);
+    const widgets = widgetsResponse.data;
 
     const sharedCanvas = widgets.find(widget => widget.widget_type === 'SharedCanvas');
     if (!sharedCanvas) {
@@ -2777,15 +2706,9 @@ async function createInitialZones(gridSize, gridPattern) {
         };
 
         try {
-            await axios.post(
-                `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/anchors`,
-                payload,
-                {
-                    headers: {
-                        "Private-Token": CANVUS_API_KEY,
-                        "Content-Type": "application/json"
-                    }
-                }
+            await apiClient.post(
+                `/api/v1/canvases/${process.env.CANVAS_ID}/anchors`,
+                payload
             );
             createdCount++;
         } catch (err) {
@@ -2827,25 +2750,14 @@ function getWidgetPatchURL(widget) {
   
 
 async function getAllWidgets() {
-    const response = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`, {
-        headers: {
-            "Private-Token": CANVUS_API_KEY,
-            "Content-Type": "application/json"
-        }
-    });
+    const response = await apiClient.get(`/api/v1/canvases/${process.env.CANVAS_ID}/widgets`);
     return response.data; // Array of widget objects
 }
 
 async function getZoneBoundingBox(zoneId) {
     // retrieve anchor (zone)
-    const { data: anchor } = await axios.get(
-        `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/anchors/${zoneId}`,
-        {
-            headers: {
-                "Private-Token": CANVUS_API_KEY,
-                "Content-Type": "application/json"
-            }
-        }
+    const { data: anchor } = await apiClient.get(
+        `/api/v1/canvases/${process.env.CANVAS_ID}/anchors/${zoneId}`
     );
     return {
         x: anchor.location.x,
@@ -2945,15 +2857,9 @@ app.post("/api/macros/move", async (req, res) => {
             while (tries < 3 && !success) {
                 try {
                     console.log(`[${getTimestamp()}] Attempting PATCH for widget ID=${w.id}, try #${tries + 1}`);
-                    await axios.patch(
-                        `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets/${w.id}`,
-                        { location: updated.location, scale: updated.scale },
-                        {
-                            headers: {
-                                "Private-Token": CANVUS_API_KEY,
-                                "Content-Type": "application/json"
-                            }
-                        }
+                    await apiClient.patch(
+                        `/api/v1/canvases/${process.env.CANVAS_ID}/widgets/${w.id}`,
+                        { location: updated.location, scale: updated.scale }
                     );
                     success = true;
                     movedCount++;
@@ -3039,10 +2945,9 @@ app.post("/api/macros/copy", async (req, res) => {
                         try {
                             // TODO: If different endpoints for notes/images, do so by w.widget_type
                             // For now, just assume a single /widgets endpoint:
-                            const resp = await axios.post(
-                                `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`,
-                                updated,
-                                { headers: { "Private-Token": CANVUS_API_KEY, "Content-Type": "application/json" } }
+                            const resp = await apiClient.post(
+                                `/api/v1/canvases/${process.env.CANVAS_ID}/widgets`,
+                                updated
                             );
                             success = true;
                             newId = resp.data.id;
@@ -3563,10 +3468,9 @@ app.post("/api/macros/import", upload.single('importFile'), async (req, res) => 
                     let success = false;
                     while (tries < 3 && !success) {
                         try {
-                            const resp = await axios.post(
-                                `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`,
-                                newWidget,
-                                { headers: { "Private-Token": CANVUS_API_KEY, "Content-Type": "application/json" } }
+                            const resp = await apiClient.post(
+                                `/api/v1/canvases/${process.env.CANVAS_ID}/widgets`,
+                                newWidget
                             );
                             let newId = resp.data.id;
                             importedMap.set(w.id, newId);
@@ -3622,7 +3526,7 @@ app.post('/admin/createTargets', validateAdminAuth, async (req, res) => {
         console.log(`[${getTimestamp()}] Creating target notes...`);
         
         // Get zones using our existing endpoint
-        const zonesResponse = await axios.get(`http://localhost:${PORT}/get-zones`);
+        const zonesResponse = await apiClient.get(`/get-zones`);
         if (!zonesResponse.data.success) {
             throw new Error('Failed to fetch zones');
         }
@@ -3672,9 +3576,8 @@ app.post('/admin/deleteTargets', validateAdminAuth, async (req, res) => {
         console.log(`[${getTimestamp()}] Deleting target notes...`);
         
         // Get all widgets from CANVUS
-        const response = await axios.get(
-            `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/widgets`,
-            { headers: { 'Private-Token': CANVUS_API_KEY } }
+        const response = await apiClient.get(
+            `/api/v1/canvases/${process.env.CANVAS_ID}/widgets`
         );
 
         // Filter target notes - using correct property names and values
@@ -3688,9 +3591,8 @@ app.post('/admin/deleteTargets', validateAdminAuth, async (req, res) => {
         let deletedCount = 0;
         for (const note of targetNotes) {
             try {
-                await axios.delete(
-                    `${CANVUS_SERVER}/api/v1/canvases/${CANVAS_ID}/notes/${note.id}`,
-                    { headers: { 'Private-Token': CANVUS_API_KEY } }
+                await apiClient.delete(
+                    `/api/v1/canvases/${process.env.CANVAS_ID}/notes/${note.id}`
                 );
                 deletedCount++;
                 console.log(`[${getTimestamp()}] Successfully deleted note "${note.title}"`);
@@ -3850,12 +3752,7 @@ app.get('/verifycanvas/:canvasId', async (req, res) => {
     console.log(`[${getTimestamp()}] Verifying canvas ID: ${canvasId}`);
     
     try {
-        const response = await axios.get(`${CANVUS_SERVER}/api/v1/canvases/${canvasId}`, {
-            headers: {
-                "Private-Token": CANVUS_API_KEY,
-                "Content-Type": "application/json"
-            }
-        });
+        const response = await apiClient.get(`/api/v1/canvases/${canvasId}`);
         
         if (response.data) {
             console.log(`[${getTimestamp()}] Canvas verified. Name: ${response.data.name}`);

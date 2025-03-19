@@ -42727,5 +42727,529 @@
         "widget_type": "Note"
       }
     ]
+  },
+  {
+    "recordId": "rec-1742382356325",
+    "timestamp": "2025-03-19T11:05:56.325Z",
+    "zoneBB": {
+      "x": 0.9999390244483948,
+      "y": 4365.41015625,
+      "width": 2400,
+      "height": 1455.469970703125,
+      "scale": 1
+    },
+    "widgets": [
+      {
+        "auto_text_color": true,
+        "background_color": "#fcea0fff",
+        "depth": 335.5,
+        "id": "975253fa-11b9-46eb-ad34-3231a72f0cee",
+        "location": {
+          "x": 461.2640380859375,
+          "y": 4685.162109375
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": false,
+        "scale": 0.9532161355018616,
+        "size": {
+          "height": 300,
+          "width": 300
+        },
+        "state": "normal",
+        "text": "",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      }
+    ]
+  },
+  {
+    "recordId": "rec-1742382455786",
+    "timestamp": "2025-03-19T11:07:35.786Z",
+    "zoneBB": {
+      "x": 0.9999390244483948,
+      "y": 4365.41015625,
+      "width": 2400,
+      "height": 1455.469970703125,
+      "scale": 1
+    },
+    "widgets": []
+  },
+  {
+    "recordId": "rec-1742382593085",
+    "timestamp": "2025-03-19T11:09:53.085Z",
+    "zoneBB": {
+      "x": 0.9999390244483948,
+      "y": 4365.41015625,
+      "width": 2400,
+      "height": 1455.469970703125,
+      "scale": 1
+    },
+    "widgets": []
+  },
+  {
+    "recordId": "rec-1742384194326",
+    "timestamp": "2025-03-19T11:36:34.326Z",
+    "zoneBB": {
+      "x": 0.9999390244483948,
+      "y": 4365.41015625,
+      "width": 2400,
+      "height": 1455.469970703125,
+      "scale": 1
+    },
+    "widgets": []
+  },
+  {
+    "recordId": "rec-1742384580269",
+    "timestamp": "2025-03-19T11:43:00.269Z",
+    "zoneBB": {
+      "x": 0.9999390244483948,
+      "y": 4365.41015625,
+      "width": 2400,
+      "height": 1455.469970703125,
+      "scale": 1
+    },
+    "widgets": [
+      {
+        "auto_text_color": true,
+        "background_color": "#ffffffff",
+        "depth": 285.60101318359375,
+        "id": "56c4b883-d687-435b-96e6-64b740960dd8",
+        "location": {
+          "x": 62.06119918823242,
+          "y": 4372.5146484375
+        },
+        "parent_id": "9131c271-807f-40c5-b3fb-29e186e5b378",
+        "pinned": false,
+        "scale": 0.49611198902130127,
+        "size": {
+          "height": 350.1719970703125,
+          "width": 418.6000061035156
+        },
+        "state": "normal",
+        "text": "RISK TEMPLATE\n\nRisk ID: [Number]\nDescription: [Brief description of risk]\nLikelihood Score (1-5): [Score] - [Reasoning]\nImpact Score (1-5): [Score] - [Reasoning]\nTotal Risk Score: [Likelihood × Impact]\nMitigation Strategy: [Planned actions]\nOwner: [Name/Role]\nReview Date: [Next review date]",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffffffff",
+        "depth": 212.6999969482422,
+        "id": "44eef2ed-42aa-45e4-b013-442bcdbd9d54",
+        "location": {
+          "x": 157.4290008544922,
+          "y": 4532.81103515625
+        },
+        "parent_id": "9a6b25cb-e8a1-452b-bf62-0c607b2fda84",
+        "pinned": false,
+        "scale": 1,
+        "size": {
+          "height": 458.70001220703125,
+          "width": 384
+        },
+        "state": "normal",
+        "text": "Name:\nRole:\nInterest Level:\nInfluence Level:\nKey Concerns:\n",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#3aaa34ff",
+        "depth": 212.6999969482422,
+        "id": "c2356f84-74e2-45f9-88b3-8fddfdf43296",
+        "location": {
+          "x": 525.5180053710938,
+          "y": 4416.41748046875
+        },
+        "parent_id": "9f7dd307-90df-4c1d-baca-34814714b78f",
+        "pinned": false,
+        "scale": 0.5237039923667908,
+        "size": {
+          "height": 458.70001220703125,
+          "width": 384
+        },
+        "state": "normal",
+        "text": "Name:\nRole:\nInterest Level:\nInfluence Level:\nKey Concerns:\n",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#92278fff",
+        "depth": 213.6999969482422,
+        "id": "fbadb24a-fd58-47ee-8079-365aed4c401a",
+        "location": {
+          "x": 88.88289642333984,
+          "y": 4571.76904296875
+        },
+        "parent_id": "9f7dd307-90df-4c1d-baca-34814714b78f",
+        "pinned": false,
+        "scale": 0.7605310082435608,
+        "size": {
+          "height": 458.70001220703125,
+          "width": 384
+        },
+        "state": "normal",
+        "text": "Name:\nRole:\nInterest Level:\nInfluence Level:\nKey Concerns:\n",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#3aaa34ff",
+        "depth": 25.299999237060547,
+        "id": "db661a9b-8238-450a-b682-8d9d76bfd10b",
+        "location": {
+          "x": 2379.8798828125,
+          "y": 4510.1572265625
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": false,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 458.70001220703125,
+          "width": 384
+        },
+        "state": "normal",
+        "text": "",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#3aaa34ff",
+        "depth": 24.299999237060547,
+        "id": "c8f18eab-8312-4d89-9651-2ae1b893ebc1",
+        "location": {
+          "x": 2379.8798828125,
+          "y": 4510.1572265625
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": false,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 458.70001220703125,
+          "width": 384
+        },
+        "state": "normal",
+        "text": "",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#00adefff",
+        "depth": 27.299999237060547,
+        "id": "4c081cb8-9059-4f0e-91ab-b027a37d2420",
+        "location": {
+          "x": 2379.8798828125,
+          "y": 5383.2373046875
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": false,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 458.70001220703125,
+          "width": 384
+        },
+        "state": "normal",
+        "text": "",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#00adefff",
+        "depth": 26.299999237060547,
+        "id": "875a55d0-28cc-4637-898a-9e1fb4800902",
+        "location": {
+          "x": 2379.8798828125,
+          "y": 5383.2373046875
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": true,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 458.70001220703125,
+          "width": 384
+        },
+        "state": "normal",
+        "text": "",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#3aaa34ff",
+        "depth": 23.299999237060547,
+        "id": "f2ac44c1-9234-42ed-926c-a73ab8ceaea0",
+        "location": {
+          "x": 2379.8798828125,
+          "y": 4510.1572265625
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": true,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 458.70001220703125,
+          "width": 384
+        },
+        "state": "normal",
+        "text": "Clone for more notes\n",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#00adefff",
+        "depth": 28.299999237060547,
+        "id": "db6ab8aa-4fc1-4deb-b476-6ca67abb6d64",
+        "location": {
+          "x": 2379.8798828125,
+          "y": 5383.2373046875
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": false,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 458.70001220703125,
+          "width": 384
+        },
+        "state": "normal",
+        "text": "",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffffffff",
+        "depth": 66.30000305175781,
+        "id": "7af570c1-cdba-4098-8c3f-444db6955624",
+        "location": {
+          "x": 121.9169921875,
+          "y": 5674.7314453125
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": true,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 152.89999389648438,
+          "width": 2304
+        },
+        "state": "normal",
+        "text": "PROCESS MAPPING\nThis template recreates a billing and payment process flow. Use blue notes for process steps, orange/red notes for inputs/outputs, gray notes for timing elements, and purple notes for databases. You can add arrows between notes to show the flow.\n",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#92278fff",
+        "depth": 212,
+        "id": "588ff251-46f5-4c24-b52b-16ff87304aa6",
+        "location": {
+          "x": 2055.080078125,
+          "y": 4510.1572265625
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": true,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 458.70001220703125,
+          "width": 384
+        },
+        "state": "normal",
+        "text": "",
+        "text_color": "#ffffffff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffffffff",
+        "depth": 100.30000305175781,
+        "id": "b201a440-6bc6-49ce-a66d-48a1c2944409",
+        "location": {
+          "x": 102.88983154296875,
+          "y": 5674.7314453125
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": true,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 152.89999389648438,
+          "width": 2304
+        },
+        "state": "normal",
+        "text": "RISK ASSESSMENT MATRIX\nIdentify potential risks to the project or initiative. Assess each risk based on likelihood (1-5) and impact (1-5). Position each risk on the matrix accordingly and develop mitigation strategies for high-priority risks.\n",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#f2d6991a",
+        "depth": 175.3000030517578,
+        "id": "cda0fe0e-cc3f-4932-a516-ae6297a689db",
+        "location": {
+          "x": 1201,
+          "y": 4510.1572265625
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": true,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 688.0499877929688,
+          "width": 896
+        },
+        "state": "normal",
+        "text": "WEAKNESSES\n\nWhere do you need to improve?\nAre resources adequate?\nWhat do others do better than you?\n",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#e6b3b31a",
+        "depth": 18.299999237060547,
+        "id": "a46f021f-546a-4081-8852-07a647697d47",
+        "location": {
+          "x": 346.91986083984375,
+          "y": 4510.1572265625
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": true,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 688.0499877929688,
+          "width": 896
+        },
+        "state": "normal",
+        "text": "STRENGTHS\n\nWhat are you doing well?\nWhat sets you apart?\nWhat are your good qualities?\n",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ccccccff",
+        "depth": 43.29999923706055,
+        "id": "304b8fd9-a5d1-494a-bd22-75d6edc4ea69",
+        "location": {
+          "x": 2380.8798828125,
+          "y": 5384.64013671875
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": true,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 305.79998779296875,
+          "width": 1280
+        },
+        "state": "normal",
+        "text": "Cost Structure\n\nWhat are the most important costs inherent in our business model?\nWhich key resources are most expensive?\nWhich key activities are most expensive?\n",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffffffff",
+        "depth": 214,
+        "id": "83a13241-c7ad-4e79-9316-e31375d09094",
+        "location": {
+          "x": 2055.080078125,
+          "y": 5383.2373046875
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": false,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 458.70001220703125,
+          "width": 384
+        },
+        "state": "normal",
+        "text": "",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#f2c1b31a",
+        "depth": 213,
+        "id": "ef581114-357e-441b-a31c-0f9a47c11094",
+        "location": {
+          "x": 1201,
+          "y": 5164.6171875
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": true,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 688.0499877929688,
+          "width": 896
+        },
+        "state": "normal",
+        "text": "THREATS\n\nWhat are the blockers you're facing?\nWhat are factors outside of your control?\n",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#b3d9c61a",
+        "depth": 20.299999237060547,
+        "id": "c2b56369-78be-4d80-8df9-a9a796e04cca",
+        "location": {
+          "x": 346.91986083984375,
+          "y": 5164.6171875
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": true,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 688.0499877929688,
+          "width": 896
+        },
+        "state": "normal",
+        "text": "OPPORTUNITIES\n\nWhat are your goals?\nAre demands shifting?\nHow can it be improved?\n",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      },
+      {
+        "auto_text_color": true,
+        "background_color": "#ffcc99ff",
+        "depth": 36.29999923706055,
+        "id": "8a4a2d95-4d00-4f0a-8198-9075357b2983",
+        "location": {
+          "x": 2380.8798828125,
+          "y": 4510.1572265625
+        },
+        "parent_id": "5eed36f6-11c7-4538-b786-eaf650ebc043",
+        "pinned": true,
+        "scale": 0.9532179832458496,
+        "size": {
+          "height": 917.4000244140625,
+          "width": 512
+        },
+        "state": "normal",
+        "text": "Key Partners\n\nWho are your key partners/suppliers?\nWhat are the motivators for the partnerships?\nWhich key activities do partners perform?\n",
+        "text_color": "#000000ff",
+        "title": "",
+        "widget_type": "Note"
+      }
+    ]
   }
 ]
