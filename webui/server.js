@@ -252,12 +252,19 @@ app.post('/admin/update-env', validateAdminAuth, async (req, res) => {
         // Update variables
         let updated = false;
         Object.entries(updatedVars).forEach(([key, value]) => {
-            const envKey = key.toUpperCase();
+            // Transform camelCase to uppercase with underscores
+            let envKey = key.replace(/([A-Z])/g, '_$1').toUpperCase();
+            if (envKey.startsWith('_')) {
+                envKey = envKey.substring(1); // Remove leading underscore if present
+            }
+            
             if (envObject.hasOwnProperty(envKey)) {
                 console.log(`[${getTimestamp()}] Updating ${envKey}: "${envObject[envKey]}" => "${value}"`);
                 envObject[envKey] = value;
                 process.env[envKey] = value; // Update in process.env
                 updated = true;
+            } else {
+                console.log(`[${getTimestamp()}] Variable ${envKey} not found in .env. Skipping.`);
             }
         });
 
@@ -603,14 +610,19 @@ app.post('/update-env', [
   // Update variables
   let updated = false;
   Object.entries(updatedVars).forEach(([key, value]) => {
-      const envKey = key.toUpperCase(); // Assume all keys are uppercased in .env
+      // Transform camelCase to uppercase with underscores
+      let envKey = key.replace(/([A-Z])/g, '_$1').toUpperCase();
+      if (envKey.startsWith('_')) {
+          envKey = envKey.substring(1); // Remove leading underscore if present
+      }
+      
       if (envObject.hasOwnProperty(envKey)) {
-          console.log(`[update-env] Updating ${envKey}: "${envObject[envKey]}" => "${value}"`);
+          console.log(`[${getTimestamp()}] Updating ${envKey}: "${envObject[envKey]}" => "${value}"`);
           envObject[envKey] = value;
           process.env[envKey] = value; // Update in process.env
           updated = true;
       } else {
-          console.warn(`[update-env] Variable ${envKey} not found in .env. Skipping.`);
+          console.log(`[${getTimestamp()}] Variable ${envKey} not found in .env. Skipping.`);
       }
   });
 
