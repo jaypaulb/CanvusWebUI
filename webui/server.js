@@ -30,10 +30,14 @@ const dotenv = require('dotenv');
 
 // Load environment variables first
 const realDirname = fs.realpathSync(__dirname);
+console.log(`[Server Startup] Current directory (__dirname): ${__dirname}`);
+console.log(`[Server Startup] Real path of directory: ${realDirname}`);
+
 let envPath;
 
 try {
     // First try to get the target of the symlink
+    console.log(`[Server Startup] Checking if directory is a symlink...`);
     const symlinkTarget = fs.readlinkSync(__dirname);
     if (symlinkTarget) {
         // If we're a symlink, resolve the target path
