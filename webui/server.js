@@ -30,7 +30,20 @@ const dotenv = require('dotenv');
 
 // Load environment variables first
 const realDirname = fs.realpathSync(__dirname);
-const envPath = path.resolve(realDirname, '../.env');
+let envPath;
+try {
+    const symlinkTarget = fs.readlinkSync(__dirname);
+    if (symlinkTarget) {
+        // If we're a symlink, look for .env relative to the symlink's location
+        envPath = path.resolve(path.dirname(symlinkTarget), '../.env');
+        console.log(`[Server Startup] Directory is a symlink. Looking for .env at: ${envPath}`);
+    }
+} catch (err) {
+    // If readlinkSync fails, we're not a symlink
+    envPath = path.resolve(realDirname, '../.env');
+    console.log(`[Server Startup] Directory is not a symlink. Looking for .env at: ${envPath}`);
+}
+
 const result = dotenv.config({ path: envPath });
 
 if (result.error) {
