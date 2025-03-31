@@ -76,7 +76,7 @@ const themeRoutes = require('./routes/theme');
 const apiClient = require('./utils/apiClient');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT || '3000', 10);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

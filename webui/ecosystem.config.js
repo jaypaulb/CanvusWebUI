@@ -5,12 +5,10 @@ module.exports = {
     interpreter: "authbind",
     interpreter_args: "--deep node",
     env: {
-      NODE_ENV: "development",
-      PORT: 3000
+      NODE_ENV: "development"
     },
     env_production: {
-      NODE_ENV: "production",
-      PORT: 3000
+      NODE_ENV: "production"
     }
   }]
 } 
