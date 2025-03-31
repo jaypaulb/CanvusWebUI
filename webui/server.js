@@ -29,31 +29,8 @@ const path = require('path');
 const dotenv = require('dotenv');
 
 // Load environment variables first
-const realDirname = fs.realpathSync(__dirname);
-console.log(`[Server Startup] Current directory (__dirname): ${__dirname}`);
-console.log(`[Server Startup] Real path of directory: ${realDirname}`);
-
-let envPath;
-
-try {
-    // First try to get the target of the symlink
-    console.log(`[Server Startup] Checking if directory is a symlink...`);
-    const symlinkTarget = fs.readlinkSync(__dirname);
-    if (symlinkTarget) {
-        // If we're a symlink, resolve the target path
-        const resolvedTarget = path.resolve(path.dirname(realDirname), symlinkTarget);
-        // Look for .env in the parent directory of where the symlink points to
-        envPath = path.resolve(path.dirname(resolvedTarget), '.env');
-        console.log(`[Server Startup] Directory is a symlink pointing to ${resolvedTarget}`);
-        console.log(`[Server Startup] Looking for .env at: ${envPath}`);
-    }
-} catch (err) {
-    // If readlinkSync fails, we're not a symlink
-    // In this case, try to find .env in the parent of the real directory
-    envPath = path.resolve(path.dirname(realDirname), '.env');
-    console.log(`[Server Startup] Directory is not a symlink.`);
-    console.log(`[Server Startup] Looking for .env at: ${envPath}`);
-}
+const envPath = path.resolve(__dirname, '../.env');
+console.log(`[Server Startup] Looking for .env at: ${envPath}`);
 
 const result = dotenv.config({ path: envPath });
 
