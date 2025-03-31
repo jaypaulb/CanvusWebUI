@@ -29,7 +29,8 @@ const path = require('path');
 const dotenv = require('dotenv');
 
 // Load environment variables first
-const envPath = path.resolve(__dirname, '../.env');
+const realDirname = fs.realpathSync(__dirname);
+const envPath = path.resolve(realDirname, '../.env');
 const result = dotenv.config({ path: envPath });
 
 if (result.error) {
