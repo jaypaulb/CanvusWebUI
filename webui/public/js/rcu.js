@@ -107,14 +107,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Get canvas name
                     const envResponse = await fetch('/get-canvas-info');
                     const envData = await envResponse.json();
-                    const canvasName = envData.canvasName || "Unknown Canvas";
+                    const canvas_name = envData.canvas_name || "Unknown Canvas";
 
                     // Update visibility of sections
                     if (userIdentification) userIdentification.style.display = "none";
                     if (userDashboard) {
                         userDashboard.style.display = "block";
                         // Update welcome message and note square
-                        welcomeMessage.textContent = `Welcome, ${userName}, you are currently posting to Team ${selectedTeam} on ${canvasName}.`;
+                        welcomeMessage.textContent = `Welcome, ${userName}, you are currently posting to Team ${selectedTeam} on ${canvas_name}.`;
                         noteSquare.style.backgroundColor = userColor;
                         noteSquare.style.color = isColorDark(userColor) ? '#FFFFFF' : '#000000';
                     }

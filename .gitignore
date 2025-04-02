@@ -62,3 +62,6 @@ webui/macros-deleted-records.json
 # Misc
 .DS_Store
 Thumbs.db
+
+# Dev Notes
+.notes/

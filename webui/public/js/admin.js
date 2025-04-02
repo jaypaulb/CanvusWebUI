@@ -394,8 +394,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // Broadcast the environment update event
                     const event = new CustomEvent('env-updated', { 
                         detail: { 
-                            canvasId: data.CANVAS_ID,
-                            canvasName: data.CANVAS_NAME,
+                            canvas_id: data.CANVAS_ID,
+                            canvas_name: data.CANVAS_NAME,
                             timestamp: Date.now()
                         } 
                     });
@@ -469,8 +469,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             // Update navbar canvas info
             const canvasInfo = document.getElementById('canvasInfo');
-            if (canvasInfo && event.detail.canvasName) {
-                canvasInfo.textContent = `Currently Connected to: ${event.detail.canvasName}`;
+            if (canvasInfo && event.detail.canvas_name) {
+                canvasInfo.textContent = `Currently Connected to: ${event.detail.canvas_name}`;
             }
             
             // Force reload any cached data

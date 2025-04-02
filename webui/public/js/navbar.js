@@ -89,8 +89,8 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch('/get-canvas-info')
         .then(response => response.json())
         .then(data => {
-            if (data.canvasName) {
-                document.getElementById('canvasInfo').textContent = `Currently Connected to: ${data.canvasName}`;
+            if (data.canvas_name) {
+                document.getElementById('canvasInfo').textContent = `Currently Connected to: ${data.canvas_name}`;
             }
         })
         .catch(error => console.error('Error fetching canvas info:', error));

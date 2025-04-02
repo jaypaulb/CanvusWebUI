@@ -134,7 +134,7 @@ app.post('/validateAdmin', validateAdminAuth, (req, res) => {
 
 // Define the admin environment variables endpoint
 app.get('/admin/env-variables', validateAdminAuth, (req, res) => {
-    const envPath = path.resolve(__dirname, '..', '.env');
+    const envPath = path.resolve(process.cwd(), '../.env');
 
     try {
         const envFile = fs.readFileSync(envPath, 'utf8');
@@ -190,7 +190,7 @@ async function verifyCanvas(canvasId) {
 // Update Environment Variables (admin authentication required)
 app.post('/admin/update-env', validateAdminAuth, async (req, res) => {
     const updatedVars = req.body;
-    const envPath = path.join(__dirname, '..', '.env');
+    const envPath = path.resolve(process.cwd(), '../.env');
 
     console.log(`[${getTimestamp()}] Updating .env file at: ${envPath}`);
     console.log(`[${getTimestamp()}] Variables to update:`, updatedVars);
@@ -255,11 +255,8 @@ app.post('/admin/update-env', validateAdminAuth, async (req, res) => {
         // Update variables
         let updated = false;
         Object.entries(updatedVars).forEach(([key, value]) => {
-            // Transform camelCase to uppercase with underscores
-            let envKey = key.replace(/([A-Z])/g, '_$1').toUpperCase();
-            if (envKey.startsWith('_')) {
-                envKey = envKey.substring(1); // Remove leading underscore if present
-            }
+            // Just convert to uppercase for .env comparison
+            const envKey = key.toUpperCase();
             
             if (envObject.hasOwnProperty(envKey)) {
                 console.log(`[${getTimestamp()}] Updating ${envKey}: "${envObject[envKey]}" => "${value}"`);
@@ -613,11 +610,8 @@ app.post('/update-env', [
   // Update variables
   let updated = false;
   Object.entries(updatedVars).forEach(([key, value]) => {
-      // Transform camelCase to uppercase with underscores
-      let envKey = key.replace(/([A-Z])/g, '_$1').toUpperCase();
-      if (envKey.startsWith('_')) {
-          envKey = envKey.substring(1); // Remove leading underscore if present
-      }
+      // Just convert to uppercase for .env comparison
+      const envKey = key.toUpperCase();
       
       if (envObject.hasOwnProperty(envKey)) {
           console.log(`[${getTimestamp()}] Updating ${envKey}: "${envObject[envKey]}" => "${value}"`);
@@ -727,7 +721,7 @@ app.post("/find-canvas", async (req, res) => {
                             app.locals.sseRes.end();
                             app.locals.sseRes = null;
                         }
-                        return res.json({ canvasName, canvasId });
+                        return res.json({ canvas_name: canvasName, canvas_id: canvasId });
                     }
                 }
 
@@ -810,15 +804,15 @@ app.get("/api/macros/deleted-details", (req, res) => {
 
 // Check if the provided canvasName/ID match the .env config
 app.get("/check-env", (req, res) => {
-    const { canvasName, canvasId } = req.query;
+    const { canvas_name, canvas_id } = req.query;
 
-    if (!canvasName || !canvasId) {
+    if (!canvas_name || !canvas_id) {
         console.error(`[${getTimestamp()}] Canvas name or ID is missing in the request.`);
         return res.status(400).json({ error: "Canvas name and ID are required." });
     }
 
     try {
-        const envPath = path.resolve(__dirname, "../.env");
+        const envPath = path.resolve(process.cwd(), '../.env');
         const envData = fs.readFileSync(envPath, "utf-8");
 
         const envVariables = Object.fromEntries(
@@ -831,9 +825,9 @@ app.get("/check-env", (req, res) => {
                 })
         );
 
-        const matches = envVariables.CANVAS_NAME === canvasName && envVariables.CANVAS_ID === canvasId;
+        const matches = envVariables.CANVAS_NAME === canvas_name && envVariables.CANVAS_ID === canvas_id;
 
-        console.log(`[${getTimestamp()}] Environment check for Canvas ID: ${canvasId}: ${matches ? "Matched" : "Did Not Match"}`);
+        console.log(`[${getTimestamp()}] Environment check for Canvas ID: ${canvas_id}: ${matches ? "Matched" : "Did Not Match"}`);
         return res.json({ matches });
     } catch (error) {
         console.error(`[${getTimestamp()}] Error reading .env file:`, error.message);
@@ -3524,11 +3518,11 @@ app.listen(PORT, () => console.log(`[${getTimestamp()}] Server running at http:/
 // Get Canvas Info Endpoint
 app.get('/get-canvas-info', (req, res) => {
     try {
-        const canvasName = process.env.CANVAS_NAME;
-        if (!canvasName) {
+        const canvas_name = process.env.CANVAS_NAME;
+        if (!canvas_name) {
             return res.status(404).json({ error: 'Canvas name not found in environment variables.' });
         }
-        res.json({ canvasName });
+        res.json({ canvas_name });
     } catch (error) {
         console.error(`[${getTimestamp()}] Error getting canvas info:`, error.message);
         res.status(500).json({ error: 'Failed to get canvas info.' });
@@ -3540,13 +3534,14 @@ app.post('/admin/createTargets', validateAdminAuth, async (req, res) => {
     try {
         console.log(`[${getTimestamp()}] Creating target notes...`);
         
-        // Get zones using our existing endpoint
-        const zonesResponse = await apiClient.get(`/get-zones`);
-        if (!zonesResponse.data.success) {
-            throw new Error('Failed to fetch zones');
+        // Get zones directly from Canvus API
+        const response = await apiClient.get(`/api/v1/canvases/${process.env.CANVAS_ID}/anchors`);
+        const zones = response.data;
+        
+        if (!Array.isArray(zones)) {
+            throw new Error('Invalid zones response format');
         }
         
-        const zones = zonesResponse.data.zones;
         if (zones.length < 8) {
             return res.status(400).json({ success: false, message: 'Not enough zones available' });
         }

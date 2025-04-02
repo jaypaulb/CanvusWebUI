@@ -59,8 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(data => {
           eventSource.close();
           
-          if (data.canvasName && data.canvasId) {
-            checkEnvAndUpdateButton(data.canvasName, data.canvasId);
+          if (data.canvas_name && data.canvas_id) {
+            checkEnvAndUpdateButton(data.canvas_name, data.canvas_id);
           } else {
             setTargetButton.querySelector('.loading-spinner').style.display = 'none';
             setTargetButton.querySelector('.button-text').textContent = 'No Canvas Found';
@@ -82,8 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   
     // Function to check .env and update the button
-    function checkEnvAndUpdateButton(canvasName, canvasId) {
-      fetch(`/check-env?canvasName=${encodeURIComponent(canvasName)}&canvasId=${encodeURIComponent(canvasId)}`)
+    function checkEnvAndUpdateButton(canvas_name, canvas_id) {
+      fetch(`/check-env?canvas_name=${encodeURIComponent(canvas_name)}&canvas_id=${encodeURIComponent(canvas_id)}`)
         .then(response => response.json())
         .then(data => {
           setTargetButton.querySelector('.loading-spinner').style.display = 'none';
@@ -93,9 +93,9 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "/pages.html";
           } else {
             // Update the button with canvas details
-            setTargetButton.querySelector('.button-text').textContent = `Click here to update target to ${canvasName}`;
-            setTargetButton.dataset.canvasId = canvasId;
-            setTargetButton.dataset.canvasName = canvasName;
+            setTargetButton.querySelector('.button-text').textContent = `Click here to update target to ${canvas_name}`;
+            setTargetButton.dataset.canvas_id = canvas_id;
+            setTargetButton.dataset.canvas_name = canvas_name;
             setTargetButton.disabled = false; // Enable the button
             
             // Display warning message
@@ -112,10 +112,10 @@ document.addEventListener("DOMContentLoaded", () => {
   
     // Function to handle button click with modal password prompt
     setTargetButton.addEventListener("click", async () => {
-        const canvasId = setTargetButton.dataset.canvasId;
-        const canvasName = setTargetButton.dataset.canvasName;
+        const canvas_id = setTargetButton.dataset.canvas_id;
+        const canvas_name = setTargetButton.dataset.canvas_name;
         
-        if (!canvasId || !canvasName) {
+        if (!canvas_id || !canvas_name) {
             displayError("Missing canvas information. Please try refreshing the page.");
             return;
         }
@@ -141,8 +141,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     'Content-Type': 'application/json' 
                 },
                 body: JSON.stringify({ 
-                    CANVAS_ID: canvasId, 
-                    CANVAS_NAME: canvasName 
+                    CANVAS_ID: canvas_id, 
+                    CANVAS_NAME: canvas_name 
                 })
             });
             
@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
             displayError(error.message || "An error occurred while updating the environment.");
             // Reset button state
             setTargetButton.querySelector('.loading-spinner').style.display = 'none';
-            setTargetButton.querySelector('.button-text').textContent = `Click here to update target to ${canvasName}`;
+            setTargetButton.querySelector('.button-text').textContent = `Click here to update target to ${canvas_name}`;
             setTargetButton.disabled = false;
         }
     });
