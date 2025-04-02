@@ -655,6 +655,12 @@ app.post('/update-env', [
 
 // Find Canvas Progress Endpoint
 app.get("/find-canvas-progress", (req, res) => {
+    // Add CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    
+    // SSE headers
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
@@ -664,6 +670,13 @@ app.get("/find-canvas-progress", (req, res) => {
     
     // Send an initial message
     res.write('data: Initializing search...\n\n');
+    
+    // Handle client disconnect
+    req.on('close', () => {
+        if (app.locals.sseRes === res) {
+            app.locals.sseRes = null;
+        }
+    });
 });
 
 // Helper function to send SSE messages

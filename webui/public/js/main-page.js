@@ -38,16 +38,36 @@ document.addEventListener("DOMContentLoaded", () => {
       confirmationSpan.className = "message success";
       confirmationSpan.style.display = "inline";
       
-      // Connect to SSE endpoint
-      const eventSource = new EventSource(`/find-canvas-progress`);
+      let retryCount = 0;
+      const maxRetries = 3;
       
-      eventSource.onmessage = function(event) {
-        confirmationSpan.textContent = event.data;
-      };
+      function connectSSE() {
+        // Connect to SSE endpoint
+        const eventSource = new EventSource(`/find-canvas-progress`);
+        
+        eventSource.onmessage = function(event) {
+          console.log("SSE message received:", event.data);
+          confirmationSpan.textContent = event.data;
+        };
+        
+        eventSource.onerror = function(error) {
+          console.error("SSE connection error:", error);
+          eventSource.close();
+          
+          if (retryCount < maxRetries) {
+            retryCount++;
+            console.log(`Retrying SSE connection (${retryCount}/${maxRetries})...`);
+            setTimeout(connectSSE, 1000 * retryCount);
+          } else {
+            console.error("Max SSE retries reached");
+            displayError("Connection error: Unable to receive progress updates.");
+          }
+        };
+        
+        return eventSource;
+      }
       
-      eventSource.onerror = function() {
-        eventSource.close();
-      };
+      const eventSource = connectSSE();
 
       // Make the search request
       fetch("/find-canvas", {
