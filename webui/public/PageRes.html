@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Resolution</title>
+    <style>
+        body {
+            background-color: black;
+            color: white; /* Changed to white for visibility on black background */
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            text-align: center;
+        }
+        .resolution-text {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="resolution-text">This Browser Resolution is</div>
+    <div id="resolution" class="resolution-text"></div>
+
+    <script>
+        function displayResolution() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            document.getElementById('resolution').innerText = `${width} px\nby\n${height} px`;
+        }
+
+        window.onload = displayResolution;
+        window.onresize = displayResolution;
+    </script>
+</body>
+</html> 
