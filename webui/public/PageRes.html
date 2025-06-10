@@ -41,6 +41,7 @@
 
         function adjustFontSize() {
             const textElement = document.getElementById('first-line-text');
+            const resolutionElement = document.getElementById('resolution');
             const targetWidth = window.innerWidth * 0.9; // 90% of page width
             let fontSize = 100; // Start with a large font size and decrease
             textElement.style.fontSize = fontSize + 'px';
@@ -50,6 +51,8 @@
                 fontSize--;
                 textElement.style.fontSize = fontSize + 'px';
             }
+            // Apply the same font size to the resolution text
+            resolutionElement.style.fontSize = fontSize + 'px';
         }
 
         window.onload = displayResolution;
