@@ -64,4 +64,5 @@ webui/macros-deleted-records.json
 Thumbs.db
 
 # Dev Notes
-.notes/
+.notes/docker-compose.test.yml
+webui-test-uploads/

@@ -1,234 +1,298 @@
 // /public/js/main-page.js
+// Client selection and workspace monitoring
 
 document.addEventListener("DOMContentLoaded", () => {
-    const setTargetButton = document.getElementById("setTargetButton");
+    const clientSelect = document.getElementById("clientSelect");
+    const canvasInfo = document.getElementById("canvasInfo");
+    const canvasName = document.getElementById("canvasName");
+    const connectionStatus = document.getElementById("connectionStatus");
+    const continueButton = document.getElementById("continueButton");
     const confirmationSpan = document.getElementById("confirmation");
     const errorSpan = document.getElementById("error");
-  
-    const passwordModal = document.getElementById("passwordModal");
-    const closeModal = document.getElementById("closeModal");
-    const submitPassword = document.getElementById("submitPassword");
-    const adminPasswordInput = document.getElementById("adminPassword");
-    const modalError = document.getElementById("modalError");
-  
-    // Initialize common components
+
+    let workspaceSubscription = null;
+    let currentCanvasId = null;
+    let clientRefreshInterval = null;
+    const CLIENT_REFRESH_INTERVAL = 15000; // 15 seconds
+
+    // Initialize
     MessageSystem.initialize();
-    AdminModal.initialize();
-  
-    const params = new URLSearchParams(window.location.search);
-    const uid = params.get("uid");
-    console.log("URL Parameters:", window.location.search);
-    console.log("Extracted UID:", uid);
+    loadClients();
+    startClientRefresh();
 
-    // Update button text to initial state
-    setTargetButton.innerHTML = `
-        <span class="button-content">
-            <span class="loading-spinner" style="display: none;"></span>
-            <span class="button-text">Searching for current canvas to control...</span>
-        </span>
-    `;
-  
-    if (uid) {
-      console.log("Starting canvas search for UID:", uid);
-      // Show searching state
-      setTargetButton.querySelector('.loading-spinner').style.display = 'inline-block';
-      
-      // Set up message display
-      confirmationSpan.textContent = '';
-      confirmationSpan.className = "message success";
-      confirmationSpan.style.display = "inline";
-      
-      let retryCount = 0;
-      const maxRetries = 3;
-      
-      function connectSSE() {
-        // Connect to SSE endpoint
-        const eventSource = new EventSource(`/find-canvas-progress`);
-        
-        eventSource.onmessage = function(event) {
-          console.log("SSE message received:", event.data);
-          confirmationSpan.textContent = event.data;
-        };
-        
-        eventSource.onerror = function(error) {
-          console.error("SSE connection error:", error);
-          eventSource.close();
-          
-          if (retryCount < maxRetries) {
-            retryCount++;
-            console.log(`Retrying SSE connection (${retryCount}/${maxRetries})...`);
-            setTimeout(connectSSE, 1000 * retryCount);
-          } else {
-            console.error("Max SSE retries reached");
-            displayError("Connection error: Unable to receive progress updates.");
-          }
-        };
-        
-        return eventSource;
-      }
-      
-      const eventSource = connectSSE();
+    // Load available clients (preserves selection on refresh)
+    async function loadClients(isRefresh = false) {
+        try {
+            if (!isRefresh) {
+                displayConfirmation("Loading connected clients...");
+            }
 
-      // Make the search request
-      fetch("/find-canvas", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid })
-      })
-        .then(response => response.json())
-        .then(data => {
-          eventSource.close();
-          
-          if (data.canvas_name && data.canvas_id) {
-            checkEnvAndUpdateButton(data.canvas_name, data.canvas_id);
-          } else {
-            setTargetButton.querySelector('.loading-spinner').style.display = 'none';
-            setTargetButton.querySelector('.button-text').textContent = 'No Canvas Found';
-            displayError(data.error || "Canvas not found.");
-          }
-        })
-        .catch(error => {
-          eventSource.close();
-          console.error("Error during canvas search:", error);
-          setTargetButton.querySelector('.loading-spinner').style.display = 'none';
-          setTargetButton.querySelector('.button-text').textContent = 'Error Finding Canvas';
-          displayError("An error occurred while fetching canvas data.");
-        });
-    } else {
-      console.log("No UID found in URL parameters");
-      setTargetButton.querySelector('.loading-spinner').style.display = 'none';
-      setTargetButton.querySelector('.button-text').textContent = 'No Canvas UID Provided';
-      displayError("UID not found in the URL.");
+            const currentSelection = clientSelect.value;
+            const response = await fetch("/api/clients");
+            const data = await response.json();
+
+            if (!data.success || !data.clients) {
+                throw new Error(data.error || "Failed to load clients");
+            }
+
+            populateClientDropdown(data.clients, currentSelection);
+
+            if (!isRefresh) {
+                clearMessages();
+            }
+
+            if (data.clients.length === 0) {
+                displayError("No clients connected to the server.");
+            }
+        } catch (error) {
+            console.error("Error loading clients:", error);
+            if (!isRefresh) {
+                displayError("Failed to load clients: " + error.message);
+                clearDropdown();
+                addDropdownOption("", "Error loading clients");
+            }
+        }
     }
-  
-    // Function to check .env and update the button
-    function checkEnvAndUpdateButton(canvas_name, canvas_id) {
-      fetch(`/check-env?canvas_name=${encodeURIComponent(canvas_name)}&canvas_id=${encodeURIComponent(canvas_id)}`)
-        .then(response => response.json())
-        .then(data => {
-          setTargetButton.querySelector('.loading-spinner').style.display = 'none';
-          
-          if (data.matches) {
-            // Redirect to pages.html if .env matches
-            window.location.href = "/pages.html";
-          } else {
-            // Update the button with canvas details
-            setTargetButton.querySelector('.button-text').textContent = `Click here to update target to ${canvas_name}`;
-            setTargetButton.dataset.canvas_id = canvas_id;
-            setTargetButton.dataset.canvas_name = canvas_name;
-            setTargetButton.disabled = false; // Enable the button
-            
-            // Display warning message
-            displayError("DANGER: You are not currently controlling the canvas you opened WebUI from. Please update or proceed with caution.");
-          }
-        })
-        .catch(error => {
-          console.error("Error:", error);
-          setTargetButton.querySelector('.loading-spinner').style.display = 'none';
-          setTargetButton.querySelector('.button-text').textContent = 'Error Checking Environment';
-          displayError("An error occurred while checking environment variables.");
-        });
+
+    // Start periodic client list refresh
+    function startClientRefresh() {
+        if (clientRefreshInterval) {
+            clearInterval(clientRefreshInterval);
+        }
+        clientRefreshInterval = setInterval(() => {
+            loadClients(true);
+        }, CLIENT_REFRESH_INTERVAL);
     }
-  
-    // Function to handle button click with modal password prompt
-    setTargetButton.addEventListener("click", async () => {
-        const canvas_id = setTargetButton.dataset.canvas_id;
-        const canvas_name = setTargetButton.dataset.canvas_name;
-        
-        if (!canvas_id || !canvas_name) {
-            displayError("Missing canvas information. Please try refreshing the page.");
+
+    // Stop client refresh (cleanup)
+    function stopClientRefresh() {
+        if (clientRefreshInterval) {
+            clearInterval(clientRefreshInterval);
+            clientRefreshInterval = null;
+        }
+    }
+
+    // Clear dropdown options
+    function clearDropdown() {
+        while (clientSelect.firstChild) {
+            clientSelect.removeChild(clientSelect.firstChild);
+        }
+    }
+
+    // Add option to dropdown
+    function addDropdownOption(value, text, dataset) {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = text;
+        if (dataset) {
+            Object.keys(dataset).forEach(key => {
+                option.dataset[key] = dataset[key];
+            });
+        }
+        clientSelect.appendChild(option);
+    }
+
+    // Populate the client dropdown (optionally restore previous selection)
+    function populateClientDropdown(clients, previousSelection = null) {
+        clearDropdown();
+        addDropdownOption("", "-- Select a display --");
+
+        clients.forEach(client => {
+            const displayName = client.name || client.hostname || client.id;
+            addDropdownOption(client.id, displayName, {
+                clientName: client.name || client.hostname || "Unknown"
+            });
+        });
+
+        clientSelect.disabled = false;
+
+        // Restore previous selection if it still exists
+        if (previousSelection) {
+            const optionExists = Array.from(clientSelect.options).some(
+                opt => opt.value === previousSelection
+            );
+            if (optionExists) {
+                clientSelect.value = previousSelection;
+            }
+        }
+    }
+
+    // Handle client selection
+    clientSelect.addEventListener("change", async () => {
+        const clientId = clientSelect.value;
+
+        // Close existing subscription
+        if (workspaceSubscription) {
+            workspaceSubscription.close();
+            workspaceSubscription = null;
+        }
+
+        // Reset UI
+        canvasInfo.style.display = "none";
+        continueButton.style.display = "none";
+        continueButton.disabled = true;
+        clearMessages();
+
+        if (!clientId) {
             return;
         }
 
         try {
-            // Show admin modal and wait for authentication
-            const password = await AdminModal.show();
-            if (!password) {
-                displayError("Authentication cancelled");
+            displayConfirmation("Connecting to client workspace...");
+
+            // Get current workspace
+            const response = await fetch(`/api/clients/${clientId}/workspace`);
+            const data = await response.json();
+
+            if (!data.success || !data.workspace) {
+                throw new Error(data.error || "Failed to get workspace");
+            }
+
+            const workspace = data.workspace;
+            currentCanvasId = workspace.canvas_id;
+
+            if (!currentCanvasId) {
+                displayError("No canvas open on this client.");
                 return;
             }
-            
-            // Show loading state
-            setTargetButton.querySelector('.loading-spinner').style.display = 'inline-block';
-            setTargetButton.querySelector('.button-text').textContent = 'Updating...';
-            setTargetButton.disabled = true;
-            
-            // Make the update request
-            const response = await fetch("/admin/update-env", {
-                method: "POST",
-                headers: { 
-                    'Authorization': `Bearer ${password}`,
-                    'Content-Type': 'application/json' 
-                },
-                body: JSON.stringify({ 
-                    CANVAS_ID: canvas_id, 
-                    CANVAS_NAME: canvas_name 
-                })
-            });
-            
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to update environment');
-            }
-            
-            if (data.success) {
-                displayConfirmation("Environment updated successfully! Redirecting...");
-                // Redirect to pages.html after a short delay
-                setTimeout(() => {
-                    window.location.href = "/pages.html";
-                }, 1500);
-            } else {
-                throw new Error(data.error || "Failed to update environment.");
-            }
+
+            // Get canvas details
+            await switchToCanvas(currentCanvasId);
+
+            // Start monitoring for changes
+            startWorkspaceSubscription(clientId);
+
         } catch (error) {
-            console.error("Error:", error);
-            displayError(error.message || "An error occurred while updating the environment.");
-            // Reset button state
-            setTargetButton.querySelector('.loading-spinner').style.display = 'none';
-            setTargetButton.querySelector('.button-text').textContent = `Click here to update target to ${canvas_name}`;
-            setTargetButton.disabled = false;
+            console.error("Error connecting to client:", error);
+            displayError("Failed to connect: " + error.message);
         }
     });
-  
-    // Close modal when clicking outside of it
-    window.addEventListener("click", (event) => {
-      if (event.target == passwordModal) {
-        passwordModal.style.display = "none";
-      }
+
+    // Switch to a canvas
+    async function switchToCanvas(canvasId) {
+        try {
+            // Notify server of canvas switch
+            const response = await fetch("/api/canvas/switch", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ canvas_id: canvasId })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.error || "Failed to switch canvas");
+            }
+
+            // Update UI
+            canvasName.textContent = data.canvas_name || canvasId;
+            canvasInfo.style.display = "block";
+            continueButton.style.display = "block";
+            continueButton.disabled = false;
+
+            displayConfirmation("Connected to canvas: " + (data.canvas_name || canvasId));
+
+        } catch (error) {
+            console.error("Error switching canvas:", error);
+            displayError("Failed to switch canvas: " + error.message);
+        }
+    }
+
+    // Start SSE subscription for workspace changes
+    function startWorkspaceSubscription(clientId) {
+        console.log("Starting workspace subscription for client:", clientId);
+
+        workspaceSubscription = new EventSource("/api/clients/" + clientId + "/workspace/subscribe");
+
+        workspaceSubscription.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                console.log("Workspace event:", data);
+
+                if (data.type === "connected") {
+                    connectionStatus.textContent = "Monitoring";
+                    connectionStatus.className = "status connected";
+                }
+
+                if (data.type === "canvas_change") {
+                    if (data.canvas_id !== currentCanvasId) {
+                        console.log("Canvas changed:", data.canvas_id);
+                        currentCanvasId = data.canvas_id;
+
+                        // Update UI
+                        canvasName.textContent = data.canvas_name || data.canvas_id;
+                        displayConfirmation("Canvas changed to: " + (data.canvas_name || data.canvas_id));
+
+                        // Notify server
+                        fetch("/api/canvas/switch", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                canvas_id: data.canvas_id,
+                                canvas_name: data.canvas_name
+                            })
+                        });
+                    }
+                }
+
+                if (data.type === "error") {
+                    connectionStatus.textContent = "Error";
+                    connectionStatus.className = "status error";
+                }
+            } catch (e) {
+                console.error("Error parsing SSE data:", e);
+            }
+        };
+
+        workspaceSubscription.onerror = (error) => {
+            console.error("SSE connection error:", error);
+            connectionStatus.textContent = "Disconnected";
+            connectionStatus.className = "status disconnected";
+
+            // Try to reconnect after a delay
+            setTimeout(() => {
+                if (clientSelect.value === clientId) {
+                    console.log("Attempting to reconnect...");
+                    startWorkspaceSubscription(clientId);
+                }
+            }, 5000);
+        };
+    }
+
+    // Continue button handler
+    continueButton.addEventListener("click", () => {
+        if (currentCanvasId) {
+            window.location.href = "/pages.html";
+        }
     });
-  
-    function updateSearchStatus(status) {
-      const searchMsg = document.createElement('div');
-      searchMsg.textContent = status;
-      
-      const updatesContainer = confirmationSpan.querySelector('.search-updates');
-      if (updatesContainer) {
-        updatesContainer.appendChild(searchMsg);
-        updatesContainer.scrollTop = updatesContainer.scrollHeight;
-      }
-    }
-  
-    // Function to display confirmation messages
+
+    // Message display helpers
     function displayConfirmation(message) {
-      confirmationSpan.textContent = message;
-      confirmationSpan.className = "message success";
-      confirmationSpan.style.display = "inline";
-      errorSpan.textContent = "";
-      errorSpan.className = "message";
-      errorSpan.style.display = "none";
+        confirmationSpan.textContent = message;
+        confirmationSpan.className = "message success";
+        confirmationSpan.style.display = "inline";
+        errorSpan.style.display = "none";
     }
-  
-    // Function to display error messages
+
     function displayError(message) {
-      errorSpan.textContent = message;
-      errorSpan.className = "message error";
-      errorSpan.style.display = "inline";
-      // Only clear confirmation if not during search
-      if (!message.includes("Searching") && !confirmationSpan.querySelector('.search-updates')) {
-        confirmationSpan.textContent = "";
-        confirmationSpan.className = "message";
+        errorSpan.textContent = message;
+        errorSpan.className = "message error";
+        errorSpan.style.display = "inline";
         confirmationSpan.style.display = "none";
-      }
     }
-  });
-  
+
+    function clearMessages() {
+        confirmationSpan.textContent = "";
+        confirmationSpan.style.display = "none";
+        errorSpan.textContent = "";
+        errorSpan.style.display = "none";
+    }
+
+    // Cleanup on page unload
+    window.addEventListener("beforeunload", () => {
+        stopClientRefresh();
+        if (workspaceSubscription) {
+            workspaceSubscription.close();
+        }
+    });
+});

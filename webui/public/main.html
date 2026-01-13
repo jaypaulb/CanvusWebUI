@@ -18,13 +18,29 @@
     <div id="navbar-placeholder"></div>
       
     <div class="container">
-        <h1>Welcome to the Main Page</h1>
-        
+        <h1>Welcome to Canvus WebUI</h1>
+
         <div class="action-container">
-            <button id="setTargetButton" class="primary-button" disabled>
+            <div class="form-group">
+                <label for="clientSelect">Select a Display Client</label>
+                <select id="clientSelect" class="form-select" disabled>
+                    <option value="">Loading clients...</option>
+                </select>
+            </div>
+
+            <div id="canvasInfo" class="canvas-info" style="display: none;">
+                <div class="canvas-details">
+                    <span class="label">Active Canvas:</span>
+                    <span id="canvasName" class="value">-</span>
+                </div>
+                <div class="status-indicator">
+                    <span id="connectionStatus" class="status connected">Monitoring</span>
+                </div>
+            </div>
+
+            <button id="continueButton" class="primary-button" disabled style="display: none;">
                 <span class="button-content">
-                    <span class="loading-spinner" style="display: none;"></span>
-                    <span class="button-text">Loading...</span>
+                    <span class="button-text">Continue to WebUI</span>
                 </span>
             </button>
         </div>

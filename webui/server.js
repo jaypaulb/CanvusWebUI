@@ -659,121 +659,6 @@ app.post('/update-env', [
   res.json({ success: true, message: 'Environment variables updated and reloaded successfully.' });
 });
 
-// Find Canvas Progress Endpoint
-app.get("/find-canvas-progress", (req, res) => {
-    // Add CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    
-    // SSE headers
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    
-    // Store the response object in app.locals for use in other routes
-    app.locals.sseRes = res;
-    
-    // Send an initial message
-    res.write('data: Initializing search...\n\n');
-    
-    // Handle client disconnect
-    req.on('close', () => {
-        if (app.locals.sseRes === res) {
-            app.locals.sseRes = null;
-        }
-    });
-});
-
-// Helper function to send SSE messages
-function sendSSEMessage(message) {
-    console.log(message); // Keep console logging
-    if (app.locals.sseRes) {
-        app.locals.sseRes.write(`data: ${message}\n\n`);
-    }
-}
-
-// Find Canvas
-app.post("/find-canvas", async (req, res) => {
-    const { uid } = req.body;
-    if (!uid) {
-        sendSSEMessage("Error: UID is required.");
-        return res.status(400).json({ error: "UID is required." });
-    }
-
-    try {
-        sendSSEMessage(`Searching for UID: "${uid}"`);
-        const response = await apiClient.get(`/api/v1/canvases`);
-
-        const canvases = response.data;
-        if (!Array.isArray(canvases)) {
-            throw new Error("Invalid response format: canvases should be an array.");
-        }
-
-        sendSSEMessage(`Retrieved ${canvases.length} canvases.`);
-        let foundMatch = false;
-
-        for (const canvas of canvases) {
-            const { id: canvasId, name: canvasName } = canvas;
-            sendSSEMessage(`Processing Canvas ID: ${canvasId}`);
-
-            try {
-                const browsersResponse = await apiClient.get(
-                    `/api/v1/canvases/${canvasId}/browsers`
-                );
-
-                const browsers = browsersResponse.data;
-                if (!Array.isArray(browsers)) {
-                    throw new Error(`Invalid browsers format for canvas ${canvasId}.`);
-                }
-
-                sendSSEMessage(`Retrieved ${browsers.length} browsers for Canvas ID: ${canvasId}`);
-
-                for (let i = 1; i <= browsers.length; i++) {
-                    const browser = browsers[i-1];
-                    sendSSEMessage(`Checking Browser ${i}`);
-
-                    if (browser.url && browser.url.includes(uid)) {
-                        foundMatch = true;
-                        sendSSEMessage(`Match found in Canvas: "${canvasName}" (ID: ${canvasId})`);
-                        if (app.locals.sseRes) {
-                            app.locals.sseRes.end();
-                            app.locals.sseRes = null;
-                        }
-                        return res.json({ canvas_name: canvasName, canvas_id: canvasId });
-                    }
-                }
-
-                sendSSEMessage(`No matching browser found in Canvas ID: ${canvasId}`);
-            } catch (error) {
-                const errorMsg = error.response?.data?.msg || error.message;
-                if (errorMsg.toLowerCase().includes('archived')) {
-                    sendSSEMessage(`Skipping archived Canvas ID: ${canvasId} (${canvasName})`);
-                    continue;
-                }
-                throw error;
-            }
-        }
-
-        if (!foundMatch) {
-            sendSSEMessage(`No matching canvas found for UID: "${uid}"`);
-            if (app.locals.sseRes) {
-                app.locals.sseRes.end();
-                app.locals.sseRes = null;
-            }
-            res.status(404).json({ error: "No matching canvas found." });
-        }
-    } catch (error) {
-        sendSSEMessage(`Error occurred during search: ${error.message}`);
-        if (app.locals.sseRes) {
-            app.locals.sseRes.end();
-            app.locals.sseRes = null;
-        }
-        res.status(500).json({ error: "Failed to process request." });
-    }
-});
-
-
 // GET /api/macros/deleted-details?recordId=<someId>
 app.get("/api/macros/deleted-details", (req, res) => {
     console.log("[/api/macros/deleted-details] route invoked.");
@@ -820,41 +705,6 @@ app.get("/api/macros/deleted-details", (req, res) => {
       return res.status(500).json({ success: false, error: "Failed to load record details." });
     }
   });
-
-// Check if the provided canvasName/ID match the .env config
-app.get("/check-env", (req, res) => {
-    const { canvas_name, canvas_id } = req.query;
-
-    if (!canvas_name || !canvas_id) {
-        console.error(`[${getTimestamp()}] Canvas name or ID is missing in the request.`);
-        return res.status(400).json({ error: "Canvas name and ID are required." });
-    }
-
-    try {
-        const envPath = path.resolve(process.cwd(), '../.env');
-        const envData = fs.readFileSync(envPath, "utf-8");
-
-        const envVariables = Object.fromEntries(
-            envData
-                .split("\n")
-                .filter(line => line.includes("="))
-                .map(line => {
-                    const [key, ...rest] = line.split("=");
-                    return [key.trim(), rest.join("=").trim()];
-                })
-        );
-
-        const matches = envVariables.CANVAS_NAME === canvas_name && envVariables.CANVAS_ID === canvas_id;
-
-        console.log(`[${getTimestamp()}] Environment check for Canvas ID: ${canvas_id}: ${matches ? "Matched" : "Did Not Match"}`);
-        return res.json({ matches });
-    } catch (error) {
-        console.error(`[${getTimestamp()}] Error reading .env file:`, error.message);
-        res.status(500).json({ error: "Failed to read .env file." });
-    }
-});
-
-
 
 // ------------------------------- Get Zones Endpoint -----------------------------
 
@@ -1866,13 +1716,19 @@ app.post("/api/macros/group-title", async (req, res) => {
 
 // ------------------------------- Note Creation Helpers --------------------------
 
-// Create a note on the canvas at a given location
-async function createNoteAtLocation(title, text, color, location) {
+// Create a note on the canvas at a given location with offset from anchor corner
+async function createNoteAtLocation(title, text, color, location, offset = { x: 30, y: 30 }) {
+    // Apply offset from anchor corner (default 30,30)
+    const offsetLocation = {
+        x: location.x + offset.x,
+        y: location.y + offset.y
+    };
+
     const payload = {
         auto_text_color: true,
         background_color: color,
         depth: 100,
-        location: location,
+        location: offsetLocation,
         pinned: false,
         scale: 1,
         size: { height: 300, width: 300 },
@@ -3526,6 +3382,116 @@ app.post("/api/macros/import", upload.single('importFile'), async (req, res) => 
         return res.status(500).json({ error: error.message });
     }
 });
+
+// ------------------- Client Selection Endpoints -------------------
+
+// List all connected clients
+app.get('/api/clients', async (req, res) => {
+    console.log(`[${getTimestamp()}] Fetching connected clients...`);
+    try {
+        const response = await apiClient.get('/api/v1/clients');
+        const clients = response.data || [];
+        console.log(`[${getTimestamp()}] Found ${clients.length} client(s)`);
+        res.json({ success: true, clients });
+    } catch (error) {
+        console.error(`[${getTimestamp()}] Error fetching clients:`, error.response?.data || error.message);
+        res.status(500).json({ success: false, error: 'Failed to fetch clients' });
+    }
+});
+
+// Get current workspace (canvas) for a client
+app.get('/api/clients/:clientId/workspace', async (req, res) => {
+    const { clientId } = req.params;
+    console.log(`[${getTimestamp()}] Fetching workspace for client: ${clientId}`);
+    try {
+        const response = await apiClient.get(`/api/v1/clients/${clientId}/workspaces/0`);
+        const workspace = response.data;
+        console.log(`[${getTimestamp()}] Client ${clientId} workspace:`, workspace);
+        res.json({ success: true, workspace });
+    } catch (error) {
+        console.error(`[${getTimestamp()}] Error fetching workspace:`, error.response?.data || error.message);
+        res.status(500).json({ success: false, error: 'Failed to fetch workspace' });
+    }
+});
+
+// Subscribe to workspace changes for a client (SSE)
+app.get('/api/clients/:clientId/workspace/subscribe', async (req, res) => {
+    const { clientId } = req.params;
+    console.log(`[${getTimestamp()}] Starting workspace subscription for client: ${clientId}`);
+
+    // Set SSE headers
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    // Send initial connection message
+    res.write(`data: ${JSON.stringify({ type: 'connected', clientId })}\n\n`);
+
+    let lastCanvasId = null;
+
+    // Poll the workspace endpoint for changes (Canvus API subscribe on workspaces is limited)
+    const pollInterval = setInterval(async () => {
+        try {
+            const response = await apiClient.get(`/api/v1/clients/${clientId}/workspaces/0`);
+            const workspace = response.data;
+            const currentCanvasId = workspace?.canvas_id;
+
+            if (currentCanvasId && currentCanvasId !== lastCanvasId) {
+                console.log(`[${getTimestamp()}] Canvas changed for client ${clientId}: ${lastCanvasId} -> ${currentCanvasId}`);
+                lastCanvasId = currentCanvasId;
+
+                // Get canvas details
+                try {
+                    const canvasResponse = await apiClient.get(`/api/v1/canvases/${currentCanvasId}`);
+                    const canvas = canvasResponse.data;
+                    res.write(`data: ${JSON.stringify({
+                        type: 'canvas_change',
+                        canvas_id: currentCanvasId,
+                        canvas_name: canvas?.name || 'Unknown'
+                    })}\n\n`);
+                } catch (canvasError) {
+                    res.write(`data: ${JSON.stringify({
+                        type: 'canvas_change',
+                        canvas_id: currentCanvasId,
+                        canvas_name: 'Unknown'
+                    })}\n\n`);
+                }
+            }
+        } catch (error) {
+            console.error(`[${getTimestamp()}] Error polling workspace:`, error.message);
+            res.write(`data: ${JSON.stringify({ type: 'error', message: 'Failed to poll workspace' })}\n\n`);
+        }
+    }, 2000); // Poll every 2 seconds
+
+    // Clean up on client disconnect
+    req.on('close', () => {
+        console.log(`[${getTimestamp()}] Client ${clientId} subscription closed`);
+        clearInterval(pollInterval);
+    });
+});
+
+// Update active canvas (switch to a new canvas)
+app.post('/api/canvas/switch', async (req, res) => {
+    const { canvas_id, canvas_name } = req.body;
+
+    if (!canvas_id) {
+        return res.status(400).json({ success: false, error: 'canvas_id is required' });
+    }
+
+    console.log(`[${getTimestamp()}] Switching to canvas: ${canvas_id} (${canvas_name})`);
+
+    // Update environment variables in memory
+    process.env.CANVAS_ID = canvas_id;
+    if (canvas_name) {
+        process.env.CANVAS_NAME = canvas_name;
+    }
+
+    console.log(`[${getTimestamp()}] Canvas switched successfully`);
+    res.json({ success: true, canvas_id, canvas_name });
+});
+
+// ------------------- End Client Selection Endpoints -------------------
 
 // Start the server (HTTPS if certs configured, otherwise HTTP)
 const SSL_CERT_PATH = process.env.SSL_CERT_PATH;

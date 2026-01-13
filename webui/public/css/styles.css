@@ -1192,3 +1192,92 @@ button.loading .loading-spinner {
 
 
 
+
+/* Client Selection Page Styles */
+.form-select {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+.form-select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.canvas-info {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.canvas-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.canvas-details .label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+}
+
+.canvas-details .value {
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    color: var(--color-text);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+}
+
+.status {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.status.connected {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: var(--color-primary);
+}
+
+.status.disconnected {
+    background-color: rgba(244, 67, 54, 0.15);
+    color: var(--color-danger);
+}
+
+.status.error {
+    background-color: rgba(255, 152, 0, 0.15);
+    color: #ff9800;
+}
+
+[data-theme="dark"] .form-select {
+    background-color: var(--color-dark-surface);
+    border-color: var(--color-dark-border);
+    color: var(--color-dark-text);
+}
+
+[data-theme="dark"] .canvas-info {
+    background-color: var(--color-dark-surface);
+    border-color: var(--color-dark-border);
+}
