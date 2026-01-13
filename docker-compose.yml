@@ -1,0 +1,90 @@
+# ==============================================================================
+# CanvusWebUI - Standalone Container Deployment
+# ==============================================================================
+#
+# Deploy alongside Canvus Server containers to provide a web interface for
+# file uploads, notes, and widget macros.
+#
+# Quick Start:
+#   1. Copy this file to the same directory as your Canvus podman-compose.yml
+#   2. Edit the environment variables below
+#   3. Run: podman-compose -f podman-compose.yml -f docker-compose.webui.yml up -d
+#
+# Or run standalone:
+#   podman-compose up -d
+#
+# Access: https://your-canvus-server:8443
+#
+# ==============================================================================
+
+version: '3.8'
+
+services:
+  canvus-webui:
+    image: ghcr.io/jaypaulb/canvus-webui:latest
+    # Or build locally:
+    # build: .
+    container_name: canvus-webui
+    restart: unless-stopped
+    environment:
+      # ==========================================================================
+      # Required: Canvus API Configuration
+      # ==========================================================================
+      # Point to the Canvus server (use container name if on same network)
+      CANVUS_SERVER: https://canvus-combined:443
+
+      # Canvas to operate on (get ID from Canvus dashboard)
+      CANVAS_ID: your-canvas-id
+      CANVAS_NAME: Your Canvas Name
+
+      # API key for authentication (generate in Canvus dashboard)
+      CANVUS_API_KEY: your-api-key
+
+      # ==========================================================================
+      # Required: SSL Configuration
+      # ==========================================================================
+      # Port for HTTPS (default 8443)
+      PORT: 8443
+
+      # SSL certificate paths (mounted from Canvus certs volume)
+      SSL_CERT_PATH: /certs/fullchain.pem
+      SSL_KEY_PATH: /certs/privkey.pem
+
+      # Allow self-signed certs when connecting to Canvus API
+      # Set to 'true' if Canvus uses self-signed certs internally
+      ALLOW_SELF_SIGNED_CERTS: "true"
+
+      # ==========================================================================
+      # Optional: Admin Configuration
+      # ==========================================================================
+      # Password for admin endpoints (env vars, user management)
+      WEBUI_PWD: changeme
+
+    volumes:
+      # Mount same SSL certs as Canvus server
+      - /canvus-data/certs:/certs:ro
+
+      # Persistent storage for uploaded files
+      - canvus-webui-uploads:/app/uploads
+
+    ports:
+      # Expose on port 8443 (bypasses Traefik, direct to container)
+      - "8443:8443"
+
+    networks:
+      - canvus-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost:8443/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
+
+volumes:
+  canvus-webui-uploads:
+    driver: local
+
+networks:
+  canvus-network:
+    external: true

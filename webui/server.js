@@ -24,20 +24,26 @@
 // server.js - All-in-one version with Macro Endpoints
 
 const express = require('express');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
 
-// Load environment variables first
-const envPath = path.resolve(process.cwd(), '../.env');
+// Load environment variables
+// Container mode: env vars passed directly, no .env file needed
+// Local mode: loads from ../.env (relative to webui directory)
+const envPath = process.env.ENV_FILE_PATH || path.resolve(process.cwd(), '../.env');
 console.log(`[Server Startup] Process working directory: ${process.cwd()}`);
-console.log(`[Server Startup] Looking for .env at: ${envPath}`);
 
-const result = dotenv.config({ path: envPath });
-
-if (result.error) {
-    console.error('[Server Startup] Error loading environment variables:', result.error);
-    process.exit(1);
+if (fs.existsSync(envPath)) {
+    console.log(`[Server Startup] Loading .env from: ${envPath}`);
+    const result = dotenv.config({ path: envPath });
+    if (result.error) {
+        console.error('[Server Startup] Error loading .env file:', result.error);
+        process.exit(1);
+    }
+} else {
+    console.log(`[Server Startup] No .env file found at ${envPath} - using environment variables directly (container mode)`);
 }
 
 // Validate essential environment variables
@@ -3521,8 +3527,35 @@ app.post("/api/macros/import", upload.single('importFile'), async (req, res) => 
     }
 });
 
-// Start the server
-app.listen(PORT, () => console.log(`[${getTimestamp()}] Server running at http://localhost:${PORT}`));
+// Start the server (HTTPS if certs configured, otherwise HTTP)
+const SSL_CERT_PATH = process.env.SSL_CERT_PATH;
+const SSL_KEY_PATH = process.env.SSL_KEY_PATH;
+
+if (SSL_CERT_PATH && SSL_KEY_PATH) {
+    try {
+        const sslOptions = {
+            cert: fs.readFileSync(SSL_CERT_PATH),
+            key: fs.readFileSync(SSL_KEY_PATH)
+        };
+        https.createServer(sslOptions, app).listen(PORT, () => {
+            console.log(`[${getTimestamp()}] Server running at https://localhost:${PORT}`);
+            console.log(`[${getTimestamp()}] SSL Certificate: ${SSL_CERT_PATH}`);
+            console.log(`[${getTimestamp()}] SSL Key: ${SSL_KEY_PATH}`);
+        });
+    } catch (err) {
+        console.error(`[${getTimestamp()}] Failed to load SSL certificates:`, err.message);
+        console.error(`[${getTimestamp()}] Cert path: ${SSL_CERT_PATH}`);
+        console.error(`[${getTimestamp()}] Key path: ${SSL_KEY_PATH}`);
+        process.exit(1);
+    }
+} else {
+    app.listen(PORT, () => {
+        console.log(`[${getTimestamp()}] Server running at http://localhost:${PORT}`);
+        if (!SSL_CERT_PATH || !SSL_KEY_PATH) {
+            console.log(`[${getTimestamp()}] SSL disabled (SSL_CERT_PATH and SSL_KEY_PATH not configured)`);
+        }
+    });
+}
 
 // -----------------------------------------------------------------------------
 // End of script
