@@ -87,4 +87,6 @@ volumes:
 
 networks:
   canvus-network:
-    external: true
+    # When used with Canvus Server compose, this merges with their network definition
+    # When used standalone, creates a new bridge network
+    driver: bridge
